@@ -8,7 +8,7 @@ OutputBaseFilename=rmbg-setup
 AppVerName=rmbg 1.1
 
 [Files]
-Source: "D:\Go-Projects\rmbg\rmbg.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "rmbg.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
 Root: HKCR; Subkey: "SystemFileAssociations\image\shell\rmbg"; ValueType: string; ValueName: ""; ValueData: "Szybkie usuwanie tła"; Flags: uninsdeletekey
