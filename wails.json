@@ -6,6 +6,8 @@
   "frontend:build": "bun run build",
   "frontend:dev:watcher": "bun dev",
   "frontend:dev:serverUrl": "auto",
+  "obfuscated": true,
+  "garbleargs": "-tiny",
   "author": {
     "name": "VdanielVPL"
   }
