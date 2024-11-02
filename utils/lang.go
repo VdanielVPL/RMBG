@@ -1,10 +1,16 @@
 package utils
 
 import (
+	"embed"
 	"encoding/json"
-	"os"
 	"syscall"
 )
+
+var Assets embed.FS
+
+func InitAssets(fs embed.FS) {
+	Assets = fs
+}
 
 func getSystemLanguage() string {
 	kernel32 := syscall.NewLazyDLL("kernel32.dll")
@@ -30,7 +36,7 @@ func loadLangFile(lang string) (map[string]string, error) {
 		filename = "assets/lang/pl.json"
 	}
 
-	data, err := os.ReadFile(filename)
+	data, err := Assets.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}

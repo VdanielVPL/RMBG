@@ -10,10 +10,12 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
-//go:embed all:frontend/dist
+//go:embed all:frontend/dist all:assets
 var assets embed.FS
 
 func main() {
+
+	utils.InitAssets(assets)
 	// Create an instance of the app structure
 	app := NewApp()
 
