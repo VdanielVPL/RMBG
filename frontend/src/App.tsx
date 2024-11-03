@@ -1,16 +1,15 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import logo from './assets/images/logo-universal.png';
-import { GetLangStrings } from '../wailsjs/go/main/App';
+import { LangContext } from './contexts/LangContext';
 import './App.css';
 
 function App() {
-    const [text, setText] = useState('');
-    GetLangStrings().then((result) => setText(()=>result["Test"]));
+    const strings = useContext(LangContext);
 
     return (
         <div id="App">
             <img src={logo} id="logo" alt="logo"/>
-            <div id="result" className="result">{text}</div>
+            <div id="result" className="result">{strings["Hello"]}</div>
         </div>
     )
 }
