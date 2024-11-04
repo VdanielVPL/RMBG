@@ -12,6 +12,7 @@ import (
 type App struct {
 	ctx         context.Context
 	LangStrings map[string]string
+	IsDarkMode  bool
 }
 
 // NewApp creates a new App application struct
@@ -28,6 +29,7 @@ func (a *App) startup(ctx context.Context) {
 	} else {
 		runtime.LogError(ctx, "Error loading lang file:"+err.Error())
 	}
+	a.IsDarkMode = utils.IsDarkMode()
 }
 
 // Greet returns a greeting for the given name
@@ -37,4 +39,8 @@ func (a *App) Greet(name string) string {
 
 func (a *App) GetLangStrings() map[string]string {
 	return a.LangStrings
+}
+
+func (a *App) GetDarkMode() bool {
+	return a.IsDarkMode
 }

@@ -1,16 +1,17 @@
 import { useContext } from 'react';
-import logo from './assets/images/logo-universal.png';
-import { LangContext } from './contexts/LangContext';
+import { MainContext } from './contexts/MainContext';
 import './App.css';
+import { HashRouter } from 'react-router-dom';
 
 function App() {
-    const strings = useContext(LangContext);
+    const { strings } = useContext(MainContext);
 
     return (
-        <div id="App">
-            <img src={logo} id="logo" alt="logo"/>
-            <div id="result" className="result">{strings["Hello"]}</div>
-        </div>
+        <HashRouter>
+            <div id="App">
+                <div id="result" className="result">{strings["Hello"]}</div>
+            </div>
+        </HashRouter>
     )
 }
 

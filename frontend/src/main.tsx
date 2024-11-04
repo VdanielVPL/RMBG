@@ -2,7 +2,7 @@ import React from 'react'
 import {createRoot} from 'react-dom/client'
 import './style.css'
 import App from './App'
-import { LangProvider } from './contexts/LangContext'
+import { MainProvider } from './contexts/MainContext'
 
 const container = document.getElementById('root')
 
@@ -10,8 +10,8 @@ const root = createRoot(container!)
 
 root.render(
     <React.StrictMode>
-        <LangProvider>
+        <MainProvider>
             <App/>
-        </LangProvider>
+        </MainProvider>
     </React.StrictMode>
 )
