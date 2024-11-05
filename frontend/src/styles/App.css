@@ -1,0 +1,19 @@
+#App {
+    height: 100%;
+    position: relative;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+
+.NavButton{
+    background-color: purple;
+    width: 90%;
+    padding: 10px;
+    border-radius: 10px;
+}

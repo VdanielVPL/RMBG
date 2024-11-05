@@ -1,15 +1,19 @@
-import { useContext } from 'react';
-import { MainContext } from './contexts/MainContext';
-import './App.css';
-import { HashRouter } from 'react-router-dom';
+import './styles/App.css';
+import { HashRouter, Route, Routes } from 'react-router-dom';
+import { Nav } from './components/Nav';
+import { MainWrapper } from './components/MainWrapper';
 
 function App() {
-    const { strings } = useContext(MainContext);
-
     return (
         <HashRouter>
             <div id="App">
-                <div id="result" className="result">{strings["Hello"]}</div>
+                <Nav/>
+                <MainWrapper>
+                    <Routes>
+                        <Route path="/" element={<div>Home</div>} />
+                        <Route path="/crop" element={<div>Crop</div>} />
+                    </Routes>
+                </MainWrapper>
             </div>
         </HashRouter>
     )
