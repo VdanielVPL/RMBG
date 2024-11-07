@@ -36,5 +36,4 @@ func BgColor() *options.RGBA {
 			return options.NewRGBA(255, 255, 255, 255)
 		}
 	}
-
 }

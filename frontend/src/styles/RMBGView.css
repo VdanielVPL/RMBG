@@ -1,0 +1,13 @@
+.rmbgViewHeader{
+    font-size: 1.5em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.imageContainer{
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+}
+.wails-drop-target-active{
+    border: 1px solid red;
+}

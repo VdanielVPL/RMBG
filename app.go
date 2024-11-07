@@ -44,3 +44,7 @@ func (a *App) GetLangStrings() map[string]string {
 func (a *App) GetDarkMode() bool {
 	return a.IsDarkMode
 }
+
+func (a *App) HandleDrop(path string, isUrl bool) {
+	println("Dropped:", path, "isUrl:", isUrl)
+}

@@ -38,6 +38,11 @@ func main() {
 		BackgroundColour: utils.BgColor(),
 		OnStartup:        app.startup,
 		Windows:          windowsOptions,
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop:  true,
+			CSSDropProperty: "--wails-drop-target",
+			CSSDropValue:    "drop",
+		},
 		Bind: []interface{}{
 			app,
 		},

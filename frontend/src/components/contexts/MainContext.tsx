@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState, ReactNode } from 'react';
-import { GetLangStrings, GetDarkMode } from '../../wailsjs/go/main/App';
+import { GetLangStrings, GetDarkMode } from '../../../wailsjs/go/main/App';
 
 type MainContextType = { 
     strings: {[key: string]: string};
