@@ -2,7 +2,7 @@ module rmbg
 
 go 1.22.0
 
-toolchain go1.23.2
+toolchain go1.23.3
 
 require (
 	github.com/wailsapp/wails/v2 v2.9.2
