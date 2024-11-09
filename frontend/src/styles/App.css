@@ -19,3 +19,18 @@ a{
     text-transform: capitalize;
     font-weight: 600;
 }
+.Button{
+    background-color: purple;
+    padding: 10px;
+    border-radius: 10px;
+    text-transform: capitalize;
+    font-weight: 600;
+    color: white;
+    height: fit-content;
+    width: fit-content;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

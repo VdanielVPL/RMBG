@@ -28,8 +28,8 @@ func main() {
 
 	err := wails.Run(&options.App{
 		Title:     "rmbg",
-		Width:     1024,
-		Height:    768,
+		Width:     1200,
+		Height:    700,
 		MinWidth:  800,
 		MinHeight: 600,
 		AssetServer: &assetserver.Options{

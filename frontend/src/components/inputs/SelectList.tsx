@@ -1,3 +1,5 @@
+import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react"
 
 interface SelectListProps{
@@ -65,7 +67,9 @@ export default function SelectList(props: SelectListProps) {
             <div style={{position: "relative",backgroundColor: 'rgb(34, 38, 39)', borderTopLeftRadius: '10px', borderTopRightRadius: '10px', borderBottomLeftRadius: expanded?'0px':'10px',borderBottomRightRadius: expanded?'0px':'10px', cursor: 'pointer', width: props.width?props.width:'370px'}} onClick={onClickList}>
                 <div style={{display: 'grid', gridTemplateColumns: '1fr auto',padding: '5px 5px 5px 10px'}}>
                     <span style={{userSelect: 'none'}}>{selected?.text}</span>
-                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', rotate: expanded?'180deg':'0deg', userSelect: 'none'}}>^</div>
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', transition: 'rotate 0.1s ease', width: '100%', height: '100%', rotate: expanded?'180deg':'0deg', userSelect: 'none'}}>
+                        <FontAwesomeIcon icon={faAngleUp} />
+                    </div>
                 </div>
                 <div style={{display:expanded?'block':'none', position: 'absolute', top: '100%', width: '100%', backgroundColor: 'rgb(30, 32, 33)', zIndex: '1', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px'}}>
                     <div style={{padding: '5px 5px 5px 5px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
