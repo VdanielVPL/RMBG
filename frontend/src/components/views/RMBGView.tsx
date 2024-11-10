@@ -1,10 +1,10 @@
 import '../../styles/RMBGView.css';
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { MainContext } from "../contexts/MainContext";
 import { ImageContainer } from '../ImageContainer';
-import SelectList from '../inputs/SelectList';
+import SelectList, { Selected } from '../inputs/SelectList';
 import { Button } from '../inputs/Button';
 
 
@@ -15,22 +15,27 @@ const tiles = [
     {text: "birefnet - massive", value: "birefnet-massive"},
 ]
 
-function OptionBar() {
+function OptionBar(props: {callback: (selected: Selected) => void}) {
     return (
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
             <span>AI model:</span>
-            <SelectList tiles={tiles} width='170px'/>
+            <SelectList tiles={tiles} width='170px' onSelected={props.callback}/>
         </div>
     )
 }
 
 export function RMBGView() {
     const { strings } = useContext(MainContext);
+    const [AImodel, setAImodel] = useState("u2net");
+
+    function handleModelChange(selected: Selected) {
+        setAImodel(selected.value);
+    }
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
             <span className='ViewHeader'>{strings["BGrem"]}</span>
-            <OptionBar></OptionBar>
+            <OptionBar callback={handleModelChange}></OptionBar>
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', height: 'inherit'}}>
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
                     <ImageContainer></ImageContainer>
