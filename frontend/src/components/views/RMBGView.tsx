@@ -6,7 +6,7 @@ import { MainContext } from "../contexts/MainContext";
 import { ImageContainer } from '../ImageContainer';
 import SelectList, { Selected } from '../inputs/SelectList';
 import { Button } from '../inputs/Button';
-import { RemoveBackground } from '../../../wailsjs/go/main/App';
+import { RemoveBackground, SetModel } from '../../../wailsjs/go/main/App';
 
 const tiles = [
     {text: "u2net", value: "u2net"},
@@ -26,11 +26,10 @@ function OptionBar(props: {callback: (selected: Selected) => void}) {
 
 export function RMBGView() {
     const { strings } = useContext(MainContext);
-    const [AImodel, setAImodel] = useState("u2net");
     const rembgimage = useRef<HTMLImageElement>(null);
 
     function handleModelChange(selected: Selected) {
-        setAImodel(selected.value);
+        SetModel(selected.value);
     }
 
     function removeBackground() {

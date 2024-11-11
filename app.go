@@ -106,3 +106,7 @@ func (a *App) RemoveBackground() []string {
 	runtime.EventsEmit(a.ctx, "loading", false)
 	return []string{str, fileType}
 }
+
+func (a *App) SetModel(model string) {
+	a.model = model
+}
