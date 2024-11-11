@@ -18,6 +18,7 @@ a{
     border-radius: 10px;
     text-transform: capitalize;
     font-weight: 600;
+    user-select: none;
 }
 .Button{
     background-color: purple;

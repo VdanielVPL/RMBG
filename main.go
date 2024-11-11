@@ -30,7 +30,7 @@ func main() {
 		Title:     "rmbg",
 		Width:     1200,
 		Height:    700,
-		MinWidth:  800,
+		MinWidth:  920,
 		MinHeight: 600,
 		AssetServer: &assetserver.Options{
 			Assets: assets,

@@ -9,7 +9,7 @@ export function NavButton(props: ButtonNavProps) {
 
     return (
 
-        <Link className="NavButton" to={props.link || '/'}>
+        <Link className="NavButton" to={props.link || '/'} draggable={false}>
             <span>{props.text}</span>
         </Link>
 

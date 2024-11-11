@@ -1,12 +1,12 @@
 import '../../styles/RMBGView.css';
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { MainContext } from "../contexts/MainContext";
 import { ImageContainer } from '../ImageContainer';
 import SelectList, { Selected } from '../inputs/SelectList';
 import { Button } from '../inputs/Button';
-
+import { RemoveBackground } from '../../../wailsjs/go/main/App';
 
 const tiles = [
     {text: "u2net", value: "u2net"},
@@ -27,9 +27,23 @@ function OptionBar(props: {callback: (selected: Selected) => void}) {
 export function RMBGView() {
     const { strings } = useContext(MainContext);
     const [AImodel, setAImodel] = useState("u2net");
+    const rembgimage = useRef<HTMLImageElement>(null);
 
     function handleModelChange(selected: Selected) {
         setAImodel(selected.value);
+    }
+
+    function removeBackground() {
+        console.log("Remove background");
+        RemoveBackground().then(([base64, fileType]) => {
+            if (rembgimage.current) {
+                if (base64 == "" || fileType == "") {
+                    rembgimage.current.src = "";
+                } else {
+                    rembgimage.current.src = `data:${fileType};base64,${base64}`;
+                }
+            }
+        });
     }
 
     return (
@@ -39,10 +53,12 @@ export function RMBGView() {
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', height: 'inherit'}}>
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
                     <ImageContainer></ImageContainer>
-                    <Button style={{borderRadius: '100%', width: '45px', height: '45px'}}>
+                    <Button style={{borderRadius: '100%', width: '45px', height: '45px'}} onClick={removeBackground}>
                         <FontAwesomeIcon icon={faArrowRight} size='2xl'/>
                     </Button>
-                    <div className="imageContainer"></div>
+                    <div className="imageContainer">
+                        <img ref={rembgimage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
+                    </div>
                 </div>
             </div>
         </div>
