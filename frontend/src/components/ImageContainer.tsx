@@ -57,7 +57,7 @@ export function ImageContainer() {
         }
     };
 
-    function openDialog() {
+    async function openDialog() {
         OpenImageDialog().then((result) => {
             if (result != null) {
                 const [base64, fileType] = result;
