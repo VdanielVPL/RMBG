@@ -1,12 +1,12 @@
 import '../../styles/RMBGView.css';
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faCloudArrowDown, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { MainContext } from "../contexts/MainContext";
 import { ImageContainer } from '../ImageContainer';
 import SelectList, { Selected } from '../inputs/SelectList';
 import { Button } from '../inputs/Button';
-import { RemoveBackground, SetModel } from '../../../wailsjs/go/main/App';
+import { RemoveBackground, SaveImage, SetModel } from '../../../wailsjs/go/main/App';
 
 const tiles = [
     {text: "u2net", value: "u2net"},
@@ -33,7 +33,6 @@ export function RMBGView() {
     }
 
     function removeBackground() {
-        console.log("Remove background");
         RemoveBackground().then(([base64, fileType]) => {
             if (rembgimage.current) {
                 if (base64 == "" || fileType == "") {
@@ -51,12 +50,27 @@ export function RMBGView() {
             <OptionBar callback={handleModelChange}></OptionBar>
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', height: 'inherit'}}>
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
-                    <ImageContainer></ImageContainer>
+                    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
+                        <ImageContainer></ImageContainer>
+                        <div style={{padding: '10px', fontSize: '1rem', fontFamily: 'Arial', visibility: 'hidden'}}>
+                            s
+                        </div>
+                    </div>
                     <Button style={{borderRadius: '100%', width: '45px', height: '45px'}} onClick={removeBackground}>
                         <FontAwesomeIcon icon={faArrowRight} size='2xl'/>
                     </Button>
-                    <div className="imageContainer">
-                        <img ref={rembgimage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
+                    <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
+                        <div className="imageContainer">
+                            <img ref={rembgimage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
+                        </div>
+                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'end', width: '100%', gap: '10px'}}>
+                            <Button style={{width: '40px', height: '40px'}} onClick={SaveImage}>
+                                <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
+                            </Button>
+                            <Button style={{width: '40px', height: '40px'}}>
+                                <FontAwesomeIcon icon={faCopy} size='xl'style={{transform: 'scale(0.8)'}} />
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

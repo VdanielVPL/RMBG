@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"os"
 	"rmbg/utils"
 	"rmbg/utils/image"
 
@@ -38,11 +38,6 @@ func (a *App) startup(ctx context.Context) {
 	a.model = "u2net"
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
-}
-
 func (a *App) GetLangStrings() map[string]string {
 	return a.LangStrings
 }
@@ -75,8 +70,8 @@ func (a *App) HandleDrop(path string, isUrl bool) []string {
 		return []string{str, fileType}
 	}
 }
-func (a *App) OpenImageDialog() []string {
-	path, err := image.OpenImage(a.ctx, "")
+func (a *App) OpenImage() []string {
+	path, err := image.OpenImageDialog(a.ctx)
 	if err != nil {
 		return nil
 	}
@@ -109,4 +104,13 @@ func (a *App) RemoveBackground() []string {
 
 func (a *App) SetModel(model string) {
 	a.model = model
+}
+
+func (a *App) SaveImage() error {
+	filePath, err := image.SaveImageDialog(a.ctx)
+	if err != nil {
+		return err
+	}
+	os.WriteFile(filePath, a.rembgimg, 0644)
+	return nil
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, CSSProperties } from "react";
 import { OnFileDrop, OnFileDropOff } from "../../wailsjs/runtime/runtime";
-import { HandleDrop, OpenImageDialog } from "../../wailsjs/go/main/App";
+import { HandleDrop, OpenImage } from "../../wailsjs/go/main/App";
 
 export function ImageContainer() {
     const [filePath, setFilePath] = useState<string>('');
@@ -58,18 +58,17 @@ export function ImageContainer() {
     };
 
     async function openDialog() {
-        OpenImageDialog().then((result) => {
-            if (result != null) {
-                const [base64, fileType] = result;
-                if (image.current) {
-                    if (base64 == "" || fileType == "") {
-                        image.current.src = "";
-                    }else{
-                        image.current.src = `data:${fileType};base64,${base64}`;
-                    }
+        const result = await OpenImage()
+        if (result != null) {
+            const [base64, fileType] = result;
+            if (image.current) {
+                if (base64 == "" || fileType == "") {
+                    image.current.src = "";
+                }else{
+                    image.current.src = `data:${fileType};base64,${base64}`;
                 }
             }
-        });
+        }
     }
 
     return (

@@ -40,7 +40,7 @@ func ToBase64FromBytes(fileBytes []byte) (string, string, error) {
 	}
 }
 
-func OpenImage(ctx context.Context, path string) (string, error) {
+func OpenImageDialog(ctx context.Context) (string, error) {
 	options := runtime.OpenDialogOptions{
 		Title: "Select an image",
 		Filters: []runtime.FileFilter{
@@ -50,7 +50,42 @@ func OpenImage(ctx context.Context, path string) (string, error) {
 			},
 		},
 	}
-	filePath, err := runtime.OpenFileDialog(ctx, options)
+	var filePath string
+	var err error
+	done := make(chan struct{})
+
+	go func() {
+		filePath, err = runtime.OpenFileDialog(ctx, options)
+		close(done)
+	}()
+
+	<-done
+	if err != nil {
+		return "", err
+	}
+	return filePath, nil
+}
+
+func SaveImageDialog(ctx context.Context) (string, error) {
+	options := runtime.SaveDialogOptions{
+		Title: "Save an image",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "Image (*.png)",
+				Pattern:     "*.png",
+			},
+		},
+	}
+	var filePath string
+	var err error
+	done := make(chan struct{})
+
+	go func() {
+		filePath, err = runtime.SaveFileDialog(ctx, options)
+		close(done)
+	}()
+
+	<-done
 	if err != nil {
 		return "", err
 	}
