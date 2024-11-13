@@ -7,11 +7,15 @@
     width: 300px;
     height: 300px;
     border: 1px solid black;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: white;
     cursor: pointer;
+    position: relative;
+}
+.imageContainer > div{
+    border-radius: 10px;
 }
 .imageContainer > img {
     max-width: 100%;

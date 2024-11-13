@@ -4,11 +4,12 @@ type ButtonProps = {
     children: ReactNode;
     style?: CSSProperties;
     onClick?: ()=>void;
+    disabled?: boolean;
 }
 
 export function Button(props: ButtonProps) {
     return (
-        <button className="Button" style={props.style} onClick={props.onClick}>
+        <button disabled={props.disabled} className="Button" style={props.style} onClick={props.onClick}>
             {props.children}
         </button>
     )

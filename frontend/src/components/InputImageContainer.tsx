@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, CSSProperties } from "react";
 import { OnFileDrop, OnFileDropOff } from "../../wailsjs/runtime/runtime";
 import { HandleDrop, OpenImage } from "../../wailsjs/go/main/App";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 
-export function ImageContainer() {
+export function InputImageContainer() {
     const [filePath, setFilePath] = useState<string>('');
     const imageContainer = useRef<HTMLDivElement>(null);
     const image = useRef<HTMLImageElement>(null);
@@ -74,6 +76,9 @@ export function ImageContainer() {
     return (
         <div ref={imageContainer} className='imageContainer' onDrop={handleURLDrop} style={{'--wails-drop-target': 'drop'} as CSSProperties} onClick={openDialog}>
             <img ref={image} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
+            <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1, backgroundColor: 'white'}}>
+                <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%'}} />
+            </div>
         </div>
     )
 }

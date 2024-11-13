@@ -86,19 +86,19 @@ func (a *App) OpenImage() []string {
 
 func (a *App) RemoveBackground() []string {
 	var err error
-	runtime.EventsEmit(a.ctx, "loading", true)
+	runtime.EventsEmit(a.ctx, "removingbg", true)
 	a.rembgimg, err = image.RemBG(a.model, a.path, a.img)
 	if err != nil {
 		runtime.LogError(a.ctx, "Error removing background:"+err.Error())
-		runtime.EventsEmit(a.ctx, "loading", false)
+		runtime.EventsEmit(a.ctx, "removingbg", false)
 		return nil
 	}
 	str, fileType, err := image.ToBase64FromBytes(a.rembgimg)
 	if err != nil {
-		runtime.EventsEmit(a.ctx, "loading", false)
+		runtime.EventsEmit(a.ctx, "removingbg", false)
 		return nil
 	}
-	runtime.EventsEmit(a.ctx, "loading", false)
+	runtime.EventsEmit(a.ctx, "removingbg", false)
 	return []string{str, fileType}
 }
 
@@ -113,4 +113,8 @@ func (a *App) SaveImage() error {
 	}
 	os.WriteFile(filePath, a.rembgimg, 0644)
 	return nil
+}
+
+func (a *App) CopyImage() {
+	image.CopyToClipboard(a.rembgimg)
 }
