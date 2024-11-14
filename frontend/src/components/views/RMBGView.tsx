@@ -7,7 +7,7 @@ import { InputImageContainer } from '../InputImageContainer';
 import SelectList, { Selected } from '../inputs/SelectList';
 import { Button } from '../inputs/Button';
 import { CopyImage, RemoveBackground, SaveImage, SetModel } from '../../../wailsjs/go/main/App';
-import { EventsOff, EventsOn } from '../../../wailsjs/runtime/runtime';
+import { EventsEmit, EventsOff, EventsOn } from '../../../wailsjs/runtime/runtime';
 
 const tiles = [
     {text: "u2net", value: "u2net"},
@@ -29,7 +29,7 @@ function OutputImageContainer(props: {rembgimage: RefObject<HTMLImageElement>, r
     return (
         <div className="imageContainer">
             <img ref={props.rembgimage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
-            <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1, backgroundColor: 'white'}}>
+            <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -2, backgroundColor: 'white'}}>
                 {props.removingBG?
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%'}} />
                 :
@@ -52,12 +52,16 @@ export function RMBGView() {
     }
 
     function removeBackground() {
+        if (rembgimage.current){
+            rembgimage.current.src = "";
+        }
         RemoveBackground().then(([base64, fileType]) => {
             if (rembgimage.current) {
                 if (base64 == "" || fileType == "") {
                     rembgimage.current.src = "";
                 } else {
                     rembgimage.current.src = `data:${fileType};base64,${base64}`;
+                    EventsEmit('removingbg', false);
                 }
             }
             setTrigger((prev) => !prev);

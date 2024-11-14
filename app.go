@@ -47,7 +47,7 @@ func (a *App) GetDarkMode() bool {
 }
 
 func (a *App) HandleDrop(path string, isUrl bool) []string {
-	println("Dropped:", path, "isUrl:", isUrl)
+	// println("Dropped:", path, "isUrl:", isUrl)
 	if isUrl {
 		a.path = ""
 		imgBytes, err := image.GetImageFromURL(path)
@@ -86,20 +86,23 @@ func (a *App) OpenImage() []string {
 
 func (a *App) RemoveBackground() []string {
 	var err error
-	runtime.EventsEmit(a.ctx, "removingbg", true)
-	a.rembgimg, err = image.RemBG(a.model, a.path, a.img)
-	if err != nil {
-		runtime.LogError(a.ctx, "Error removing background:"+err.Error())
-		runtime.EventsEmit(a.ctx, "removingbg", false)
-		return nil
+	if a.img != nil || a.path != "" {
+		runtime.EventsEmit(a.ctx, "removingbg", true)
+		a.rembgimg, err = image.RemBG(a.model, a.path, a.img)
+		if err != nil {
+			runtime.LogError(a.ctx, "Error removing background:"+err.Error())
+			runtime.EventsEmit(a.ctx, "removingbg", false)
+			return nil
+		}
+		str, fileType, err := image.ToBase64FromBytes(a.rembgimg)
+		if err != nil {
+			runtime.EventsEmit(a.ctx, "removingbg", false)
+			return nil
+		}
+		// runtime.EventsEmit(a.ctx, "removingbg", false)
+		return []string{str, fileType}
 	}
-	str, fileType, err := image.ToBase64FromBytes(a.rembgimg)
-	if err != nil {
-		runtime.EventsEmit(a.ctx, "removingbg", false)
-		return nil
-	}
-	runtime.EventsEmit(a.ctx, "removingbg", false)
-	return []string{str, fileType}
+	return nil
 }
 
 func (a *App) SetModel(model string) {
