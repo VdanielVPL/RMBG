@@ -36,3 +36,12 @@ a{
     align-items: center;
     justify-content: center;
 }
+.NavButton, .Button{
+    transition: background-color 0.3s ease;
+}
+.NavButton:hover, .Button:hover{
+    background-color: #4c166d;
+}
+.NavButton:active, .Button:active{
+    background-color: #3c1157;
+}

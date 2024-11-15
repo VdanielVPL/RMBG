@@ -4,6 +4,7 @@ import { Nav } from './components/nav/Nav';
 import { MainWrapper } from './components/MainWrapper';
 import { RMBGView } from './components/views/RMBGView';
 import { CropView } from './components/views/CropView';
+import { ImageProvider } from './components/contexts/ImageContext';
 
 function App() {
     return (
@@ -11,10 +12,12 @@ function App() {
             <div id="App">
                 <Nav/>
                 <MainWrapper>
-                    <Routes>
-                        <Route path="/" element={<RMBGView/>} />
-                        <Route path="/crop" element={<CropView/>} />
-                    </Routes>
+                    <ImageProvider>
+                        <Routes>
+                            <Route path="/" element={<RMBGView/>} />
+                            <Route path="/crop" element={<CropView/>} />
+                        </Routes>
+                    </ImageProvider>
                 </MainWrapper>
             </div>
         </HashRouter>

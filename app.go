@@ -99,7 +99,6 @@ func (a *App) RemoveBackground() []string {
 			runtime.EventsEmit(a.ctx, "removingbg", false)
 			return nil
 		}
-		// runtime.EventsEmit(a.ctx, "removingbg", false)
 		return []string{str, fileType}
 	}
 	return nil
@@ -120,4 +119,10 @@ func (a *App) SaveImage() error {
 
 func (a *App) CopyImage() {
 	image.CopyToClipboard(a.rembgimg)
+}
+
+func (a *App) ClearImageMem() {
+	a.img = nil
+	a.rembgimg = nil
+	a.path = ""
 }
