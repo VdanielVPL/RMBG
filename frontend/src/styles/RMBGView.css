@@ -15,7 +15,7 @@
     background-color: rgba(255, 255, 255, 1);
     border: 1px solid rgba(255, 255, 255, 1);
     overflow: hidden;
-    z-index: 100;
+    z-index: 0;
     transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .imageContainer > img {
@@ -31,11 +31,9 @@
     transition: opacity 0.35s ease;
 }
 .wails-drop-target-active{
-    background-color: purple !important;
-    border-color: purple !important;
-    position: relative;
-    z-index: 101;
+    background-color: purple;
+    border-color: purple;
 }
 .wails-drop-target-active > img{
-    opacity: 0.3;
+    opacity: 0.25;
 }
