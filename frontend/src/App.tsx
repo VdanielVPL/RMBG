@@ -11,14 +11,14 @@ function App() {
         <HashRouter>
             <div id="App">
                 <Nav/>
-                <MainWrapper>
-                    <ImageProvider>
+                <ImageProvider>
+                    <MainWrapper>
                         <Routes>
                             <Route path="/" element={<RMBGView/>} />
                             <Route path="/crop" element={<CropView/>} />
                         </Routes>
-                    </ImageProvider>
-                </MainWrapper>
+                    </MainWrapper>
+                </ImageProvider>
             </div>
         </HashRouter>
     )

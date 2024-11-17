@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { InputImageContainer } from "../InputImageContainer";
+import { InputImageContainer } from "../CropImageContainer";
 import { MainContext } from "../contexts/MainContext";
 
 export function CropView() {

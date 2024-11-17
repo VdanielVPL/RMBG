@@ -14,10 +14,12 @@ type App struct {
 	ctx         context.Context
 	LangStrings map[string]string
 	IsDarkMode  bool
-	path        string
-	img         []byte
 	model       string
+	rembgpath   string
 	rembgimg    []byte
+	rembgimg2   []byte
+	cropimgpath string
+	cropimg     []byte
 }
 
 // NewApp creates a new App application struct
@@ -46,15 +48,23 @@ func (a *App) GetDarkMode() bool {
 	return a.IsDarkMode
 }
 
-func (a *App) HandleDrop(path string, isUrl bool) []string {
+func (a *App) HandleDrop(Imagetype string, path string, isUrl bool) []string {
 	// println("Dropped:", path, "isUrl:", isUrl)
 	if isUrl {
-		a.path = ""
+		if Imagetype == "RMBG" {
+			a.rembgpath = ""
+		} else if Imagetype == "CROP" {
+			a.cropimgpath = ""
+		}
 		imgBytes, err := image.GetImageFromURL(path)
 		if err != nil {
 			return nil
 		}
-		a.img = imgBytes
+		if Imagetype == "RMBG" {
+			a.rembgimg = imgBytes
+		} else if Imagetype == "CROP" {
+			a.cropimg = imgBytes
+		}
 		str, fileType, err := image.ToBase64FromBytes(imgBytes)
 		if err != nil {
 			return nil
@@ -65,42 +75,57 @@ func (a *App) HandleDrop(path string, isUrl bool) []string {
 		if err != nil {
 			return nil
 		}
-		a.img = nil
-		a.path = path
+		if Imagetype == "RMBG" {
+			a.rembgimg = nil
+			a.rembgpath = path
+		} else if Imagetype == "CROP" {
+			a.cropimg = nil
+			a.cropimgpath = path
+		}
 		return []string{str, fileType}
 	}
 }
-func (a *App) OpenImage() []string {
+func (a *App) OpenImage(Imagetype string) []string {
 	path, err := image.OpenImageDialog(a.ctx)
 	if err != nil {
 		return nil
 	}
-	a.img = nil
-	a.path = path
-	str, fileType, err := image.ToBase64FromPath(path)
-	if err != nil {
+	if path != "" {
+		if Imagetype == "RMBG" {
+			a.rembgimg = nil
+			a.rembgpath = path
+		} else if Imagetype == "CROP" {
+			a.cropimg = nil
+			a.cropimgpath = path
+		}
+		str, fileType, err := image.ToBase64FromPath(path)
+		if err != nil {
+			return nil
+		}
+		return []string{str, fileType}
+	} else {
 		return nil
 	}
-	return []string{str, fileType}
 }
 
 func (a *App) RemoveBackground() []string {
 	var err error
-	if a.img != nil || a.path != "" {
+	if a.rembgimg != nil || a.rembgpath != "" {
 		runtime.EventsEmit(a.ctx, "removingbg", true)
-		a.rembgimg, err = image.RemBG(a.model, a.path, a.img)
+		a.rembgimg2, err = image.RemBG(a.model, a.rembgpath, a.rembgimg)
 		if err != nil {
 			runtime.LogError(a.ctx, "Error removing background:"+err.Error())
 			runtime.EventsEmit(a.ctx, "removingbg", false)
 			return nil
 		}
-		str, fileType, err := image.ToBase64FromBytes(a.rembgimg)
+		str, fileType, err := image.ToBase64FromBytes(a.rembgimg2)
 		if err != nil {
 			runtime.EventsEmit(a.ctx, "removingbg", false)
 			return nil
 		}
 		return []string{str, fileType}
 	}
+	println("No image to remove background")
 	return nil
 }
 
@@ -113,16 +138,21 @@ func (a *App) SaveImage() error {
 	if err != nil {
 		return err
 	}
-	os.WriteFile(filePath, a.rembgimg, 0644)
+	os.WriteFile(filePath, a.rembgimg2, 0644)
 	return nil
 }
 
 func (a *App) CopyImage() {
-	image.CopyToClipboard(a.rembgimg)
+	image.CopyToClipboard(a.rembgimg2)
 }
 
-func (a *App) ClearImageMem() {
-	a.img = nil
-	a.rembgimg = nil
-	a.path = ""
+func (a *App) ClearImageMem(Imagetype string) {
+	if Imagetype == "RMBG" {
+		a.rembgimg = nil
+		a.rembgimg2 = nil
+		a.rembgpath = ""
+	} else if Imagetype == "CROP" {
+		a.cropimg = nil
+		a.cropimgpath = ""
+	}
 }

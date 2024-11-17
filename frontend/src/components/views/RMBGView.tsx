@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCloudArrowDown, faCopy, faImage, faSpinner, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { MainContext } from "../contexts/MainContext";
-import { InputImageContainer } from '../InputImageContainer';
+import { InputImageContainer } from '../InputRMBGImageContainer';
 import SelectList, { Selected } from '../inputs/SelectList';
 import { Button } from '../inputs/Button';
 import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem } from '../../../wailsjs/go/main/App';
@@ -26,14 +26,14 @@ function OptionBar(props: {callback: (selected: Selected) => void}) {
     )
 }
 
-function OutputImageContainer(props: {removingBG: boolean}) {
-    const { outputRMBGImage } = useContext(ImageContext);
+function OutputImageContainer() {
+    const { outputRMBGImage, removingBG } = useContext(ImageContext);
     
     return (
         <div className="imageContainer" style={{cursor: 'auto'}}>
             <img src={outputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -2, backgroundColor: 'white'}}>
-                {props.removingBG?
+                {removingBG?
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%'}} />
                 :
                     (!outputRMBGImage || outputRMBGImage === "") && <FontAwesomeIcon icon={faImage} color='lightgray' style={{height: '50%', width: '50%', fontSize: '50%'}}/>
@@ -45,8 +45,7 @@ function OutputImageContainer(props: {removingBG: boolean}) {
 
 export function RMBGView() {
     const { strings } = useContext(MainContext);
-    const { setOutputRMBGImage, setInputRMBGImage, inputRMBGImage } = useContext(ImageContext);
-    const [removingBG, setRemovingBG] = useState(false);
+    const { setOutputRMBGImage, setInputRMBGImage, inputRMBGImage, removingBG } = useContext(ImageContext);
 
     function handleModelChange(selected: Selected) {
         SetModel(selected.value);
@@ -69,20 +68,8 @@ export function RMBGView() {
     function ClearView() {
         setOutputRMBGImage("");
         setInputRMBGImage("");
-        ClearImageMem();
+        ClearImageMem("RMBG");
     }
-
-    useEffect(() => {
-        const handleRemBGstatus = (status: boolean) => {
-            setRemovingBG(()=>status);
-        }
-
-        EventsOn('removingbg', handleRemBGstatus);
-
-        return () => {
-            EventsOff('removingbg');
-        }
-    }, []);
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
@@ -102,7 +89,7 @@ export function RMBGView() {
                         <FontAwesomeIcon icon={faArrowRight} size='2xl'/>
                     </Button>
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
-                        <OutputImageContainer removingBG={removingBG}></OutputImageContainer>
+                        <OutputImageContainer></OutputImageContainer>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'end', width: '100%', gap: '10px'}}>
                             <Button style={{width: '40px', height: '40px'}} onClick={SaveImage} title='Zapisz zdjęcie'>
                                 <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
