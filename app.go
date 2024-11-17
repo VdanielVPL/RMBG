@@ -125,7 +125,7 @@ func (a *App) RemoveBackground() []string {
 		}
 		return []string{str, fileType}
 	}
-	println("No image to remove background")
+	// println("No image to remove background")
 	return nil
 }
 
@@ -134,16 +134,23 @@ func (a *App) SetModel(model string) {
 }
 
 func (a *App) SaveImage() error {
-	filePath, err := image.SaveImageDialog(a.ctx)
-	if err != nil {
-		return err
+	if a.rembgimg2 != nil {
+		filePath, err := image.SaveImageDialog(a.ctx)
+		if err != nil {
+			return err
+		}
+		if filePath != "" {
+			os.WriteFile(filePath, a.rembgimg2, 0644)
+		}
+		return nil
 	}
-	os.WriteFile(filePath, a.rembgimg2, 0644)
 	return nil
 }
 
 func (a *App) CopyImage() {
-	image.CopyToClipboard(a.rembgimg2)
+	if a.rembgimg2 != nil {
+		image.CopyToClipboard(a.rembgimg2)
+	}
 }
 
 func (a *App) ClearImageMem(Imagetype string) {

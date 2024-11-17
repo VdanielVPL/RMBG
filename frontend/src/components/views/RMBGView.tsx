@@ -1,5 +1,5 @@
 import '../../styles/RMBGView.css';
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCloudArrowDown, faCopy, faImage, faSpinner, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { MainContext } from "../contexts/MainContext";
@@ -7,7 +7,7 @@ import { InputImageContainer } from '../InputRMBGImageContainer';
 import SelectList, { Selected } from '../inputs/SelectList';
 import { Button } from '../inputs/Button';
 import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem } from '../../../wailsjs/go/main/App';
-import { EventsEmit, EventsOff, EventsOn } from '../../../wailsjs/runtime/runtime';
+import { EventsEmit } from '../../../wailsjs/runtime/runtime';
 import { ImageContext } from '../contexts/ImageContext';
 
 const tiles = [
@@ -85,9 +85,14 @@ export function RMBGView() {
                             </Button>
                         </div>
                     </div>
-                    <Button style={{borderRadius: '100%', width: '45px', height: '45px', backgroundColor: removingBG?'indigo':undefined}} onClick={removeBackground} disabled={removingBG} title='Usuń tło'>
-                        <FontAwesomeIcon icon={faArrowRight} size='2xl'/>
-                    </Button>
+                    <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
+                        <div style={{flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                            <Button style={{borderRadius: '100%', width: '45px', height: '45px', backgroundColor: removingBG?'indigo':undefined}} onClick={removeBackground} disabled={removingBG} title='Usuń tło'>
+                                <FontAwesomeIcon icon={faArrowRight} size='2xl'/>
+                            </Button>
+                        </div>
+                        <div style={{height: '40px'}}></div>
+                    </div>
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                         <OutputImageContainer></OutputImageContainer>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'end', width: '100%', gap: '10px'}}>
