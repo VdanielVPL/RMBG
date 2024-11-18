@@ -6,8 +6,7 @@ interface SelectListProps{
     tiles: Selected[]
     width?: string;
     onSelected?: (selected: Selected)=>void;
-    defaultSelected?: "first" | "none"
-
+    defaultSelected?: "first" | "none" | string;
 }
 
 export interface Selected{
@@ -58,6 +57,8 @@ export default function SelectList(props: SelectListProps) {
             setSelected(tileSelected[0])
         }else if(defaultSelected=="first"){
             setSelected(props.tiles[0])
+        }else{
+            setSelected(props.tiles.filter(tile=>tile.value==defaultSelected)[0])
         }
 
     },[props.tiles])

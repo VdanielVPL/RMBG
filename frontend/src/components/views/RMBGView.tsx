@@ -10,7 +10,7 @@ import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem } from 
 import { EventsEmit } from '../../../wailsjs/runtime/runtime';
 import { ImageContext } from '../contexts/ImageContext';
 
-const tiles = [
+const tiles: Selected[] = [
     {text: "u2net", value: "u2net"},
     {text: "isnet - general", value: "isnet-general-use"},
     {text: "birefnet - general", value: "birefnet-general"},
@@ -18,10 +18,13 @@ const tiles = [
 ]
 
 function OptionBar(props: {callback: (selected: Selected) => void}) {
+
+    const { model } = useContext(ImageContext);
+
     return (
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
             <span>AI model:</span>
-            <SelectList tiles={tiles} width='170px' onSelected={props.callback}/>
+            <SelectList tiles={tiles} width='170px' defaultSelected={model} onSelected={props.callback}/>
         </div>
     )
 }
@@ -45,9 +48,10 @@ function OutputImageContainer() {
 
 export function RMBGView() {
     const { strings } = useContext(MainContext);
-    const { setOutputRMBGImage, setInputRMBGImage, inputRMBGImage, removingBG } = useContext(ImageContext);
+    const { setOutputRMBGImage, setInputRMBGImage, inputRMBGImage, removingBG, setModel } = useContext(ImageContext);
 
     function handleModelChange(selected: Selected) {
+        setModel(selected.value);
         SetModel(selected.value);
     }
 
