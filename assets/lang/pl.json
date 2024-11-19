@@ -1,4 +1,9 @@
 {
     "BGrem": "Usuwanie tła",
-    "Crop": "Kadrowanie"
+    "Crop": "Kadrowanie",
+    "AImodel": "Model AI: ",
+    "RemoveBG": "Usuń tło",
+    "ClearView": "Wyczyść widok",
+    "SaveImage": "Zapisz obraz",
+    "CopyImage": "Kopiuj do schowka"
 }

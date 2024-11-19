@@ -20,10 +20,11 @@ const tiles: Selected[] = [
 function OptionBar(props: {callback: (selected: Selected) => void}) {
 
     const { model } = useContext(ImageContext);
+    const { strings } = useContext(MainContext);
 
     return (
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
-            <span>AI model:</span>
+            <span>{strings["AImodel"]}</span>
             <SelectList tiles={tiles} width='170px' defaultSelected={model} onSelected={props.callback}/>
         </div>
     )
@@ -84,14 +85,14 @@ export function RMBGView() {
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                         <InputImageContainer></InputImageContainer>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'start', width: '100%', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px'}} onClick={ClearView} title='Wyczyść widok'>
+                            <Button style={{width: '40px', height: '40px'}} onClick={ClearView} title={strings["ClearView"]}>
                                 <FontAwesomeIcon icon={faTrashCan} size='xl' style={{transform: 'scale(0.8)'}} />
                             </Button>
                         </div>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
                         <div style={{flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                            <Button style={{borderRadius: '100%', width: '45px', height: '45px', backgroundColor: removingBG?'indigo':undefined}} onClick={removeBackground} disabled={removingBG} title='Usuń tło'>
+                            <Button style={{borderRadius: '100%', width: '45px', height: '45px', backgroundColor: removingBG?'indigo':undefined}} onClick={removeBackground} disabled={removingBG} title={strings["RemoveBG"]}>
                                 <FontAwesomeIcon icon={faArrowRight} size='2xl'/>
                             </Button>
                         </div>
@@ -100,10 +101,10 @@ export function RMBGView() {
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                         <OutputImageContainer></OutputImageContainer>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'end', width: '100%', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px'}} onClick={SaveImage} title='Zapisz zdjęcie'>
+                            <Button style={{width: '40px', height: '40px'}} onClick={SaveImage} title={strings["SaveImage"]}>
                                 <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
-                            <Button style={{width: '40px', height: '40px'}} onClick={CopyImage} title='Kopiuj do schowka'>
+                            <Button style={{width: '40px', height: '40px'}} onClick={CopyImage} title={strings["CopyImage"]}>
                                 <FontAwesomeIcon icon={faCopy} size='xl'style={{transform: 'scale(0.8)'}} />
                             </Button>
                         </div>

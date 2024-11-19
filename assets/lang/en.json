@@ -1,4 +1,9 @@
 {
     "BGrem": "Background removal",
-    "Crop": "Cropping"
+    "Crop": "Cropping",
+    "AImodel": "AI model: ",
+    "RemoveBG": "Remove background",
+    "ClearView": "Clear view",
+    "SaveImage": "Save image",
+    "CopyImage": "Copy to clipboard"
 }
