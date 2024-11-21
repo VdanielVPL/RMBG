@@ -14,13 +14,15 @@
     position: relative;
     background-color: rgba(255, 255, 255, 1);
     border: 1px solid rgba(255, 255, 255, 1);
-    overflow: hidden;
+    /* overflow: hidden; */
     z-index: 0;
     transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .imageContainer > img {
     max-width: 100%;
     max-height: 100%;
+    height: 100%;
+    width: 100%;
     width: auto;
     height: auto;
     object-fit: contain;
@@ -30,8 +32,24 @@
     z-index: 1;
     transition: opacity 0.35s ease;
 }
+.imageContainerCrop{
+    width: 450px;
+    height: 450px;
+    border: none;
+    max-width: 450px;
+    max-height: 450px;
+    /* transition: background-color 0.35s ease, border-color 0.35s ease, width 0.35s ease-out, height 0.35s ease-out; */
+}
+.cropEditor{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background-color: blue; */
+    border: 1px solid white;
+    z-index: 2;
+}
 .wails-drop-target-active{
-    background-color: purple;
+    background-color: purple !important;
     border-color: purple;
 }
 .wails-drop-target-active > img{

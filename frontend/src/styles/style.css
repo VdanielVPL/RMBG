@@ -5,6 +5,7 @@ html {
 }
 #root{
     height: 100%;
+    interpolate-size: allow-keywords;
 }
 body {
     height: 100%;
