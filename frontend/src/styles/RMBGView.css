@@ -42,11 +42,54 @@
 }
 .cropEditor{
     position: absolute;
-    width: 100%;
-    height: 100%;
-    /* background-color: blue; */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     border: 1px solid white;
     z-index: 2;
+    cursor: auto;
+    backdrop-filter: brightness(2);
+}
+.cropEditor > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* cursor: move; */
+    /* -webkit-user-drag: none; */
+    user-select: none;
+}
+.cropEditor > div > div{
+    border: 1px solid white;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    cursor: move;
+    justify-content: center;
+}
+
+.top {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: flex-start;
+}
+
+.left {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: left;
+}
+
+.right {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: right;
+}
+
+.bottom {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: flex-end;
 }
 .wails-drop-target-active{
     background-color: purple !important;

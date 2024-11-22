@@ -1,4 +1,4 @@
-import { useEffect, useRef, CSSProperties, useContext, useState, ReactEventHandler, SyntheticEvent } from "react";
+import { useEffect, useRef, CSSProperties, useContext, useState, SyntheticEvent, MouseEvent } from "react";
 import { OnFileDrop, OnFileDropOff } from "../../wailsjs/runtime/runtime";
 import { HandleDrop, OpenImage } from "../../wailsjs/go/main/App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,6 +10,7 @@ export function InputImageContainer() {
     // const [filePath, setFilePath] = useState<string>('');
     const { cropImage, setCropImage } = useContext(ImageContext);
     const imageContainer = useRef<HTMLDivElement>(null);
+    const [rect, setRect] = useState<DOMRect | null>(null);
 
     useEffect(() => {
         const handleFileDrop = (x: number, y: number, paths: string[]) => {
@@ -56,7 +57,16 @@ export function InputImageContainer() {
         }
     };
 
-    async function openDialog() {
+    async function openDialog(e: MouseEvent<HTMLDivElement>) {
+        if (cropImage != "") {
+            const target = e.target as HTMLElement;
+            // if (target.parentElement != imageContainer.current) {
+            //     console.log(target.parentElement, imageContainer.current);
+            //     return;
+            // }
+            return;
+        }
+        console.log(e.target)
         const result = await OpenImage("CROP")
         if (result != null) {
             const [base64, fileType] = result;
@@ -70,7 +80,7 @@ export function InputImageContainer() {
 
     function onImageLoad(e: SyntheticEvent<HTMLImageElement>) {
         if(imageContainer.current != null){
-            console.log(e.currentTarget.width, e.currentTarget.height);
+            console.log(e.currentTarget.offsetWidth, e.currentTarget.offsetHeight);
             if (e.currentTarget.width < e.currentTarget.height) {
                 imageContainer.current.style.width = "fit-content";
                 imageContainer.current.style.height = "100%";
@@ -81,16 +91,17 @@ export function InputImageContainer() {
                 e.currentTarget.style.width = "100%";
             }
             imageContainer.current.style.borderRadius = '0px';
+            setRect(imageContainer.current.getBoundingClientRect());
         };
     }
 
     return (
-        <div ref={imageContainer} className='imageContainer imageContainerCrop' onDrop={handleURLDrop} style={{'--wails-drop-target': 'drop', backgroundColor: cropImage!="" && "rgba(255,255,255,0)"} as CSSProperties} onClick={openDialog}>
-            <img src={cropImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false} onLoad={onImageLoad}></img>
+        <div ref={imageContainer} className='imageContainer imageContainerCrop' onDrop={handleURLDrop} style={{'--wails-drop-target': !cropImage&&'drop', backgroundColor: cropImage!="" && "rgba(255,255,255,0)"} as CSSProperties} onClick={openDialog}>
+            <img src={cropImage} style={{userSelect: 'none', pointerEvents: 'none', filter: cropImage&& 'brightness(0.5)'}} draggable={false} onLoad={onImageLoad}></img>
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1,}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
             </div>
-            {cropImage && <CropEditor />}
+            {cropImage && <CropEditor rect={rect}/>}
         </div>
     )
 }
