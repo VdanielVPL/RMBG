@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type CropEditorProps = {
     rect: DOMRect | null;
@@ -6,6 +6,7 @@ type CropEditorProps = {
 
 export default function CropEditor(props: CropEditorProps) {
     const [dragging, setDragging] = useState<boolean>(false);
+    const cropEditorRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
 
@@ -22,23 +23,34 @@ export default function CropEditor(props: CropEditorProps) {
 
     },[dragging]);
 
-    useEffect(() => {
-        console.log(dragging);
-    }, [dragging]);
-
     function resetClick(e: React.MouseEvent<HTMLDivElement>) {
         e.preventDefault();
     }
 
     function mouseDown(e: React.DragEvent<HTMLDivElement>) {
-        // e.preventDefault();
-        console.log("start")
+        // console.log(e.movementX)
+        // console.log("start")
         setDragging(true);
 
     }
+
+    function mouseMove(e: React.MouseEvent<HTMLDivElement>) {
+        if (dragging && cropEditorRef.current) {
+            const currentTop = parseInt(cropEditorRef.current.style.top || '0', 10);
+            const newTop = currentTop + e.movementY;
+
+            const minTop = 0;
+            const maxTop = props.rect!.height;
+
+            const clampedTop = Math.max(minTop, Math.min(newTop, maxTop));
+
+            cropEditorRef.current.style.top = `${clampedTop}px`;
+        }
+    }
+
     return (
-        <div className="cropEditor" style={{width: props.rect?.width, height: props.rect?.height}}>
-            <div className="top" onClick={resetClick} onMouseDown={mouseDown}>
+        <div ref={cropEditorRef} className="cropEditor" style={{top: '0px',right: '0px', left: '0px', bottom: '0px'}}>
+            <div className="top" onClick={resetClick} onMouseDown={mouseDown} onMouseMove={mouseMove}>
                 <div></div>
             </div>
             <div className="left" onClick={resetClick}>
