@@ -5,5 +5,7 @@
     "RemoveBG": "Remove background",
     "ClearView": "Clear view",
     "SaveImage": "Save image",
-    "CopyImage": "Copy to clipboard"
+    "CopyImage": "Copy to clipboard",
+    "ToCropView": "Move image to cropping view",
+    "ToRMBGView": "Move image to background removal view"
 }

@@ -48,7 +48,7 @@ a{
     justify-content: center;
 }
 .NavButton, .Button{
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, opacity 0.5s ease;
 }
 .NavButton:hover, .Button:hover{
     background-color: #4c166d;

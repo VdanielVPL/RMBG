@@ -1,7 +1,7 @@
 import '../../styles/RMBGView.css';
 import { useContext } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faCloudArrowDown, faCopy, faImage, faSpinner, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faCloudArrowDown, faCopy, faCropSimple, faImage, faSpinner, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { MainContext } from "../contexts/MainContext";
 import { InputImageContainer } from '../InputRMBGImageContainer';
 import SelectList, { Selected } from '../inputs/SelectList';
@@ -9,6 +9,7 @@ import { Button } from '../inputs/Button';
 import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem } from '../../../wailsjs/go/main/App';
 import { EventsEmit } from '../../../wailsjs/runtime/runtime';
 import { ImageContext } from '../contexts/ImageContext';
+import { useNavigate } from 'react-router-dom';
 
 const tiles: Selected[] = [
     {text: "u2net", value: "u2net"},
@@ -49,7 +50,8 @@ function OutputImageContainer() {
 
 export function RMBGView() {
     const { strings } = useContext(MainContext);
-    const { setOutputRMBGImage, setInputRMBGImage, inputRMBGImage, removingBG, setModel } = useContext(ImageContext);
+    const { setOutputRMBGImage, setInputRMBGImage, setCropImage, inputRMBGImage, outputRMBGImage, removingBG, setModel } = useContext(ImageContext);
+    let navigate = useNavigate();
 
     function handleModelChange(selected: Selected) {
         setModel(selected.value);
@@ -76,6 +78,20 @@ export function RMBGView() {
         ClearImageMem("RMBG");
     }
 
+    function ToCropView(inOrOut: string) {
+        if (inOrOut == "in") {
+            if (inputRMBGImage != "") {
+                setCropImage(inputRMBGImage);
+                navigate('/crop');
+            }
+        }else if (inOrOut == "out") {
+            if (outputRMBGImage != "") {
+                setCropImage(outputRMBGImage);
+                navigate('/crop');
+            }
+        }
+    }
+
     return (
         <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
             <span className='ViewHeader'>{strings["BGrem"]}</span>
@@ -87,6 +103,9 @@ export function RMBGView() {
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'start', width: '100%', gap: '10px'}}>
                             <Button style={{width: '40px', height: '40px'}} onClick={ClearView} title={strings["ClearView"]}>
                                 <FontAwesomeIcon icon={faTrashCan} size='xl' style={{transform: 'scale(0.8)'}} />
+                            </Button>
+                            <Button style={{width: '40px', height: '40px'}} onClick={() => ToCropView('in')} title={strings["ToCropView"]}>
+                                <FontAwesomeIcon icon={faCropSimple} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                         </div>
                     </div>
@@ -100,13 +119,18 @@ export function RMBGView() {
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                         <OutputImageContainer></OutputImageContainer>
-                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'end', width: '100%', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px'}} onClick={SaveImage} title={strings["SaveImage"]}>
-                                <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
+                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
+                            <Button style={{width: '40px', height: '40px'}} onClick={() => ToCropView('out')} title={strings["ToCropView"]}>
+                                <FontAwesomeIcon icon={faCropSimple} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
-                            <Button style={{width: '40px', height: '40px'}} onClick={CopyImage} title={strings["CopyImage"]}>
-                                <FontAwesomeIcon icon={faCopy} size='xl'style={{transform: 'scale(0.8)'}} />
-                            </Button>
+                            <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+                                <Button style={{width: '40px', height: '40px'}} onClick={SaveImage} title={strings["SaveImage"]}>
+                                    <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
+                                </Button>
+                                <Button style={{width: '40px', height: '40px'}} onClick={CopyImage} title={strings["CopyImage"]}>
+                                    <FontAwesomeIcon icon={faCopy} size='xl'style={{transform: 'scale(0.8)'}} />
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>

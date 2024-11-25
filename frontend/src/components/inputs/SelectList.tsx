@@ -72,10 +72,10 @@ export default function SelectList(props: SelectListProps) {
                         <FontAwesomeIcon icon={faAngleUp} />
                     </div>
                 </div>
-                <div style={{display:expanded?'block':'none', position: 'absolute', top: '100%', width: '100%', backgroundColor: 'rgb(30, 32, 33)', zIndex: '1', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px'}}>
+                <div style={{display:expanded?'block':'none', position: 'absolute', top: '100%', width: '100%', backgroundColor: 'rgb(30, 32, 33)', zIndex: '3', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px'}}>
                     <div style={{padding: '5px 5px 5px 5px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
                         {props.tiles.map((item)=>(
-                            <div onClick={()=>{onClickOption(item.text, item.value)}} className="selectListOption" style={{padding: '5px', textAlign: 'left', backgroundColor: item.text==selected?.text?'rgb(34, 38, 39)':'inherit', borderRadius: '10px'}} key={item.value}>{item.text}</div>
+                            <div onClick={()=>{onClickOption(item.text, item.value)}} style={{padding: '5px', textAlign: 'left', backgroundColor: item.text==selected?.text?'rgb(34, 38, 39)':'inherit', borderRadius: '10px'}} key={item.value}>{item.text}</div>
                         ))}
                     </div>
                 </div>

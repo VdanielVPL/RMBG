@@ -5,5 +5,7 @@
     "RemoveBG": "Usuń tło",
     "ClearView": "Wyczyść widok",
     "SaveImage": "Zapisz obraz",
-    "CopyImage": "Kopiuj do schowka"
+    "CopyImage": "Kopiuj do schowka",
+    "ToCropView": "Przenieś obraz do widoku kadrowania",
+    "ToRMBGView": "Przenieś obraz do widoku usuwania tła"
 }

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ImageContext } from "./contexts/ImageContext";
 
 type CropEditorProps = {
     rect: DOMRect | null;
@@ -8,12 +9,15 @@ export default function CropEditor(props: CropEditorProps) {
     const [dragging, setDragging] = useState<boolean>(false);
     const [draggingSide, setDraggingSide] = useState<string | null>(null);
     const cropEditorRef = useRef<HTMLDivElement>(null);
+    const { cropImage } = useContext(ImageContext);
 
     useEffect(() => {
-        if (cropEditorRef.current) {
-            cropEditorRef.current.style.opacity = '1';
+        if (props.rect) {
+            if (cropEditorRef.current) {
+                cropEditorRef.current.style.opacity = '1';
+            }
         }
-    },[]);
+    },[props.rect]);
 
     useEffect(() => {
 
@@ -79,6 +83,17 @@ export default function CropEditor(props: CropEditorProps) {
         }
 
     },[dragging]);
+
+    useEffect(() => {
+        if(cropImage != "") {
+            if (cropEditorRef.current) {
+                cropEditorRef.current.style.top = '0px';
+                cropEditorRef.current.style.right = '0px';
+                cropEditorRef.current.style.bottom = '0px';
+                cropEditorRef.current.style.left = '0px';
+            }
+        }
+    },[cropImage]);
 
     function resetClick(e: React.MouseEvent<HTMLDivElement>) {
         e.preventDefault();

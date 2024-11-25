@@ -16,7 +16,7 @@
     border: 1px solid rgba(255, 255, 255, 1);
     overflow: hidden;
     z-index: 1;
-    transition: background-color 0.35s ease, border-color 0.35s ease;
+    transition: background-color 0.35s ease, border-color 0.35s ease, border-radius 0.5s ease;
 }
 .imageContainer > img {
     max-width: 100%;
@@ -42,9 +42,6 @@
 }
 .cropEditor{
     position: absolute;
-    /* display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr); */
     outline-offset: -1px;
     outline-width: 1px;
     outline-style: solid;
@@ -52,20 +49,17 @@
     z-index: 2;
     cursor: auto;
     backdrop-filter: brightness(2);
-    transition: opacity 0.35s ease;
+    transition: opacity 0.5s ease;
 }
 .cropEditor > div{
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* cursor: move; */
-    /* -webkit-user-drag: none; */
     user-select: none;
 }
 .cropEditor > div > div{
     outline-offset: -1px;
-    /* outline: 1px solid white; */
     outline-width: 1px;
     outline-style: solid;
     outline-color: white;
