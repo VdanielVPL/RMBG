@@ -14,8 +14,8 @@
     position: relative;
     background-color: rgba(255, 255, 255, 1);
     border: 1px solid rgba(255, 255, 255, 1);
-    /* overflow: hidden; */
-    z-index: 0;
+    overflow: hidden;
+    z-index: 1;
     transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .imageContainer > img {
@@ -42,16 +42,20 @@
 }
 .cropEditor{
     position: absolute;
-    display: grid;
+    /* display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    outline: 1px solid white;
+    grid-template-rows: repeat(3, 1fr); */
+    outline-offset: -1px;
+    outline-width: 1px;
+    outline-style: solid;
+    outline-color: white;
     z-index: 2;
     cursor: auto;
     backdrop-filter: brightness(2);
-
+    transition: opacity 0.35s ease;
 }
 .cropEditor > div{
+    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -60,7 +64,11 @@
     user-select: none;
 }
 .cropEditor > div > div{
-    outline: 1px solid white;
+    outline-offset: -1px;
+    /* outline: 1px solid white; */
+    outline-width: 1px;
+    outline-style: solid;
+    outline-color: white;
     width: 50px;
     height: 50px;
     display: flex;
@@ -70,27 +78,27 @@
 }
 
 .top {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: flex-start;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .left {
-    grid-column: 1;
-    grid-row: 2;
-    justify-self: left;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
 }
 
 .right {
-    grid-column: 3;
-    grid-row: 2;
-    justify-self: right;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
 }
 
 .bottom {
-    grid-column: 2;
-    grid-row: 3;
-    align-self: flex-end;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 .wails-drop-target-active{
     background-color: purple !important;

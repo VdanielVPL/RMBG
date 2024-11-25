@@ -10,22 +10,37 @@ export default function CropEditor(props: CropEditorProps) {
     const cropEditorRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        if (cropEditorRef.current) {
+            cropEditorRef.current.style.opacity = '1';
+        }
+    },[]);
 
-        const handlemouseup = (e: MouseEvent) => {
+    useEffect(() => {
+
+        const handlemouseup = () => {
             if (dragging) {
                 setDragging(false);
             }
         }
+        
         window.addEventListener('mouseup', handlemouseup);
 
         const mouseMove = (e: MouseEvent) => {
             if (dragging && cropEditorRef.current) {
+                const minTop = 0;
+                const maxTop = props.rect!.height - 30*2-1 - parseInt(cropEditorRef.current.style.bottom || '0', 10);
+            
+                const minBottom = 0;
+                const maxBottom = props.rect!.height - 30*2-1 - parseInt(cropEditorRef.current.style.top || '0', 10);
+            
+                const minLeft = 0;
+                const maxLeft = props.rect!.width - 30*2-1 - parseInt(cropEditorRef.current.style.right || '0', 10);
+            
+                const minRight = 0;
+                const maxRight = props.rect!.width - 30*2-1 - parseInt(cropEditorRef.current.style.left || '0', 10);
                 if (draggingSide === "top") {
                     const currentTop = parseInt(cropEditorRef.current.style.top || '0', 10);
                     const newTop = currentTop + e.movementY;
-        
-                    const minTop = 0;
-                    const maxTop = props.rect!.height;
         
                     const clampedTop = Math.max(minTop, Math.min(newTop, maxTop));
         
@@ -34,9 +49,6 @@ export default function CropEditor(props: CropEditorProps) {
                     const currentBottom = parseInt(cropEditorRef.current.style.bottom || '0', 10);
                     const newBottom = currentBottom - e.movementY;
         
-                    const minBottom = 0;
-                    const maxBottom = props.rect!.height;
-        
                     const clampedBottom = Math.max(minBottom, Math.min(newBottom, maxBottom));
         
                     cropEditorRef.current.style.bottom = `${clampedBottom}px`;
@@ -44,18 +56,12 @@ export default function CropEditor(props: CropEditorProps) {
                     const currentLeft = parseInt(cropEditorRef.current.style.left || '0', 10);
                     const newLeft = currentLeft + e.movementX;
         
-                    const minLeft = 0;
-                    const maxLeft = props.rect!.width;
-        
                     const clampedLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
         
                     cropEditorRef.current.style.left = `${clampedLeft}px`;
                 } else if (draggingSide === 'right') {
                     const currentRight = parseInt(cropEditorRef.current.style.right || '0', 10);
                     const newRight = currentRight - e.movementX;
-        
-                    const minRight = 0;
-                    const maxRight = props.rect!.width;
         
                     const clampedRight = Math.max(minRight, Math.min(newRight, maxRight));
         
@@ -84,7 +90,7 @@ export default function CropEditor(props: CropEditorProps) {
     }
 
     return (
-        <div ref={cropEditorRef} className="cropEditor" style={{top: '0px',right: '0px', left: '0px', bottom: '0px'}}>
+        <div ref={cropEditorRef} className="cropEditor" style={{top: '0px',right: '0px', left: '0px', bottom: '0px', opacity: '0'}}>
             <div className="top" onClick={resetClick}>
                 <div onMouseDown={() => mouseDown("top")} style={{height: '30px', width: '60px'}}></div>
             </div>
