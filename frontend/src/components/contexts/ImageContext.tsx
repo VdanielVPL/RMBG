@@ -14,6 +14,9 @@ type ImageContextType = {
     
     cropImage: string;
     setCropImage: (inputCropImage: string) => void;
+
+    cropDimens: {left: number, right: number, top: number, bottom: number};
+    setCropDimens: (cropDimens: {left: number, right: number, top: number, bottom: number}) => void;
 };
 
 export const ImageContext = createContext<ImageContextType>({
@@ -29,7 +32,10 @@ export const ImageContext = createContext<ImageContextType>({
     setModel: () => {},
 
     cropImage: "",
-    setCropImage: () => {}
+    setCropImage: () => {},
+
+    cropDimens: {left: 0, right: 0, top: 0, bottom: 0},
+    setCropDimens: () => {}
 });
 
 export function ImageProvider({ children }: { children: ReactNode }) {
@@ -38,6 +44,7 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     const [cropImage, setCropImage] = useState<ImageContextType["cropImage"]>("");
     const [removingBG, setRemovingBG] = useState<ImageContextType["removingBG"]>(false);
     const [model, setModel] = useState<ImageContextType["model"]>("u2net");
+    const [cropDimens, setCropDimens] = useState<ImageContextType["cropDimens"]>({left: 0, right: 0, top: 0, bottom: 0});
 
     return (
         <ImageContext.Provider value={{
@@ -45,7 +52,8 @@ export function ImageProvider({ children }: { children: ReactNode }) {
             outputRMBGImage, setOutputRMBGImage, 
             cropImage, setCropImage, 
             removingBG, setRemovingBG, 
-            setModel, model
+            setModel, model,
+            cropDimens, setCropDimens
         }}>
             {children}
         </ImageContext.Provider>

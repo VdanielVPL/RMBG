@@ -6,7 +6,7 @@ import { MainContext } from "../contexts/MainContext";
 import { InputImageContainer } from '../InputRMBGImageContainer';
 import SelectList, { Selected } from '../inputs/SelectList';
 import { Button } from '../inputs/Button';
-import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem } from '../../../wailsjs/go/main/App';
+import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem, FromRMBGtoCrop } from '../../../wailsjs/go/main/App';
 import { EventsEmit } from '../../../wailsjs/runtime/runtime';
 import { ImageContext } from '../contexts/ImageContext';
 import { useNavigate } from 'react-router-dom';
@@ -82,11 +82,13 @@ export function RMBGView() {
         if (inOrOut == "in") {
             if (inputRMBGImage != "") {
                 setCropImage(inputRMBGImage);
+                FromRMBGtoCrop(0);
                 navigate('/crop');
             }
         }else if (inOrOut == "out") {
             if (outputRMBGImage != "") {
                 setCropImage(outputRMBGImage);
+                FromRMBGtoCrop(1);
                 navigate('/crop');
             }
         }

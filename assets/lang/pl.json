@@ -7,5 +7,6 @@
     "SaveImage": "Zapisz obraz",
     "CopyImage": "Kopiuj do schowka",
     "ToCropView": "Przenieś obraz do widoku kadrowania",
-    "ToRMBGView": "Przenieś obraz do widoku usuwania tła"
+    "ToRMBGView": "Przenieś obraz do widoku usuwania tła",
+    "CropImage": "Kadruj obraz"
 }

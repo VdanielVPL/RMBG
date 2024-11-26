@@ -40,6 +40,10 @@ func ToBase64FromBytes(fileBytes []byte) (string, string, error) {
 	}
 }
 
+func ToBytesFromPath(path string) ([]byte, error) {
+	return os.ReadFile(path)
+}
+
 func OpenImageDialog(ctx context.Context) (string, error) {
 	options := runtime.OpenDialogOptions{
 		Title: "Select an image",

@@ -3,27 +3,44 @@ import { ImageContext } from "./contexts/ImageContext";
 
 type CropEditorProps = {
     rect: DOMRect | null;
+    imageRef: React.RefObject<HTMLImageElement>;
 };
 
 export default function CropEditor(props: CropEditorProps) {
     const [dragging, setDragging] = useState<boolean>(false);
     const [draggingSide, setDraggingSide] = useState<string | null>(null);
     const cropEditorRef = useRef<HTMLDivElement>(null);
-    const { cropImage } = useContext(ImageContext);
+    const { cropImage, setCropDimens } = useContext(ImageContext);
+    const [imageWidth, setImageWidth] = useState<number>(0);
+    const [imageHeight, setImageHeight] = useState<number>(0);
 
     useEffect(() => {
         if (props.rect) {
             if (cropEditorRef.current) {
                 cropEditorRef.current.style.opacity = '1';
             }
+            if (props.imageRef.current) {
+                // console.log('Image Width:', props.imageRef.current.naturalWidth);
+                // console.log('Image Height:', props.imageRef.current.naturalHeight);
+                setImageWidth(props.imageRef.current.naturalWidth / props.rect.width);
+                setImageHeight(props.imageRef.current.naturalHeight / props.rect.height);
+            }
         }
-    },[props.rect]);
+    },[props.imageRef.current, props.rect]);
 
     useEffect(() => {
 
         const handlemouseup = () => {
             if (dragging) {
                 setDragging(false);
+                console.log('widthRatio:', imageWidth);
+                console.log('heightRatio:', imageHeight);
+                setCropDimens({
+                    left: parseInt(cropEditorRef.current?.style.left || '0', 10) * imageWidth,
+                    right: parseInt(cropEditorRef.current?.style.right || '0', 10) * imageWidth,
+                    top: parseInt(cropEditorRef.current?.style.top || '0', 10) * imageHeight,
+                    bottom: parseInt(cropEditorRef.current?.style.bottom || '0', 10) * imageHeight
+                })
             }
         }
         
@@ -92,6 +109,7 @@ export default function CropEditor(props: CropEditorProps) {
                 cropEditorRef.current.style.bottom = '0px';
                 cropEditorRef.current.style.left = '0px';
             }
+            setCropDimens({left: 0, right: 0, top: 0, bottom: 0});
         }
     },[cropImage]);
 

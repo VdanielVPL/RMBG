@@ -100,9 +100,11 @@ export function InputImageContainer() {
             console.log(e.currentTarget.clientWidth, e.currentTarget.clientHeight);
             if (e.currentTarget.width < e.currentTarget.height) {
                 imageContainer.current.style.width = "fit-content";
+                imageContainer.current.style.height = '450px';
                 e.currentTarget.style.height = "100%";
             } else {
                 imageContainer.current.style.height = "fit-content";
+                imageContainer.current.style.width = "450px";
                 e.currentTarget.style.width = "100%";
             }
             imageContainer.current.style.borderRadius = '0px';
@@ -116,7 +118,7 @@ export function InputImageContainer() {
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1, opacity: cropImage!=""?0:1}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
             </div>
-            {cropImage && <CropEditor rect={rect}/>}
+            {cropImage && <CropEditor rect={rect} imageRef={imageRef} />}
         </div>
     )
 }

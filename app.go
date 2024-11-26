@@ -163,3 +163,50 @@ func (a *App) ClearImageMem(Imagetype string) {
 		a.cropimgpath = ""
 	}
 }
+
+func (a *App) CropImage(left, right, top, bottom float32) []string {
+	if a.cropimg == nil {
+		if a.cropimgpath != "" {
+			imgBytes, err := image.ToBytesFromPath(a.cropimgpath)
+			if err != nil {
+				return nil
+			}
+			a.cropimg = imgBytes
+		} else {
+			return nil
+		}
+	}
+	img := image.CropImage(a.cropimg, left, right, top, bottom)
+	if img != nil {
+		a.cropimg = img
+		str, fileType, err := image.ToBase64FromBytes(img)
+		if err != nil {
+			return nil
+		}
+		return []string{str, fileType}
+	} else {
+		return nil
+	}
+}
+
+func (a *App) FromRMBGtoCrop(t int) {
+	println("FromRMBGtoCrop", t)
+	if t == 0 {
+		if a.rembgimg != nil {
+			a.cropimg = a.rembgimg
+		} else if a.rembgpath != "" {
+			imgBytes, _ := image.ToBytesFromPath(a.rembgpath)
+			a.cropimg = imgBytes
+		}
+	} else if t == 1 {
+		if a.rembgimg2 != nil {
+			a.cropimg = a.rembgimg2
+		}
+	}
+}
+
+func (a *App) FromCroptoRMBG() {
+	if a.cropimg != nil {
+		a.rembgimg = a.cropimg
+	}
+}

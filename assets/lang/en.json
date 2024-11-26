@@ -7,5 +7,6 @@
     "SaveImage": "Save image",
     "CopyImage": "Copy to clipboard",
     "ToCropView": "Move image to cropping view",
-    "ToRMBGView": "Move image to background removal view"
+    "ToRMBGView": "Move image to background removal view",
+    "CropImage": "Crop image"
 }
