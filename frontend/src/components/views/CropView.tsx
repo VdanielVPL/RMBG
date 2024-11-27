@@ -8,6 +8,7 @@ import { ImageContext } from "../contexts/ImageContext";
 import { useNavigate } from "react-router-dom";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { CropImage, FromCroptoRMBG } from "../../../wailsjs/go/main/App";
+import { EventsEmit } from "../../../wailsjs/runtime/runtime";
 
 export function CropView() {
     const { strings } = useContext(MainContext);
@@ -37,6 +38,7 @@ export function CropView() {
                     setCropImage("");
                 }else{
                     setCropImage(`data:${fileType};base64,${base64}`);
+                    EventsEmit('cropping', false);
                 }
             }
         });
@@ -46,7 +48,7 @@ export function CropView() {
         <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
             <span className='ViewHeader'>{strings["Crop"]}</span>
             <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center'}}>
                     <InputImageContainer></InputImageContainer>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'start', width: '100%', gap: '10px'}}>

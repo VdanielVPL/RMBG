@@ -9,6 +9,7 @@ export function InputImageContainer() {
     // const [filePath, setFilePath] = useState<string>('');
     const { inputRMBGImage, setInputRMBGImage } = useContext(ImageContext);
     const imageContainer = useRef<HTMLDivElement>(null);
+    const imgRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
         const handleFileDrop = (x: number, y: number, paths: string[]) => {
@@ -67,9 +68,21 @@ export function InputImageContainer() {
         }
     }
 
+    useEffect(() => {  
+        if(imgRef.current){
+            if (inputRMBGImage != "") {
+                imgRef.current.style.width = '100%';
+                imgRef.current.style.height = '100%';
+            }else{
+                imgRef.current.style.width = 'auto';
+                imgRef.current.style.height = 'auto';
+            }
+        }
+    }, [inputRMBGImage]);
+
     return (
         <div ref={imageContainer} className='imageContainer' onDrop={handleURLDrop} style={{'--wails-drop-target': 'drop'} as CSSProperties} onClick={openDialog}>
-            <img src={inputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
+            <img ref={imgRef} src={inputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1,}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%'}} />
             </div>

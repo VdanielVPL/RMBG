@@ -1,20 +1,20 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useLayoutEffect, useRef, useState, RefObject } from "react";
 import { ImageContext } from "./contexts/ImageContext";
 
 type CropEditorProps = {
     rect: DOMRect | null;
-    imageRef: React.RefObject<HTMLImageElement>;
+    imageRef: RefObject<HTMLImageElement>;
 };
 
 export default function CropEditor(props: CropEditorProps) {
+    const { cropImage, setCropDimens } = useContext(ImageContext);
     const [dragging, setDragging] = useState<boolean>(false);
     const [draggingSide, setDraggingSide] = useState<string | null>(null);
-    const cropEditorRef = useRef<HTMLDivElement>(null);
-    const { cropImage, setCropDimens } = useContext(ImageContext);
     const [imageWidth, setImageWidth] = useState<number>(0);
     const [imageHeight, setImageHeight] = useState<number>(0);
+    const cropEditorRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (props.rect) {
             if (cropEditorRef.current) {
                 cropEditorRef.current.style.opacity = '1';
@@ -28,13 +28,13 @@ export default function CropEditor(props: CropEditorProps) {
         }
     },[props.imageRef.current, props.rect]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
 
         const handlemouseup = () => {
             if (dragging) {
                 setDragging(false);
-                console.log('widthRatio:', imageWidth);
-                console.log('heightRatio:', imageHeight);
+                // console.log('widthRatio:', imageWidth);
+                // console.log('heightRatio:', imageHeight);
                 setCropDimens({
                     left: parseInt(cropEditorRef.current?.style.left || '0', 10) * imageWidth,
                     right: parseInt(cropEditorRef.current?.style.right || '0', 10) * imageWidth,
@@ -101,7 +101,7 @@ export default function CropEditor(props: CropEditorProps) {
 
     },[dragging]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if(cropImage != "") {
             if (cropEditorRef.current) {
                 cropEditorRef.current.style.top = '0px';

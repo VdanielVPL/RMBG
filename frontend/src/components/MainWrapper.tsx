@@ -4,17 +4,23 @@ import { ImageContext } from "./contexts/ImageContext";
 
 export function MainWrapper({children}: {children: ReactNode}) {
 
-    const { setRemovingBG } = useContext(ImageContext);
+    const { setRemovingBG, setCropping } = useContext(ImageContext);
 
     useEffect(() => {
         const handleRemBGstatus = (status: boolean) => {
             setRemovingBG(status);
         }
 
+        const handleCropStatus = (status: boolean) => {
+            setCropping(status);
+        }
+
         EventsOn('removingbg', handleRemBGstatus);
+        EventsOn('cropping', handleCropStatus);
 
         return () => {
             EventsOff('removingbg');
+            EventsOff('cropping');
         }
     }, []);
 

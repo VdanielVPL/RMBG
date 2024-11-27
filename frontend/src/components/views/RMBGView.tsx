@@ -1,5 +1,5 @@
 import '../../styles/RMBGView.css';
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCloudArrowDown, faCopy, faCropSimple, faImage, faSpinner, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { MainContext } from "../contexts/MainContext";
@@ -33,10 +33,23 @@ function OptionBar(props: {callback: (selected: Selected) => void}) {
 
 function OutputImageContainer() {
     const { outputRMBGImage, removingBG } = useContext(ImageContext);
+    const imgRef = useRef<HTMLImageElement>(null);
+
+    useEffect(() => {  
+        if(imgRef.current){
+            if (outputRMBGImage != "") {
+                imgRef.current.style.width = '100%';
+                imgRef.current.style.height = '100%';
+            }else{
+                imgRef.current.style.width = 'auto';
+                imgRef.current.style.height = 'auto';
+            }
+        }
+    }, [outputRMBGImage]);
     
     return (
         <div className="imageContainer" style={{cursor: 'auto'}}>
-            <img src={outputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
+            <img ref={imgRef} src={outputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -2, backgroundColor: 'white'}}>
                 {removingBG?
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%'}} />

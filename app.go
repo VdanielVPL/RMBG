@@ -165,14 +165,17 @@ func (a *App) ClearImageMem(Imagetype string) {
 }
 
 func (a *App) CropImage(left, right, top, bottom float32) []string {
+	runtime.EventsEmit(a.ctx, "cropping", true)
 	if a.cropimg == nil {
 		if a.cropimgpath != "" {
 			imgBytes, err := image.ToBytesFromPath(a.cropimgpath)
 			if err != nil {
+				runtime.EventsEmit(a.ctx, "cropping", false)
 				return nil
 			}
 			a.cropimg = imgBytes
 		} else {
+			runtime.EventsEmit(a.ctx, "cropping", false)
 			return nil
 		}
 	}
@@ -181,10 +184,12 @@ func (a *App) CropImage(left, right, top, bottom float32) []string {
 		a.cropimg = img
 		str, fileType, err := image.ToBase64FromBytes(img)
 		if err != nil {
+			runtime.EventsEmit(a.ctx, "cropping", false)
 			return nil
 		}
 		return []string{str, fileType}
 	} else {
+		runtime.EventsEmit(a.ctx, "cropping", false)
 		return nil
 	}
 }
@@ -197,10 +202,12 @@ func (a *App) FromRMBGtoCrop(t int) {
 		} else if a.rembgpath != "" {
 			imgBytes, _ := image.ToBytesFromPath(a.rembgpath)
 			a.cropimg = imgBytes
+			a.cropimgpath = ""
 		}
 	} else if t == 1 {
 		if a.rembgimg2 != nil {
 			a.cropimg = a.rembgimg2
+			a.cropimgpath = ""
 		}
 	}
 }
@@ -208,5 +215,6 @@ func (a *App) FromRMBGtoCrop(t int) {
 func (a *App) FromCroptoRMBG() {
 	if a.cropimg != nil {
 		a.rembgimg = a.cropimg
+		a.rembgpath = ""
 	}
 }

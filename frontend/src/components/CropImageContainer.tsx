@@ -1,17 +1,17 @@
-import { useEffect, useRef, CSSProperties, useContext, useState, SyntheticEvent, MouseEvent } from "react";
+import { useEffect, useRef, CSSProperties, useContext, useState, SyntheticEvent, MouseEvent, useLayoutEffect, DragEvent } from "react";
 import { OnFileDrop, OnFileDropOff } from "../../wailsjs/runtime/runtime";
 import { HandleDrop, OpenImage } from "../../wailsjs/go/main/App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faCloudArrowUp, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { ImageContext } from "./contexts/ImageContext";
 import CropEditor from "./CropEditor";
 
 export function InputImageContainer() {
     // const [filePath, setFilePath] = useState<string>('');
-    const { cropImage, setCropImage } = useContext(ImageContext);
+    const { cropImage, setCropImage, cropping } = useContext(ImageContext);
+    const [rect, setRect] = useState<DOMRect | null>(null);
     const imageContainer = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLImageElement>(null);
-    const [rect, setRect] = useState<DOMRect | null>(null);
 
     useEffect(() => {
         const handleFileDrop = (x: number, y: number, paths: string[]) => {
@@ -33,7 +33,7 @@ export function InputImageContainer() {
         };
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (cropImage == "") {
             if(imageContainer.current){
                 imageContainer.current.style.width = '450px';
@@ -47,7 +47,7 @@ export function InputImageContainer() {
         }
     }, [cropImage]);
 
-    const handleURLDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    const handleURLDrop = (event: DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         const items = event.dataTransfer?.items;
         if (items) {
@@ -74,14 +74,14 @@ export function InputImageContainer() {
 
     async function openDialog(e: MouseEvent<HTMLDivElement>) {
         if (cropImage != "") {
-            const target = e.target as HTMLElement;
+            // const target = e.target as HTMLElement;
             // if (target.parentElement != imageContainer.current) {
             //     console.log(target.parentElement, imageContainer.current);
             //     return;
             // }
             return;
         }
-        console.log(e.target)
+        // console.log(e.target)
         const result = await OpenImage("CROP")
         if (result != null) {
             const [base64, fileType] = result;
@@ -118,7 +118,12 @@ export function InputImageContainer() {
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1, opacity: cropImage!=""?0:1}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
             </div>
-            {cropImage && <CropEditor rect={rect} imageRef={imageRef} />}
+            {cropping && 
+                <div style={{position: 'absolute', height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1}}>
+                    <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%', maxWidth: '160px', maxHeight: '160px'}} />
+                </div>
+            }
+            {(cropImage && !cropping) && <CropEditor rect={rect} imageRef={imageRef} />}
         </div>
     )
 }

@@ -5,6 +5,7 @@ go 1.22.0
 toolchain go1.23.3
 
 require (
+	github.com/disintegration/imaging v1.6.2
 	github.com/wailsapp/wails/v2 v2.9.2
 	golang.org/x/image v0.22.0
 	golang.org/x/sys v0.27.0
