@@ -12,7 +12,7 @@ import { EventsEmit } from "../../../wailsjs/runtime/runtime";
 
 export function CropView() {
     const { strings } = useContext(MainContext);
-    const { cropImage, setCropImage, setInputRMBGImage, cropDimens } = useContext(ImageContext);
+    const { cropImage, setCropImage, setInputRMBGImage, cropDimens, cropping } = useContext(ImageContext);
     let navigate = useNavigate();
 
     function clearView() {
@@ -52,15 +52,15 @@ export function CropView() {
                     <InputImageContainer></InputImageContainer>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'start', width: '100%', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1}} onClick={clearView} title={strings["ClearView"]}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={clearView} title={strings["ClearView"]} disabled={cropping}>
                                 <FontAwesomeIcon icon={faTrashCan} size='xl' style={{transform: 'scale(0.8)'}} />
                             </Button>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1}} onClick={ToRMBGView} title={strings["ToRMBGView"]}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={ToRMBGView} title={strings["ToRMBGView"]} disabled={cropping}>
                                 <FontAwesomeIcon icon={faImage} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                         </div>
                         <div>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1}} onClick={CropImageButton} title={strings["CropImage"]}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={CropImageButton} title={strings["CropImage"]} disabled={cropping}>
                                 <FontAwesomeIcon icon={faCheck} size='xl' style={{transform: 'scale(0.8)'}} />
                             </Button>
                         </div>

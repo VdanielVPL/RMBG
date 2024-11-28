@@ -41,13 +41,13 @@ func ReadOrientation(image io.Reader) int {
 
 			switch nextByte {
 			case 0xE1:
-				println("Znaleziono marker EXIF")
+				println("EXIF marker found")
 				return processExifData(reader)
 			case 0xD8:
-				println("Znaleziono początek JPEG")
+				println("Found start of JPEG image")
 				continue
 			case 0xDA:
-				println("Znaleziono początek danych obrazu")
+				println("Found start of image data")
 				return 1
 			case 0xE0:
 				// Skipping JFIF segment

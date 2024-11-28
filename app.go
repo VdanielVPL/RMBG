@@ -195,26 +195,29 @@ func (a *App) CropImage(left, right, top, bottom float32) []string {
 }
 
 func (a *App) FromRMBGtoCrop(t int) {
-	println("FromRMBGtoCrop", t)
 	if t == 0 {
 		if a.rembgimg != nil {
+			a.cropimgpath = ""
 			a.cropimg = a.rembgimg
 		} else if a.rembgpath != "" {
 			imgBytes, _ := image.ToBytesFromPath(a.rembgpath)
-			a.cropimg = imgBytes
 			a.cropimgpath = ""
+			a.cropimg = imgBytes
 		}
 	} else if t == 1 {
 		if a.rembgimg2 != nil {
-			a.cropimg = a.rembgimg2
 			a.cropimgpath = ""
+			a.cropimg = a.rembgimg2
 		}
 	}
 }
 
 func (a *App) FromCroptoRMBG() {
 	if a.cropimg != nil {
-		a.rembgimg = a.cropimg
 		a.rembgpath = ""
+		a.rembgimg = a.cropimg
+	} else if a.cropimgpath != "" {
+		a.rembgimg = nil
+		a.rembgpath = a.cropimgpath
 	}
 }
