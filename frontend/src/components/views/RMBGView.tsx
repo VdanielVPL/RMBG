@@ -21,11 +21,11 @@ const tiles: Selected[] = [
 function OptionBar(props: {callback: (selected: Selected) => void}) {
 
     const { model } = useContext(ImageContext);
-    const { strings } = useContext(MainContext);
+    const { strings, isDarkMode } = useContext(MainContext);
 
     return (
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
-            <span>{strings["AImodel"]}</span>
+            <span style={{color: !isDarkMode?'black':undefined}}>{strings["AImodel"]}</span>
             <SelectList tiles={tiles} width='170px' defaultSelected={model} onSelected={props.callback}/>
         </div>
     )
@@ -62,7 +62,7 @@ function OutputImageContainer() {
 }
 
 export function RMBGView() {
-    const { strings } = useContext(MainContext);
+    const { strings, isDarkMode } = useContext(MainContext);
     const { setOutputRMBGImage, setInputRMBGImage, setCropImage, inputRMBGImage, outputRMBGImage, removingBG, setModel } = useContext(ImageContext);
     let navigate = useNavigate();
 
@@ -109,7 +109,7 @@ export function RMBGView() {
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
-            <span className='ViewHeader'>{strings["BGrem"]}</span>
+            <span style={{color: isDarkMode?'white':'black'}} className='ViewHeader'>{strings["BGrem"]}</span>
             <OptionBar callback={handleModelChange}></OptionBar>
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', height: 'inherit'}}>
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>

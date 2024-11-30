@@ -101,3 +101,12 @@
 .wails-drop-target-active > img{
     opacity: 0.25;
 }
+
+@media (prefers-color-scheme: light) {
+    .cropEditor{
+        outline-color: black;
+    }
+    .cropEditor > div > div{
+        outline-color: black;
+    }
+}

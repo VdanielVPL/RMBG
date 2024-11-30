@@ -35,7 +35,7 @@ func BgColor() *options.RGBA {
 		if IsDarkMode() {
 			return options.NewRGBA(32, 32, 32, 255)
 		} else {
-			return options.NewRGBA(255, 255, 255, 255)
+			return options.NewRGBA(245, 241, 248, 255)
 		}
 	}
 }

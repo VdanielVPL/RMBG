@@ -13,19 +13,19 @@ import (
 
 func CropImage(image []byte, left, right, top, bottom float32) []byte {
 
-	println("Cropping image...")
+	// println("Cropping image...")
 	imgbytes := bytes.NewReader(image)
 	img, format, err := imgpkg.Decode(imgbytes)
 	if err != nil {
 		println(err.Error())
 		return nil
 	}
-	println("Decoded image")
+	// println("Decoded image")
 
 	if format == "jpeg" {
 		imgbytes.Seek(0, 0)
 		orientation := ReadOrientation(imgbytes)
-		println("Orientation:", orientation)
+		// println("Orientation:", orientation)
 
 		switch orientation {
 		case 6: // 90 CW
@@ -50,7 +50,7 @@ func CropImage(image []byte, left, right, top, bottom float32) []byte {
 		SubImage(r imgpkg.Rectangle) imgpkg.Image
 	}).SubImage(rect)
 
-	println("Sub image")
+	// println("Sub image")
 
 	var buf bytes.Buffer
 	if format == "jpeg" {
@@ -66,6 +66,6 @@ func CropImage(image []byte, left, right, top, bottom float32) []byte {
 			return nil
 		}
 	}
-	println("Cropped image")
+	// println("Cropped image")
 	return buf.Bytes()
 }
