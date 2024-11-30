@@ -6,6 +6,8 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
+var hexChars = []byte("0123456789ABCDEF")
+
 func IsWindows11OrGreater() bool {
 	major, _, build := syswindows.RtlGetNtVersionNumbers()
 	return major >= 10 && build >= 22000
@@ -36,4 +38,35 @@ func BgColor() *options.RGBA {
 			return options.NewRGBA(255, 255, 255, 255)
 		}
 	}
+}
+
+func getRawAccentColor() (uint32, error) {
+	key, err := registry.OpenKey(registry.CURRENT_USER, `Software\Microsoft\Windows\DWM`, registry.QUERY_VALUE)
+	if err != nil {
+		return 0, err
+	}
+	defer key.Close()
+
+	value, _, err := key.GetIntegerValue("ColorizationColor")
+	if err != nil {
+		return 0, err
+	}
+
+	return uint32(value), nil
+}
+
+func byteToHex(b byte) string {
+	return string([]byte{hexChars[b>>4], hexChars[b&0xF]})
+}
+
+func GetAccentColor() (string, error) {
+	accentColor, err := getRawAccentColor()
+	if err != nil {
+		return "", err
+	}
+	r := byteToHex(byte(accentColor >> 16))
+	g := byteToHex(byte(accentColor >> 8))
+	b := byteToHex(byte(accentColor))
+
+	return "#" + r + g + b, nil
 }

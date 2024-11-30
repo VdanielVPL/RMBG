@@ -14,6 +14,7 @@ type App struct {
 	ctx         context.Context
 	LangStrings map[string]string
 	IsDarkMode  bool
+	AccentColor string
 	model       string
 	rembgpath   string
 	rembgimg    []byte
@@ -36,6 +37,11 @@ func (a *App) startup(ctx context.Context) {
 	} else {
 		runtime.LogError(ctx, "Error loading lang file:"+err.Error())
 	}
+	if accentColor, err := utils.GetAccentColor(); err == nil {
+		a.AccentColor = accentColor
+	} else {
+		runtime.LogError(ctx, "Error getting accent color:"+err.Error())
+	}
 	a.IsDarkMode = utils.IsDarkMode()
 	a.model = "u2net"
 }
@@ -46,6 +52,10 @@ func (a *App) GetLangStrings() map[string]string {
 
 func (a *App) GetDarkMode() bool {
 	return a.IsDarkMode
+}
+
+func (a *App) GetAccentColor() string {
+	return a.AccentColor
 }
 
 func (a *App) HandleDrop(Imagetype string, path string, isUrl bool) []string {

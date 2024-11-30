@@ -11,7 +11,7 @@ a{
     color: white;
 }
 .NavButton{
-    background-color: purple;
+    filter: brightness(100%);
     width: 90%;
     border-radius: 10px;
     text-transform: capitalize;
@@ -32,7 +32,8 @@ a{
     padding: 10px;
 }
 .Button{
-    background-color: purple;
+    filter: brightness(100%);
+    /* background-color: purple; */
     padding: 10px;
     border-radius: 10px;
     text-transform: capitalize;
@@ -48,11 +49,13 @@ a{
     justify-content: center;
 }
 .NavButton, .Button{
-    transition: background-color 0.3s ease, opacity 0.5s ease;
+    transition: background-color 0.3s ease, opacity 0.5s ease, filter 0.3s ease;
 }
 .NavButton:hover, .Button:hover{
-    background-color: #4c166d;
+    /* background-color: #4c166d; */
+    filter: brightness(80%);
 }
 .NavButton:active, .Button:active{
-    background-color: #3c1157;
+    /* background-color: #3c1157; */
+    filter: brightness(60%);
 }

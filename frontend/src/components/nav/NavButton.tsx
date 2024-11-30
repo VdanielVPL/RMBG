@@ -1,6 +1,7 @@
 import { FontawesomeObject } from "@fortawesome/fontawesome-svg-core";
-import { ReactElement } from "react";
+import { ReactElement, useContext } from "react";
 import { Link } from "react-router-dom";
+import { MainContext } from "../contexts/MainContext";
 
 type ButtonNavProps = {
     text: string;
@@ -9,10 +10,11 @@ type ButtonNavProps = {
 }
 
 export function NavButton(props: ButtonNavProps) {
+    const { accentColor } = useContext(MainContext);
 
     return (
 
-        <Link className="NavButton" to={props.link || '/'} draggable={false}>
+        <Link className="NavButton" style={{backgroundColor: accentColor}} to={props.link || '/'} draggable={false}>
             {props.icon}
             <span>{props.text}</span>
         </Link>
