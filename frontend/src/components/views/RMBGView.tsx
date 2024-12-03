@@ -126,7 +126,7 @@ export function RMBGView() {
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
                         <div style={{flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                            <Button style={{borderRadius: '100%', width: '45px', height: '45px', backgroundColor: removingBG?'indigo':undefined}} onClick={removeBackground} disabled={removingBG} title={strings["RemoveBG"]}>
+                            <Button style={{borderRadius: '100%', width: '45px', height: '45px', filter: removingBG?'brightness(60%) contrast(100%)':undefined}} onClick={removeBackground} disabled={removingBG} title={strings["RemoveBG"]}>
                                 <FontAwesomeIcon icon={faArrowRight} size='2xl'/>
                             </Button>
                         </div>
