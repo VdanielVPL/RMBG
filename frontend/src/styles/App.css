@@ -10,6 +10,10 @@ a{
     text-decoration: none;
     color: white;
 }
+.View{
+    position: absolute;
+    inset: 20px;
+}
 .NavButton{
     filter: brightness(100%) contrast(110%);
     width: 90%;
@@ -58,4 +62,20 @@ a{
 .NavButton:active, .Button:active{
     /* background-color: #3c1157; */
     filter: brightness(60%) contrast(100%);
+}
+
+/* View animations */
+.fade-enter {
+    opacity: 0;
+}
+.fade-enter-active {
+    opacity: 1;
+    transition: opacity 300ms;
+}
+.fade-exit {
+    opacity: 1;
+    }
+.fade-exit-active {
+    opacity: 0;
+    transition: opacity 300ms;
 }

@@ -45,11 +45,10 @@
     outline-offset: -1px;
     outline-width: 1px;
     outline-style: solid;
-    outline-color: white;
     z-index: 2;
     cursor: auto;
     backdrop-filter: brightness(2);
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease, outline-color 0.5s ease;
 }
 .cropEditor > div{
     position: absolute;
@@ -62,13 +61,13 @@
     outline-offset: -1px;
     outline-width: 1px;
     outline-style: solid;
-    outline-color: white;
     width: 50px;
     height: 50px;
     display: flex;
     align-items: center;
     cursor: pointer;
     justify-content: center;
+    transition: outline-color 0.5s ease;
 }
 
 .top {
@@ -100,13 +99,4 @@
 }
 .wails-drop-target-active > img{
     opacity: 0.25;
-}
-
-@media (prefers-color-scheme: light) {
-    .cropEditor{
-        outline-color: black;
-    }
-    .cropEditor > div > div{
-        outline-color: black;
-    }
 }

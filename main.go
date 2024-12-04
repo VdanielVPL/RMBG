@@ -27,7 +27,7 @@ func main() {
 	}
 
 	err := wails.Run(&options.App{
-		Title:     "rmbg",
+		Title:     "RMBG",
 		Width:     1200,
 		Height:    700,
 		MinWidth:  920,

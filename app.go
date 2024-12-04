@@ -143,8 +143,8 @@ func (a *App) SetModel(model string) {
 	a.model = model
 }
 
-func (a *App) SaveImage() error {
-	if a.rembgimg2 != nil {
+func (a *App) SaveImage(ImageType string) error {
+	if ImageType == "RMBG" && a.rembgimg2 != nil {
 		filePath, err := image.SaveImageDialog(a.ctx)
 		if err != nil {
 			return err
@@ -153,13 +153,37 @@ func (a *App) SaveImage() error {
 			os.WriteFile(filePath, a.rembgimg2, 0644)
 		}
 		return nil
+	} else if ImageType == "CROP" && a.cropimg != nil {
+		filePath, err := image.SaveImageDialog(a.ctx)
+		if err != nil {
+			return err
+		}
+		if filePath != "" {
+			os.WriteFile(filePath, a.cropimg, 0644)
+		}
+		return nil
+	} else if ImageType == "CROP" && a.cropimgpath != "" {
+		filePath, err := image.SaveImageDialog(a.ctx)
+		if err != nil {
+			return err
+		}
+		if filePath != "" {
+			imgBytes, _ := image.ToBytesFromPath(a.cropimgpath)
+			os.WriteFile(filePath, imgBytes, 0644)
+		}
+		return nil
 	}
 	return nil
 }
 
-func (a *App) CopyImage() {
-	if a.rembgimg2 != nil {
+func (a *App) CopyImage(ImageType string) {
+	if ImageType == "RMBG" && a.rembgimg2 != nil {
 		image.CopyToClipboard(a.rembgimg2)
+	} else if ImageType == "CROP" && a.cropimg != nil {
+		image.CopyToClipboard(a.cropimg)
+	} else if ImageType == "CROP" && a.cropimgpath != "" {
+		imgBytes, _ := image.ToBytesFromPath(a.cropimgpath)
+		image.CopyToClipboard(imgBytes)
 	}
 }
 
@@ -183,6 +207,7 @@ func (a *App) CropImage(left, right, top, bottom float32) []string {
 				runtime.EventsEmit(a.ctx, "cropping", false)
 				return nil
 			}
+			a.cropimgpath = ""
 			a.cropimg = imgBytes
 		} else {
 			runtime.EventsEmit(a.ctx, "cropping", false)

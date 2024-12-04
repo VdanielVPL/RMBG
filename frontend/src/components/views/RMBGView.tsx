@@ -1,5 +1,5 @@
 import '../../styles/RMBGView.css';
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useLayoutEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCloudArrowDown, faCopy, faCropSimple, faImage, faSpinner, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { MainContext } from "../contexts/MainContext";
@@ -35,7 +35,7 @@ function OutputImageContainer() {
     const { outputRMBGImage, removingBG } = useContext(ImageContext);
     const imgRef = useRef<HTMLImageElement>(null);
 
-    useEffect(() => {  
+    useLayoutEffect(() => {  
         if(imgRef.current){
             if (outputRMBGImage != "") {
                 imgRef.current.style.width = '100%';
@@ -108,10 +108,10 @@ export function RMBGView() {
     }
 
     return (
-        <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
+        <div className='View' style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
             <span style={{color: isDarkMode?'white':'black'}} className='ViewHeader'>{strings["BGrem"]}</span>
             <OptionBar callback={handleModelChange}></OptionBar>
-            <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', height: 'inherit'}}>
+            <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%'}}>
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                         <InputImageContainer></InputImageContainer>
@@ -139,11 +139,11 @@ export function RMBGView() {
                                 <FontAwesomeIcon icon={faCropSimple} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                             <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
-                                <Button style={{width: '40px', height: '40px'}} onClick={SaveImage} title={strings["SaveImage"]}>
-                                    <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
-                                </Button>
-                                <Button style={{width: '40px', height: '40px'}} onClick={CopyImage} title={strings["CopyImage"]}>
+                                <Button style={{width: '40px', height: '40px'}} onClick={() => CopyImage('RMBG')} title={strings["CopyImage"]}>
                                     <FontAwesomeIcon icon={faCopy} size='xl'style={{transform: 'scale(0.8)'}} />
+                                </Button>
+                                <Button style={{width: '40px', height: '40px'}} onClick={() => SaveImage('RMBG')} title={strings["SaveImage"]}>
+                                    <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
                                 </Button>
                             </div>
                         </div>

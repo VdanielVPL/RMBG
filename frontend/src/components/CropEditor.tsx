@@ -4,6 +4,7 @@ import { ImageContext } from "./contexts/ImageContext";
 type CropEditorProps = {
     rect: DOMRect | null;
     imageRef: RefObject<HTMLImageElement>;
+    isImageDark: boolean;
 };
 
 export default function CropEditor(props: CropEditorProps) {
@@ -123,18 +124,18 @@ export default function CropEditor(props: CropEditorProps) {
     }
 
     return (
-        <div ref={cropEditorRef} className="cropEditor" style={{top: '0px',right: '0px', left: '0px', bottom: '0px', opacity: '0'}}>
+        <div ref={cropEditorRef} className="cropEditor" style={{top: '0px',right: '0px', left: '0px', bottom: '0px', opacity: '0', outlineColor: props.isImageDark?'white':'black'}}>
             <div className="top" onClick={resetClick}>
-                <div onMouseDown={() => mouseDown("top")} style={{height: '30px', width: '60px'}}></div>
+                <div onMouseDown={() => mouseDown("top")} style={{height: '30px', width: '60px', outlineColor: props.isImageDark?'white':'black'}}></div>
             </div>
             <div className="left" onClick={resetClick}>
-                <div onMouseDown={() => mouseDown("left")} style={{height: '60px', width: '30px'}}></div>
+                <div onMouseDown={() => mouseDown("left")} style={{height: '60px', width: '30px', outlineColor: props.isImageDark?'white':'black'}}></div>
             </div>
             <div className="bottom" onClick={resetClick}>
-                <div onMouseDown={() => mouseDown("bottom")} style={{height: '30px', width: '60px'}}></div>
+                <div onMouseDown={() => mouseDown("bottom")} style={{height: '30px', width: '60px', outlineColor: props.isImageDark?'white':'black'}}></div>
             </div>
             <div className="right" onClick={resetClick}>
-                <div onMouseDown={() => mouseDown("right")} style={{height: '60px', width: '30px'}}></div>
+                <div onMouseDown={() => mouseDown("right")} style={{height: '60px', width: '30px', outlineColor: props.isImageDark?'white':'black'}}></div>
             </div>
         </div>
     );

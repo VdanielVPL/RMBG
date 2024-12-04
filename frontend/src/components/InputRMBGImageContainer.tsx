@@ -1,4 +1,4 @@
-import { useEffect, useRef, CSSProperties, useContext } from "react";
+import { useEffect, useRef, CSSProperties, useContext, useLayoutEffect } from "react";
 import { OnFileDrop, OnFileDropOff } from "../../wailsjs/runtime/runtime";
 import { HandleDrop, OpenImage } from "../../wailsjs/go/main/App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -68,7 +68,7 @@ export function InputImageContainer() {
         }
     }
 
-    useEffect(() => {  
+    useLayoutEffect(() => {  
         if(imgRef.current){
             if (inputRMBGImage != "") {
                 imgRef.current.style.width = '100%';

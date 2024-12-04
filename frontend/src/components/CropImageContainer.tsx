@@ -10,6 +10,7 @@ export function InputImageContainer() {
     // const [filePath, setFilePath] = useState<string>('');
     const { cropImage, setCropImage, cropping } = useContext(ImageContext);
     const [rect, setRect] = useState<DOMRect | null>(null);
+    const [isImageDark, setIsImageDark] = useState<boolean>(true);
     const imageContainer = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLImageElement>(null);
 
@@ -46,6 +47,35 @@ export function InputImageContainer() {
             }
         }
     }, [cropImage]);
+
+    const calculateBrightness = (image: HTMLImageElement) => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+    
+        canvas.width = image.width;
+        canvas.height = image.height;
+        if (!ctx) {
+            return false;
+        }
+        ctx.drawImage(image, 0, 0, image.width, image.height);
+        const imageData = ctx.getImageData(0, 0, image.width, image.height);
+        const data = imageData.data;
+    
+        let totalBrightness = 0;
+    
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            totalBrightness += (r + g + b) / 3;
+        }
+        if (canvas.parentNode) {
+            document.body.removeChild(canvas);
+        }
+    
+        const averageBrightness = totalBrightness / (image.width * image.height);
+        return averageBrightness < 192;
+      };
 
     const handleURLDrop = (event: DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -108,6 +138,7 @@ export function InputImageContainer() {
                 e.currentTarget.style.width = "100%";
             }
             imageContainer.current.style.borderRadius = '0px';
+            setIsImageDark(calculateBrightness(e.currentTarget));
             setRect(imageContainer.current.getBoundingClientRect());
         };
     }
@@ -123,7 +154,7 @@ export function InputImageContainer() {
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%', maxWidth: '160px', maxHeight: '160px'}} />
                 </div>
             }
-            {(cropImage && !cropping) && <CropEditor rect={rect} imageRef={imageRef} />}
+            {(cropImage && !cropping) && <CropEditor rect={rect} imageRef={imageRef} isImageDark={isImageDark}/>}
         </div>
     )
 }
