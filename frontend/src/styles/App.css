@@ -15,7 +15,7 @@ a{
     inset: 20px;
 }
 .NavButton{
-    filter: brightness(100%) contrast(110%);
+    filter: brightness(100%) contrast(105%);
     width: 90%;
     border-radius: 10px;
     text-transform: capitalize;
@@ -36,7 +36,7 @@ a{
     padding: 10px;
 }
 .Button{
-    filter: brightness(100%) contrast(110%);
+    filter: brightness(100%) contrast(105%);
     /* background-color: purple; */
     padding: 10px;
     border-radius: 10px;

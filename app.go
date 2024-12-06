@@ -124,13 +124,14 @@ func (a *App) RemoveBackground() []string {
 		runtime.EventsEmit(a.ctx, "removingbg", true)
 		a.rembgimg2, err = image.RemBG(a.model, a.rembgpath, a.rembgimg)
 		if err != nil {
-			runtime.LogError(a.ctx, "Error removing background:"+err.Error())
 			runtime.EventsEmit(a.ctx, "removingbg", false)
+			runtime.EventsEmit(a.ctx, "error", err.Error())
 			return nil
 		}
 		str, fileType, err := image.ToBase64FromBytes(a.rembgimg2)
 		if err != nil {
 			runtime.EventsEmit(a.ctx, "removingbg", false)
+			runtime.EventsEmit(a.ctx, "error", err.Error())
 			return nil
 		}
 		return []string{str, fileType}

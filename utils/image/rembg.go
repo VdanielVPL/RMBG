@@ -2,6 +2,7 @@ package image
 
 import (
 	"bytes"
+	"errors"
 	"os/exec"
 	"syscall"
 )
@@ -18,6 +19,9 @@ func RemBG(model string, path string, img []byte) ([]byte, error) {
 		err := cmd.Run()
 		if err != nil {
 			cmd = nil
+			if errors.Is(err, exec.ErrNotFound) {
+				return nil, errors.New("REMBG_NOT_FOUND")
+			}
 			return nil, err
 		}
 		cmd = nil
@@ -34,6 +38,9 @@ func RemBG(model string, path string, img []byte) ([]byte, error) {
 		err := cmd.Run()
 		if err != nil {
 			cmd = nil
+			if errors.Is(err, exec.ErrNotFound) {
+				return nil, errors.New("REMBG_NOT_FOUND")
+			}
 			return nil, err
 		}
 		cmd = nil

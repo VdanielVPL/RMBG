@@ -74,12 +74,15 @@ export function RMBGView() {
     function removeBackground() {
         setOutputRMBGImage("");
         if (inputRMBGImage != "") {
-            RemoveBackground().then(([base64, fileType]) => {
-                if (base64 == "" || fileType == "") {
-                    setOutputRMBGImage("");
-                } else {
-                    setOutputRMBGImage(`data:${fileType};base64,${base64}`);
-                    EventsEmit('removingbg', false);
+            RemoveBackground().then((result) => {
+                if (result != null) {
+                    const [base64, fileType] = result;
+                    if (base64 == "" || fileType == "") {
+                        setOutputRMBGImage("");
+                    } else {
+                        setOutputRMBGImage(`data:${fileType};base64,${base64}`);
+                        EventsEmit('removingbg', false);
+                    }
                 }
             });
         }

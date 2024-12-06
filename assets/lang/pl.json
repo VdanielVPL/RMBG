@@ -8,5 +8,7 @@
     "CopyImage": "Kopiuj do schowka",
     "ToCropView": "Przenieś obraz do widoku kadrowania",
     "ToRMBGView": "Przenieś obraz do widoku usuwania tła",
-    "CropImage": "Kadruj obraz"
+    "CropImage": "Kadruj obraz",
+    "ErrorUnknown": "Wystąpił nieznany błąd",
+    "ErrorREMBG_NOT_FOUND": "Nie znaleziono CLI rembg"
 }

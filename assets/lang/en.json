@@ -8,5 +8,7 @@
     "CopyImage": "Copy to clipboard",
     "ToCropView": "Move image to cropping view",
     "ToRMBGView": "Move image to background removal view",
-    "CropImage": "Crop image"
+    "CropImage": "Crop image",
+    "ErrorUnknown": "An unknown error occurred",
+    "ErrorREMBG_NOT_FOUND": "rembg CLI not found"
 }
