@@ -7,6 +7,7 @@ interface SelectListProps{
     width?: string;
     onSelected?: (selected: Selected)=>void;
     defaultSelected?: "first" | "none" | string;
+    isDarkMode?: boolean;
 }
 
 export interface Selected{
@@ -75,7 +76,7 @@ export default function SelectList(props: SelectListProps) {
                 <div style={{display:expanded?'block':'none', position: 'absolute', top: '100%', width: '100%', backgroundColor: 'rgb(30, 32, 33)', zIndex: '3', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px'}}>
                     <div style={{padding: '5px 5px 5px 5px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
                         {props.tiles.map((item)=>(
-                            <div onClick={()=>{onClickOption(item.text, item.value)}} style={{padding: '5px', textAlign: 'left', backgroundColor: item.text==selected?.text?'rgb(34, 38, 39)':'inherit', borderRadius: '10px'}} key={item.value}>{item.text}</div>
+                            <div className="selectListOption" onClick={()=>{onClickOption(item.text, item.value)}} style={{padding: '5px', textAlign: 'left', backgroundColor: item.text==selected?.text?'rgb(34, 38, 39)':'inherit', borderRadius: '10px', transition: 'background-color 0.35s ease'}} key={item.value}>{item.text}</div>
                         ))}
                     </div>
                 </div>

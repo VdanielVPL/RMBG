@@ -11,6 +11,7 @@ export function MainWrapper({children}: {children: ReactNode}) {
     const [ error, setError ] = useState<string>("");
 
     useEffect(() => {
+        document.body.style.setProperty('--accent-color', accentColor);
         const handleRemBGstatus = (status: boolean) => {
             setRemovingBG(status);
         }
@@ -41,7 +42,7 @@ export function MainWrapper({children}: {children: ReactNode}) {
             EventsOff('cropping');
             EventsOff('error');
         }
-    }, [strings]);
+    }, [strings, accentColor]);
 
     return (
         <>
