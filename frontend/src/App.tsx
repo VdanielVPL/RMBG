@@ -5,7 +5,7 @@ import { MainWrapper } from './components/MainWrapper';
 import { RMBGView } from './components/views/RMBGView';
 import { CropView } from './components/views/CropView';
 import { ImageProvider } from './components/contexts/ImageContext';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function App() {
     return (
@@ -26,14 +26,20 @@ function Views() {
     const location = useLocation();
 
     return(
-        <TransitionGroup>
-            <CSSTransition key={location.pathname} classNames="fade" timeout={300} unmountOnExit>
+        <AnimatePresence mode="wait">
+            <motion.div
+                key={location.pathname}
+                initial={{ opacity: 0}}
+                animate={{ opacity: 1}}
+                exit={{ opacity: 0}}
+                transition={{ duration: 0.19 }}
+            >
                 <Routes location={location}>
                     <Route path="/" element={<RMBGView/>} />
                     <Route path="/crop" element={<CropView/>} />
                 </Routes>
-            </CSSTransition>
-        </TransitionGroup>
+            </motion.div>
+        </AnimatePresence>
     )
 }
 

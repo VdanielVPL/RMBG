@@ -65,7 +65,7 @@ a{
 }
 
 .selectListOption:hover{
-    /* background-color: var(--accent-color) !important; */
+    background-color: var(--accent-color) !important;
 }
 
 /* View animations */
