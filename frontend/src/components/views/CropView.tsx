@@ -49,6 +49,7 @@ export function CropView() {
             <span style={{color: isDarkMode?'white':'black'}} className='ViewHeader'>{strings["Crop"]}</span>
             <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center'}}>
+                    <div style={{height: '40px'}}></div>
                     <InputImageContainer></InputImageContainer>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
                         <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>

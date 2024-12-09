@@ -152,7 +152,7 @@ export function InputImageContainer() {
         width: '100%',
         height: '100%',
         zIndex: 2,
-        filter: 'brightness(0.7)',
+        filter: 'brightness(0.5)',
         outlineColor: 'gray',
         outlineStyle: 'solid',
         outlineWidth: '1px',

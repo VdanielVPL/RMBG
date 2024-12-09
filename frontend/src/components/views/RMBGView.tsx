@@ -21,12 +21,12 @@ const tiles: Selected[] = [
 function OptionBar(props: {callback: (selected: Selected) => void}) {
 
     const { model } = useContext(ImageContext);
-    const { strings, isDarkMode } = useContext(MainContext);
+    const { strings, isDarkMode, accentColor } = useContext(MainContext);
 
     return (
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
             <span style={{color: !isDarkMode?'black':undefined}}>{strings["AImodel"]}</span>
-            <SelectList tiles={tiles} width='170px' defaultSelected={model} onSelected={props.callback}/>
+            <SelectList tiles={tiles} width='170px' defaultSelected={model} onSelected={props.callback} accentColor={accentColor} isDarkMode={isDarkMode}/>
         </div>
     )
 }

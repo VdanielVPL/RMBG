@@ -35,6 +35,7 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
+		DisableResize:    true,
 		BackgroundColour: utils.BgColor(),
 		OnStartup:        app.startup,
 		Windows:          windowsOptions,

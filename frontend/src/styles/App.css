@@ -66,6 +66,7 @@ a{
 
 .selectListOption:hover{
     background-color: var(--accent-color) !important;
+    color: white !important;
 }
 
 /* View animations */
