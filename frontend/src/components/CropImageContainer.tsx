@@ -75,7 +75,7 @@ export function InputImageContainer() {
     
         const averageBrightness = totalBrightness / (image.width * image.height);
         return averageBrightness < 192;
-      };
+    };
 
     const handleURLDrop = (event: DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -142,7 +142,7 @@ export function InputImageContainer() {
             setRect(imageContainer.current.getBoundingClientRect());
         };
     }
-    
+
     const patternStyle = {
         backgroundImage: `
           url("data:image/svg+xml;utf8,<svg width='20' height='20' xmlns='http://www.w3.org/2000/svg'><rect width='10' height='10' fill='%23808080'/><rect x='10' y='10' width='10' height='10' fill='%23808080'/></svg>")
@@ -153,6 +153,10 @@ export function InputImageContainer() {
         height: '100%',
         zIndex: 2,
         filter: 'brightness(0.7)',
+        outlineColor: 'gray',
+        outlineStyle: 'solid',
+        outlineWidth: '1px',
+        outlineOffset: '-1px',
     } as CSSProperties;
 
     return (
