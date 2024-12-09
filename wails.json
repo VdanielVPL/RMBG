@@ -6,6 +6,9 @@
   "frontend:build": "bun run build",
   "frontend:dev:watcher": "bun dev",
   "frontend:dev:serverUrl": "auto",
+  "info": {
+    "productVersion": "1.2"
+  },
   "obfuscated": true,
   "garbleargs": "-tiny",
   "author": {
