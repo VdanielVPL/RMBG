@@ -142,6 +142,18 @@ export function InputImageContainer() {
             setRect(imageContainer.current.getBoundingClientRect());
         };
     }
+    
+    const patternStyle = {
+        backgroundImage: `
+          url("data:image/svg+xml;utf8,<svg width='20' height='20' xmlns='http://www.w3.org/2000/svg'><rect width='10' height='10' fill='%23808080'/><rect x='10' y='10' width='10' height='10' fill='%23808080'/></svg>")
+        `,
+        backgroundSize: '20px 20px',
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        zIndex: 2,
+        filter: 'brightness(0.7)',
+    } as CSSProperties;
 
     return (
         <div ref={imageContainer} className='imageContainer imageContainerCrop' onDrop={handleURLDrop} style={{'--wails-drop-target': 'drop', backgroundColor: cropImage!="" && "rgba(255,255,255,0)", cursor: cropImage!="" && 'auto'} as CSSProperties} onClick={openDialog}>
@@ -149,6 +161,7 @@ export function InputImageContainer() {
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1, opacity: cropImage!=""?0:1}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
             </div>
+            {cropImage && <div style={patternStyle}></div>}
             {cropping && 
                 <div style={{position: 'absolute', height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1}}>
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%', maxWidth: '160px', maxHeight: '160px'}} />
