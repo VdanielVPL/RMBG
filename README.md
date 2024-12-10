@@ -16,4 +16,7 @@ to this in your browser, and you can call your Go code from devtools.
 
 ## Building
 
-To build a redistributable, production mode package, use ` wails build -platform windows -ldflags "-s -w" -trimpath -tags "-B"; if($?) {iscc setup.iss} `.
+To build a redistributable, production mode package, use 
+```powershell
+wails build -platform windows -ldflags "-s -w" -trimpath -tags "-B"; if($?) {iscc setup.iss}
+```
