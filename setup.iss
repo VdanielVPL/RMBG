@@ -9,6 +9,7 @@ UninstallDisplayIcon={app}\RMBG.exe
 OutputDir=build\bin
 OutputBaseFilename=RMBG-setup
 AppVerName=RMBG 1.2
+WizardStyle=modern
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
