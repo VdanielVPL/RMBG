@@ -32,6 +32,7 @@ Before using RMBG, ensure you have the following installed:
 
 - **Python 3.8 to 3.12**: Download from [here](https://www.python.org/downloads/).
 - **`rembg` Library**: Install with:
+  
   ```bash
   pip install "rembg[cli]"
   ```
@@ -88,11 +89,13 @@ Make sure you have:
 
 - **Python 3.8 to 3.12**: Required for the `rembg` library.
 - **`rembg`**:
+  
   ```bash
   pip install "rembg[cli]"
   ```
 - **Go**: Install from [here](https://golang.org/dl/).
 - **Wails CLI**:
+  
   ```bash
   go install github.com/wailsapp/wails/v2/cmd/wails@latest
   ```
@@ -122,12 +125,7 @@ Make sure you have:
      bun i
      ```
 
-3. **Install Wails CLI**:
-   ```bash
-   go install github.com/wailsapp/wails/v2/cmd/wails@latest
-   ```
-
-4. **Build the Application**:
+3. **Build the Application**:
    Return to the main directory:
    ```bash
    cd ..
@@ -145,7 +143,7 @@ Make sure you have:
    wails dev
    ```
 
-5. **Run the Installer (If Release Build)**:
+4. **Run the Installer (If Release Build)**:
    After a successful build and packaging, you will find the `.exe` installer in `./build/bin`. Run it to install and use the application.
 
 ## Key Files
