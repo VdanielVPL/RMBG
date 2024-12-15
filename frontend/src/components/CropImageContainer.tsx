@@ -13,6 +13,7 @@ export function InputImageContainer() {
     const [isImageDark, setIsImageDark] = useState<boolean>(true);
     const imageContainer = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLImageElement>(null);
+    const alphaPatternRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleFileDrop = (x: number, y: number, paths: string[]) => {
@@ -140,6 +141,9 @@ export function InputImageContainer() {
             imageContainer.current.style.borderRadius = '0px';
             setIsImageDark(calculateBrightness(e.currentTarget));
             setRect(imageContainer.current.getBoundingClientRect());
+            if (alphaPatternRef.current) {
+                alphaPatternRef.current.style.opacity = '1';
+            }
         };
     }
 
@@ -157,6 +161,8 @@ export function InputImageContainer() {
         outlineStyle: 'solid',
         outlineWidth: '1px',
         outlineOffset: '-1px',
+        opacity: 0,
+        transition: 'opacity 0.5s ease',
     } as CSSProperties;
 
     return (
@@ -165,13 +171,13 @@ export function InputImageContainer() {
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1, opacity: cropImage!=""?0:1}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
             </div>
-            {cropImage && <div style={patternStyle}></div>}
             {cropping && 
-                <div style={{position: 'absolute', height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1}}>
+                <div style={{position: 'absolute', height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3}}>
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%', maxWidth: '160px', maxHeight: '160px'}} />
                 </div>
             }
             {(cropImage && !cropping) && <CropEditor rect={rect} imageRef={imageRef} isImageDark={isImageDark}/>}
+            {cropImage!="" && <div ref={alphaPatternRef} style={patternStyle}></div>}
         </div>
     )
 }
