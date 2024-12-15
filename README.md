@@ -7,22 +7,21 @@
 
 <div align="center">
   
-[![Downloads](https://img.shields.io/github/downloads/VdanielVPL/RMBG/total.svg)](https://github.com/VdanielVPL/RMBG/releases)  [![GitHub License](https://img.shields.io/github/license/VdanielVPL/RMBG)](https://www.gnu.org/licenses/gpl-3.0.en.html)  [![Current version](https://img.shields.io/github/v/release/VdanielVPL/RMBG?label=version)](https://github.com/VdanielVPL/RMBG/releases)
+[![Downloads](https://img.shields.io/github/downloads/VdanielVPL/RMBG/total.svg?style=for-the-badge)](https://github.com/VdanielVPL/RMBG/releases)  [![GitHub License](https://img.shields.io/github/license/VdanielVPL/RMBG?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0.en.html)  [![Current version](https://img.shields.io/github/v/release/VdanielVPL/RMBG?label=version&style=for-the-badge)](https://github.com/VdanielVPL/RMBG/releases)
 
 </div>
 
 ## Downloading the Installer
 
-You can download the `.exe` installer file directly from the [Releases](https://github.com/VdanielVPL/RMBG/releases) section of the GitHub repository.
+  <a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
+    <img height='40px' src="https://img.shields.io/badge/download-red?style=for-the-badge" alt="Download Installer">
+  </a>
+</br>
 
-1. **Download the Latest Release**:
-   - Go to the [Releases](https://github.com/VdanielVPL/RMBG/releases) page.
-   - Download the `.exe` installer file.
-
-2. **Ensure Prerequisites are Met**:
+1. **Ensure Prerequisites are Met**:
    - Make sure you have **Python version 3.8 to 3.12** and the **`rembg` library** installed (see [Prerequisites](#prerequisites)).
 
-3. **Run the Installer**:
+2. **Run the Installer**:
    - Double-click the downloaded `.exe` file to install the application.
    - After installation, the application is ready to use.
 
