@@ -13,7 +13,9 @@
     cursor: pointer;
     position: relative;
     background-color: rgba(255, 255, 255, 1);
-    border: 1px solid rgba(255, 255, 255, 1);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 1);
     overflow: hidden;
     z-index: 1;
     transition: background-color 0.35s ease, border-color 0.35s ease, border-radius 0.5s ease;
@@ -94,9 +96,9 @@
     transform: translateX(-50%);
 }
 .wails-drop-target-active{
-    background-color: purple !important;
-    border-color: purple;
+    background-color: rgba(255, 255, 255, 0);
+    border-color: var(--accent-color);
 }
-.wails-drop-target-active > img{
-    opacity: 0.25;
+.wails-drop-target-active > .dropView{
+    opacity: 1 !important;
 }

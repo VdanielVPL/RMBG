@@ -5,9 +5,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { ImageContext } from "./contexts/ImageContext";
 import CropEditor from "./CropEditor";
+import { MainContext } from "./contexts/MainContext";
 
 export function InputImageContainer() {
     // const [filePath, setFilePath] = useState<string>('');
+    const { accentColor } = useContext(MainContext);
     const { cropImage, setCropImage, cropping } = useContext(ImageContext);
     const [rect, setRect] = useState<DOMRect | null>(null);
     const [isImageDark, setIsImageDark] = useState<boolean>(true);
@@ -176,6 +178,9 @@ export function InputImageContainer() {
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%', maxWidth: '160px', maxHeight: '160px'}} />
                 </div>
             }
+            <div className="dropView" style={{position: 'absolute', zIndex: 4, backgroundColor: accentColor, width: '100%', height: '100%', border: '1px solid red', opacity: '0', transition: 'opacity 0.4s ease', display: 'flex', justifyContent: 'center', alignItems: 'center', filter: cropImage&& 'brightness(0.5)'}}>
+                <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
+            </div>
             {(cropImage && !cropping) && <CropEditor rect={rect} imageRef={imageRef} isImageDark={isImageDark}/>}
             {cropImage!="" && <div ref={alphaPatternRef} style={patternStyle}></div>}
         </div>
