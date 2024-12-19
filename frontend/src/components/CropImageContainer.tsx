@@ -178,7 +178,7 @@ export function InputImageContainer() {
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%', maxWidth: '160px', maxHeight: '160px'}} />
                 </div>
             }
-            <div className="dropView" style={{position: 'absolute', zIndex: 4, backgroundColor: accentColor, width: '100%', height: '100%', border: '1px solid red', opacity: '0', transition: 'opacity 0.4s ease', display: 'flex', justifyContent: 'center', alignItems: 'center', filter: cropImage&& 'brightness(0.5)'}}>
+            <div className="dropView" style={{position: 'absolute', zIndex: 4, backgroundColor: accentColor, width: '100%', height: '100%', opacity: '0', transition: 'opacity 0.4s ease', display: 'flex', justifyContent: 'center', alignItems: 'center', filter: cropImage&& 'brightness(0.5)'}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
             </div>
             {(cropImage && !cropping) && <CropEditor rect={rect} imageRef={imageRef} isImageDark={isImageDark}/>}

@@ -88,7 +88,7 @@ export function InputImageContainer() {
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1,}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%'}} />
             </div>
-            <div className="dropView" style={{position: 'absolute', zIndex: 5, backgroundColor: accentColor, width: '100%', height: '100%', border: '1px solid red', opacity: '0', transition: 'opacity 0.4s ease', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <div className="dropView" style={{position: 'absolute', zIndex: 5, backgroundColor: accentColor, width: '100%', height: '100%', opacity: '0', transition: 'opacity 0.4s ease', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%'}} />
             </div>
         </div>
