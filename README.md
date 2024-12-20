@@ -100,6 +100,7 @@ Make sure you have:
   ```
 - **Bun**: Install from [here](https://bun.sh/).
 - **iscc (Inno Setup Compiler)**: Download and install from [here](https://jrsoftware.org/isinfo.php) to create the `.exe` installer.
+    - Add the Inno Setup installation folder to your PATH environment variable.
 
 ### Installation Steps
 
