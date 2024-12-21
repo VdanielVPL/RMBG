@@ -12,10 +12,10 @@
 </div>
 
 ## Downloading the Installer
+<a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
+  <img height='40px' src="https://img.shields.io/badge/download-red?style=for-the-badge" alt="Download Installer">
+</a>
 
-  <a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
-    <img height='40px' src="https://img.shields.io/badge/download-red?style=for-the-badge" alt="Download Installer">
-  </a>
 </br>
 
 1. **Ensure Prerequisites are Met**:
