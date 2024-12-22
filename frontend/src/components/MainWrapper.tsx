@@ -73,7 +73,7 @@ function ErrorAlert(props: {error?: string, accentColor: string, triggerError: b
     }, [props.triggerError, props.error]);
 
     return (
-        <div ref={errorRef} style={{opacity: 0, position: 'absolute', width: 'auto', height: '20px', bottom: 40, left: '50%', transform: 'translateX(-50%)', padding: '5px', borderRadius: '10px', transition: 'opacity 0.5s ease'}}>
+        <div ref={errorRef} style={{pointerEvents: 'none', opacity: 0, position: 'absolute', width: 'auto', height: '20px', bottom: 40, left: '50%', transform: 'translateX(-50%)', padding: '5px', borderRadius: '10px', transition: 'opacity 0.5s ease'}}>
             <div style={{color: isDarkMode?'white':'black', padding: '10px', borderRadius: '10px', backgroundColor: isDarkMode?'rgb(34, 38, 39)':'white', border: `1px solid ${props.accentColor}`, boxShadow: `0px 0px 10px ${props.accentColor}`}}>{props.error}</div>
         </div>
     )
