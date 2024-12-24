@@ -7,8 +7,8 @@ export function MainWrapper({children}: {children: ReactNode}) {
 
     const { accentColor, strings } = useContext(MainContext);
     const { setRemovingBG, setCropping } = useContext(ImageContext);
-    const [ triggerError, setTriggerError ] = useState<boolean>(false);
-    const [ error, setError ] = useState<string>("");
+    const [ triggerAlert, setTriggerAlert ] = useState<boolean>(false);
+    const [ alertString, setAlertString ] = useState<string>("");
 
     useEffect(() => {
         document.body.style.setProperty('--accent-color', accentColor);
@@ -20,27 +20,27 @@ export function MainWrapper({children}: {children: ReactNode}) {
             setCropping(status);
         }
 
-        const handleError = (error: string) => {
-            let errorMessage = '';
-            switch (error) {
+        const handleAlert = (alert: string) => {
+            let alertMessage = '';
+            switch (alert) {
                 case 'REMBG_NOT_FOUND':
-                    errorMessage = strings['ErrorREMBG_NOT_FOUND'];
+                    alertMessage = strings['ErrorREMBG_NOT_FOUND'];
                     break;
                 default:
-                    errorMessage = strings['ErrorUnknown'];
+                    alertMessage = strings['ErrorUnknown'];
             }
-            setTriggerError((prev) => !prev);
-            setError(errorMessage);
+            setTriggerAlert((prev) => !prev);
+            setAlertString(alertMessage);
         }
 
         EventsOn('removingbg', handleRemBGstatus);
         EventsOn('cropping', handleCropStatus);
-        EventsOn('error', handleError);
+        EventsOn('alert', handleAlert);
 
         return () => {
             EventsOff('removingbg');
             EventsOff('cropping');
-            EventsOff('error');
+            EventsOff('alert');
         }
     }, [strings, accentColor]);
 
@@ -49,32 +49,32 @@ export function MainWrapper({children}: {children: ReactNode}) {
             <div style={{position: 'relative', flex: '1', boxSizing: "border-box", padding: '20px', width: '100%', height: '100%'}}>
                 {children}  
             </div>
-            <ErrorAlert triggerError={triggerError} error={error} accentColor={accentColor}/>
+            <Alert triggerAlert={triggerAlert} alertString={alertString} accentColor={accentColor}/>
         </>
     )
 }
 
-function ErrorAlert(props: {error?: string, accentColor: string, triggerError: boolean}) {
-    const errorRef = useRef<HTMLDivElement>(null);
+function Alert(props: {alertString?: string, accentColor: string, triggerAlert: boolean}) {
+    const alertRef = useRef<HTMLDivElement>(null);
     const timeoutRef = useRef<number | null>(null);
     const { isDarkMode } = useContext(MainContext);
 
     useEffect(() => {
-        if (props.error !== "") {
+        if (props.alertString !== "") {
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
             }
-            errorRef.current?.style.setProperty('opacity', '1');
+            alertRef.current?.style.setProperty('opacity', '1');
             timeoutRef.current = window.setTimeout(() => {
-                errorRef.current?.style.setProperty('opacity', '0');
+                alertRef.current?.style.setProperty('opacity', '0');
                 timeoutRef.current = null;
             }, 5000);
         }
-    }, [props.triggerError, props.error]);
+    }, [props.triggerAlert, props.alertString]);
 
     return (
-        <div ref={errorRef} style={{pointerEvents: 'none', opacity: 0, position: 'absolute', width: 'auto', height: '20px', bottom: 40, left: '50%', transform: 'translateX(-50%)', padding: '5px', borderRadius: '10px', transition: 'opacity 0.5s ease'}}>
-            <div style={{color: isDarkMode?'white':'black', padding: '10px', borderRadius: '10px', backgroundColor: isDarkMode?'rgb(34, 38, 39)':'white', border: `1px solid ${props.accentColor}`, boxShadow: `0px 0px 10px ${props.accentColor}`}}>{props.error}</div>
+        <div ref={alertRef} style={{pointerEvents: 'none', opacity: 0, position: 'absolute', width: 'auto', height: '20px', bottom: 40, left: '50%', transform: 'translateX(-50%)', padding: '5px', borderRadius: '10px', transition: 'opacity 0.5s ease'}}>
+            <div style={{color: isDarkMode?'white':'black', padding: '10px', borderRadius: '10px', backgroundColor: isDarkMode?'rgb(34, 38, 39)':'white', border: `1px solid ${props.accentColor}`, boxShadow: `0px 0px 10px ${props.accentColor}`}}>{props.alertString}</div>
         </div>
     )
 }
