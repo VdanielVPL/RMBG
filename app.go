@@ -152,8 +152,8 @@ func (a *App) SaveImage(ImageType string) error {
 		}
 		if filePath != "" {
 			os.WriteFile(filePath, a.rembgimg2, 0644)
+			runtime.EventsEmit(a.ctx, "alert", "SAVED")
 		}
-		return nil
 	} else if ImageType == "CROP" && a.cropimg != nil {
 		filePath, err := image.SaveImageDialog(a.ctx)
 		if err != nil {
@@ -161,18 +161,21 @@ func (a *App) SaveImage(ImageType string) error {
 		}
 		if filePath != "" {
 			os.WriteFile(filePath, a.cropimg, 0644)
+			runtime.EventsEmit(a.ctx, "alert", "SAVED")
 		}
-		return nil
 	} else if ImageType == "CROP" && a.cropimgpath != "" {
 		filePath, err := image.SaveImageDialog(a.ctx)
 		if err != nil {
 			return err
 		}
 		if filePath != "" {
-			imgBytes, _ := image.ToBytesFromPath(a.cropimgpath)
+			imgBytes, err := image.ToBytesFromPath(a.cropimgpath)
+			if err != nil {
+				return err
+			}
 			os.WriteFile(filePath, imgBytes, 0644)
+			runtime.EventsEmit(a.ctx, "alert", "SAVED")
 		}
-		return nil
 	}
 	return nil
 }
@@ -186,6 +189,7 @@ func (a *App) CopyImage(ImageType string) {
 		imgBytes, _ := image.ToBytesFromPath(a.cropimgpath)
 		image.CopyToClipboard(imgBytes)
 	}
+	runtime.EventsEmit(a.ctx, "alert", "COPIED")
 }
 
 func (a *App) ClearImageMem(Imagetype string) {

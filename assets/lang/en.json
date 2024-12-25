@@ -10,5 +10,7 @@
     "ToRMBGView": "Move image to background removal view",
     "CropImage": "Crop image",
     "ErrorUnknown": "An unknown error occurred",
-    "ErrorREMBG_NOT_FOUND": "rembg CLI not found"
+    "ErrorREMBG_NOT_FOUND": "rembg CLI not found",
+    "AlertIMAGE_SAVED": "Image saved",
+    "AlertIMAGE_COPIED": "Image copied"
 }

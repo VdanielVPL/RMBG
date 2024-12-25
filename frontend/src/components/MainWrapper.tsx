@@ -26,6 +26,12 @@ export function MainWrapper({children}: {children: ReactNode}) {
                 case 'REMBG_NOT_FOUND':
                     alertMessage = strings['ErrorREMBG_NOT_FOUND'];
                     break;
+                case 'SAVED':
+                    alertMessage = strings['AlertIMAGE_SAVED'];
+                    break;
+                case 'COPIED':
+                    alertMessage = strings['AlertIMAGE_COPIED'];
+                    break;
                 default:
                     alertMessage = strings['ErrorUnknown'];
             }
