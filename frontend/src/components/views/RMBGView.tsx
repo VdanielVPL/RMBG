@@ -12,10 +12,11 @@ import { ImageContext } from '../contexts/ImageContext';
 import { useNavigate } from 'react-router-dom';
 
 const tiles: Selected[] = [
-    {text: "u2net", value: "u2net"},
-    {text: "isnet - general", value: "isnet-general-use"},
-    {text: "birefnet - general", value: "birefnet-general"},
-    {text: "birefnet - massive", value: "birefnet-massive"},
+    {text: "U<sup class='supu2net'>2</sup><span style='letter-spacing: 0.1em'>&nbsp;</span>-Net", value: "u2net"},
+    {text: "ISNet - general", value: "isnet-general-use"},
+    {text: "BiRefNet - general", value: "birefnet-general"},
+    {text: "BiRefNet - massive", value: "birefnet-massive"},
+    {text: "BRIA RMBG 2.0", value: "bria-rmbg"}
 ]
 
 function OptionBar(props: {callback: (selected: Selected) => void}) {

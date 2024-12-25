@@ -77,28 +77,32 @@
     left: 50%;
     transform: translateX(-50%);
 }
-
 .left {
     top: 50%;
     left: 0;
     transform: translateY(-50%);
 }
-
 .right {
     top: 50%;
     right: 0;
     transform: translateY(-50%);
 }
-
 .bottom {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
 }
+
 .wails-drop-target-active{
     background-color: rgba(255, 255, 255, 0);
     border-color: var(--accent-color);
 }
 .wails-drop-target-active > .dropView{
     opacity: 1 !important;
+}
+.supu2net{
+    position: absolute;
+    top: 20%;
+    transform: translateY(-50%);
+    font-size: 0.8em;
 }
