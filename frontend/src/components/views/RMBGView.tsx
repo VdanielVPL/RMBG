@@ -16,7 +16,7 @@ const tiles: Selected[] = [
     {text: "ISNet - general", value: "isnet-general-use"},
     {text: "BiRefNet - general", value: "birefnet-general"},
     {text: "BiRefNet - massive", value: "birefnet-massive"},
-    {text: "BRIA RMBG 2.0", value: "bria-rmbg"}
+    {text: "Bria RMBG 2.0", value: "bria-rmbg"}
 ]
 
 function OptionBar(props: {callback: (selected: Selected) => void}) {
