@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 const tiles: Selected[] = [
     {text: "U<sup class='supu2net'>2</sup><span style='letter-spacing: 0.1em'>&nbsp;</span>-Net", value: "u2net"},
-    {text: "ISNet - general", value: "isnet-general-use"},
+    {text: "IS-Net - general", value: "isnet-general-use"},
     {text: "BiRefNet - general", value: "birefnet-general"},
     {text: "BiRefNet - massive", value: "birefnet-massive"},
     {text: "Bria RMBG 2.0", value: "bria-rmbg"}
