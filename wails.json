@@ -7,7 +7,7 @@
   "frontend:dev:watcher": "bun dev",
   "frontend:dev:serverUrl": "auto",
   "info": {
-    "productVersion": "1.2"
+    "productVersion": "1.0"
   },
   "obfuscated": true,
   "garbleargs": "-tiny",
