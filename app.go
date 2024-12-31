@@ -188,6 +188,8 @@ func (a *App) CopyImage(ImageType string) {
 	} else if ImageType == "CROP" && a.cropimgpath != "" {
 		imgBytes, _ := image.ToBytesFromPath(a.cropimgpath)
 		image.CopyToClipboard(imgBytes)
+	} else {
+		return
 	}
 	runtime.EventsEmit(a.ctx, "alert", "COPIED")
 }
