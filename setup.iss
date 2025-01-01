@@ -9,6 +9,7 @@ UninstallDisplayIcon={app}\RMBG.exe
 OutputDir=build\bin
 OutputBaseFilename=RMBG-setup
 AppVerName=RMBG 1.0
+SetupIconFile=build/installericon.ico
 WizardStyle=modern
 
 [Languages]
