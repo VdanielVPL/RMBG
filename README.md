@@ -1,4 +1,5 @@
-<h1 align="center"><img src="./app-icon.png" width="100px" align="center">RMBG</h1>
+<div align="center"><img src="./build/appicon.png" width="100px"></div>
+<h1 align="center">RMBG</h1>
 <div align="center">
   <img alt="RMBG" src="https://github.com/user-attachments/assets/your-banner-image.png">
 </div>
