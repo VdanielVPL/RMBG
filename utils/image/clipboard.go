@@ -5,11 +5,11 @@ import (
 	"unsafe"
 )
 
-func CopyToClipboard(imageData []byte) error {
+func CopyToClipboard(imageData []byte, kernel32 *syscall.LazyDLL, user32 *syscall.LazyDLL, CF_PNG uint32) error {
 
 	if imageData != nil {
 
-		err := setClipboardImage(imageData)
+		err := setClipboardImage(imageData, kernel32, user32, CF_PNG)
 		if err != nil {
 			return err
 		}
@@ -20,23 +20,8 @@ func CopyToClipboard(imageData []byte) error {
 }
 
 // Forgive me for what you are about to see...
-var CF_PNG uint32
 
-func init() {
-	formatName, _ := syscall.UTF16PtrFromString("PNG")
-	CF_PNG = RegisterClipboardFormat(formatName)
-}
-
-func RegisterClipboardFormat(formatName *uint16) uint32 {
-	user32 := syscall.NewLazyDLL("user32.dll")
-	registerClipboardFormat := user32.NewProc("RegisterClipboardFormatW")
-	ret, _, _ := registerClipboardFormat.Call(uintptr(unsafe.Pointer(formatName)))
-	return uint32(ret)
-}
-
-func setClipboardImage(pngData []byte) error {
-	user32 := syscall.NewLazyDLL("user32.dll")
-	kernel32 := syscall.NewLazyDLL("kernel32.dll")
+func setClipboardImage(pngData []byte, kernel32 *syscall.LazyDLL, user32 *syscall.LazyDLL, CF_PNG uint32) error {
 
 	openClipboard := user32.NewProc("OpenClipboard")
 	emptyClipboard := user32.NewProc("EmptyClipboard")

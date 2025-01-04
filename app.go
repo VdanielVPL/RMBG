@@ -6,6 +6,7 @@ import (
 	"rmbg/utils"
 	"rmbg/utils/image"
 	"syscall"
+	"unsafe"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -13,6 +14,9 @@ import (
 // App struct
 type App struct {
 	ctx         context.Context
+	kernel32    *syscall.LazyDLL
+	user32      *syscall.LazyDLL
+	CF_PNG      uint32
 	LangStrings map[string]string
 	IsDarkMode  bool
 	AccentColor string
@@ -22,7 +26,6 @@ type App struct {
 	rembgimg2   []byte
 	cropimgpath string
 	cropimg     []byte
-	kernel32    *syscall.LazyDLL
 }
 
 // NewApp creates a new App application struct
@@ -34,19 +37,27 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+
 	a.kernel32 = syscall.NewLazyDLL("kernel32.dll")
+	a.user32 = syscall.NewLazyDLL("user32.dll")
+
 	if langData, err := utils.LoadLang(a.kernel32); err == nil {
 		a.LangStrings = langData
 	} else {
 		runtime.LogError(ctx, "Error loading lang file:"+err.Error())
 	}
+
 	if accentColor, err := utils.GetAccentColor(); err == nil {
 		a.AccentColor = accentColor
 	} else {
 		runtime.LogError(ctx, "Error getting accent color:"+err.Error())
 	}
+
 	a.IsDarkMode = utils.IsDarkMode()
 	a.model = "u2net"
+
+	formatName, _ := syscall.UTF16PtrFromString("PNG")
+	a.CF_PNG = RegisterClipboardFormat(formatName, a.user32)
 }
 
 func (a *App) GetLangStrings() map[string]string {
@@ -185,12 +196,12 @@ func (a *App) SaveImage(ImageType string) error {
 
 func (a *App) CopyImage(ImageType string) {
 	if ImageType == "RMBG" && a.rembgimg2 != nil {
-		image.CopyToClipboard(a.rembgimg2)
+		image.CopyToClipboard(a.rembgimg2, a.kernel32, a.user32, a.CF_PNG)
 	} else if ImageType == "CROP" && a.cropimg != nil {
-		image.CopyToClipboard(a.cropimg)
+		image.CopyToClipboard(a.cropimg, a.kernel32, a.user32, a.CF_PNG)
 	} else if ImageType == "CROP" && a.cropimgpath != "" {
 		imgBytes, _ := image.ToBytesFromPath(a.cropimgpath)
-		image.CopyToClipboard(imgBytes)
+		image.CopyToClipboard(imgBytes, a.kernel32, a.user32, a.CF_PNG)
 	} else {
 		return
 	}
@@ -265,4 +276,10 @@ func (a *App) FromCroptoRMBG() {
 		a.rembgimg = nil
 		a.rembgpath = a.cropimgpath
 	}
+}
+
+func RegisterClipboardFormat(formatName *uint16, user32 *syscall.LazyDLL) uint32 {
+	registerClipboardFormat := user32.NewProc("RegisterClipboardFormatW")
+	ret, _, _ := registerClipboardFormat.Call(uintptr(unsafe.Pointer(formatName)))
+	return uint32(ret)
 }
