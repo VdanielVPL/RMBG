@@ -72,3 +72,9 @@ func setClipboardImage(pngData []byte, kernel32 *syscall.LazyDLL, user32 *syscal
 
 	return nil
 }
+
+func RegisterClipboardFormat(formatName *uint16, user32 *syscall.LazyDLL) uint32 {
+	registerClipboardFormat := user32.NewProc("RegisterClipboardFormatW")
+	ret, _, _ := registerClipboardFormat.Call(uintptr(unsafe.Pointer(formatName)))
+	return uint32(ret)
+}

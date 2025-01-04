@@ -6,7 +6,6 @@ import (
 	"rmbg/utils"
 	"rmbg/utils/image"
 	"syscall"
-	"unsafe"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -57,7 +56,7 @@ func (a *App) startup(ctx context.Context) {
 	a.model = "u2net"
 
 	formatName, _ := syscall.UTF16PtrFromString("PNG")
-	a.CF_PNG = RegisterClipboardFormat(formatName, a.user32)
+	a.CF_PNG = image.RegisterClipboardFormat(formatName, a.user32)
 }
 
 func (a *App) GetLangStrings() map[string]string {
@@ -276,10 +275,4 @@ func (a *App) FromCroptoRMBG() {
 		a.rembgimg = nil
 		a.rembgpath = a.cropimgpath
 	}
-}
-
-func RegisterClipboardFormat(formatName *uint16, user32 *syscall.LazyDLL) uint32 {
-	registerClipboardFormat := user32.NewProc("RegisterClipboardFormatW")
-	ret, _, _ := registerClipboardFormat.Call(uintptr(unsafe.Pointer(formatName)))
-	return uint32(ret)
 }
