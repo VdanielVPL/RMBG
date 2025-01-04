@@ -5,6 +5,7 @@ import (
 	"os"
 	"rmbg/utils"
 	"rmbg/utils/image"
+	"syscall"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -21,6 +22,7 @@ type App struct {
 	rembgimg2   []byte
 	cropimgpath string
 	cropimg     []byte
+	kernel32    *syscall.LazyDLL
 }
 
 // NewApp creates a new App application struct
@@ -32,7 +34,8 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	if langData, err := utils.LoadLang(); err == nil {
+	a.kernel32 = syscall.NewLazyDLL("kernel32.dll")
+	if langData, err := utils.LoadLang(a.kernel32); err == nil {
 		a.LangStrings = langData
 	} else {
 		runtime.LogError(ctx, "Error loading lang file:"+err.Error())
