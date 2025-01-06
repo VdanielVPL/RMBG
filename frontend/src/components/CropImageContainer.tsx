@@ -8,7 +8,6 @@ import CropEditor from "./CropEditor";
 import { MainContext } from "./contexts/MainContext";
 
 export function InputImageContainer() {
-    // const [filePath, setFilePath] = useState<string>('');
     const { accentColor } = useContext(MainContext);
     const { cropImage, setCropImage, cropping } = useContext(ImageContext);
     const [rect, setRect] = useState<DOMRect | null>(null);
@@ -18,9 +17,7 @@ export function InputImageContainer() {
     const alphaPatternRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const handleFileDrop = (x: number, y: number, paths: string[]) => {
-            // console.log('File dropped:', paths);
-            // setFilePath(paths[0]);
+        const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
             HandleDrop("CROP", paths[0], false).then(([base64, fileType]) => {
                 if (base64 == "" || fileType == "") {
                     setCropImage("");
@@ -128,9 +125,9 @@ export function InputImageContainer() {
 
     function onImageLoad(e: SyntheticEvent<HTMLImageElement>) {
         if(imageContainer.current != null){
-            console.log(e.currentTarget.offsetWidth, e.currentTarget.offsetHeight);
-            console.log(e.currentTarget.width, e.currentTarget.height);
-            console.log(e.currentTarget.clientWidth, e.currentTarget.clientHeight);
+            // console.log(e.currentTarget.offsetWidth, e.currentTarget.offsetHeight);
+            // console.log(e.currentTarget.width, e.currentTarget.height);
+            // console.log(e.currentTarget.clientWidth, e.currentTarget.clientHeight);
             if (e.currentTarget.width < e.currentTarget.height) {
                 imageContainer.current.style.width = "fit-content";
                 imageContainer.current.style.height = '450px';
@@ -150,9 +147,7 @@ export function InputImageContainer() {
     }
 
     const patternStyle = {
-        backgroundImage: `
-          url("data:image/svg+xml;utf8,<svg width='20' height='20' xmlns='http://www.w3.org/2000/svg'><rect width='10' height='10' fill='%23808080'/><rect x='10' y='10' width='10' height='10' fill='%23808080'/></svg>")
-        `,
+        backgroundImage: `url("data:image/svg+xml;utf8,<svg width='20' height='20' xmlns='http://www.w3.org/2000/svg'><rect width='10' height='10' fill='%23808080'/><rect x='10' y='10' width='10' height='10' fill='%23808080'/></svg>")`,
         backgroundSize: '20px 20px',
         position: 'absolute',
         width: '100%',

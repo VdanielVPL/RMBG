@@ -46,5 +46,5 @@ func RemBG(model string, path string, img []byte) ([]byte, error) {
 		cmd = nil
 		return out.Bytes(), nil
 	}
-	return nil, nil
+	return nil, errors.New("NO_IMAGE")
 }

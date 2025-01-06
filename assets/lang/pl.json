@@ -9,7 +9,7 @@
     "ToCropView": "Przenieś obraz do widoku kadrowania",
     "ToRMBGView": "Przenieś obraz do widoku usuwania tła",
     "CropImage": "Kadruj obraz",
-    "ErrorUnknown": "Wystąpił nieznany błąd",
+    "ErrorUNKNOWN": "Wystąpił nieznany błąd",
     "ErrorREMBG_NOT_FOUND": "Nie znaleziono CLI rembg",
     "AlertIMAGE_SAVED": "Obraz zapisany",
     "AlertIMAGE_COPIED": "Obraz skopiowany"

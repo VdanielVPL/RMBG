@@ -13,11 +13,9 @@ export function NavButton(props: ButtonNavProps) {
     const { accentColor } = useContext(MainContext);
 
     return (
-
         <Link className="NavButton" style={{backgroundColor: accentColor}} to={props.link || '/'} draggable={false}>
             {props.icon}
             <span>{props.text}</span>
         </Link>
-
     )
 }

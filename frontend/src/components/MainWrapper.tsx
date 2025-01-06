@@ -4,7 +4,6 @@ import { ImageContext } from "./contexts/ImageContext";
 import { MainContext } from "./contexts/MainContext";
 
 export function MainWrapper({children}: {children: ReactNode}) {
-
     const { accentColor, strings } = useContext(MainContext);
     const { setRemovingBG, setCropping } = useContext(ImageContext);
     const [ triggerAlert, setTriggerAlert ] = useState<boolean>(false);
@@ -33,7 +32,7 @@ export function MainWrapper({children}: {children: ReactNode}) {
                     alertMessage = strings['AlertIMAGE_COPIED'];
                     break;
                 default:
-                    alertMessage = strings['ErrorUnknown'];
+                    alertMessage = strings['ErrorUNKNOWN'];
             }
             setTriggerAlert((prev) => !prev);
             setAlertString(alertMessage);
@@ -61,9 +60,9 @@ export function MainWrapper({children}: {children: ReactNode}) {
 }
 
 function Alert(props: {alertString?: string, accentColor: string, triggerAlert: boolean}) {
+    const { isDarkMode } = useContext(MainContext);
     const alertRef = useRef<HTMLDivElement>(null);
     const timeoutRef = useRef<number | null>(null);
-    const { isDarkMode } = useContext(MainContext);
 
     useEffect(() => {
         if (props.alertString !== "") {

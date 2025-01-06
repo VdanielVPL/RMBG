@@ -21,6 +21,7 @@ export default function SelectList(props: SelectListProps) {
     const [expanded, setExpanded] = useState<boolean>(false)
     const [selected, setSelected] = useState<Selected | null>(null)
     const selectListRef = useRef<HTMLDivElement>(null);
+    
     let defaultSelected = props.defaultSelected?props.defaultSelected:"first"
 
     function onClickList(){
@@ -52,7 +53,6 @@ export default function SelectList(props: SelectListProps) {
     },[expanded])
 
     useEffect(()=>{
-
         let tileSelected = props.tiles.filter(tile=>tile.isSelected==true)
 
         if(tileSelected.length==1){
@@ -62,7 +62,6 @@ export default function SelectList(props: SelectListProps) {
         }else{
             setSelected(props.tiles.filter(tile=>tile.value==defaultSelected)[0])
         }
-
     },[props.tiles])
 
     return (

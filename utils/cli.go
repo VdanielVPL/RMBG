@@ -18,13 +18,13 @@ func generateUniqueFileName(dir, baseName string) string {
 	var newFileName string
 
 	for {
-
 		newFileName = baseName + "-" + strconv.Itoa(suffix) + ".png"
 		newPath := filepath.Join(dir, newFileName)
 
 		if !fileExists(newPath) {
 			return newPath
 		}
+
 		suffix++
 	}
 }

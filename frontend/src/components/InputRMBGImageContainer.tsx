@@ -7,16 +7,13 @@ import { ImageContext } from "./contexts/ImageContext";
 import { MainContext } from "./contexts/MainContext";
 
 export function InputImageContainer() {
-    // const [filePath, setFilePath] = useState<string>('');
     const { accentColor } = useContext(MainContext);
     const { inputRMBGImage, setInputRMBGImage } = useContext(ImageContext);
     const imageContainer = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
-        const handleFileDrop = (x: number, y: number, paths: string[]) => {
-            // console.log('File dropped:', paths);
-            // setFilePath(paths[0]);
+        const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
             HandleDrop("RMBG", paths[0], false).then(([base64, fileType]) => {
                 if (base64 == "" || fileType == "") {
                     setInputRMBGImage("");

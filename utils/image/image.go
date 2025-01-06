@@ -3,6 +3,7 @@ package image
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -28,7 +29,7 @@ func GetImageFromURL(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return fileBytes, err
+	return fileBytes, nil
 }
 
 func ToBase64FromBytes(fileBytes []byte) (string, string, error) {
@@ -36,7 +37,7 @@ func ToBase64FromBytes(fileBytes []byte) (string, string, error) {
 	if strings.HasPrefix(fileType, "image/") {
 		return base64.StdEncoding.EncodeToString(fileBytes), fileType, nil
 	} else {
-		return "", "", nil
+		return "", "", errors.New("NOT_AN_IMAGE")
 	}
 }
 
@@ -81,17 +82,17 @@ func SaveImageDialog(ctx context.Context) (string, error) {
 		},
 	}
 	var filePath string
-	var errr error
+	var err error
 	done := make(chan struct{})
 
 	go func() {
-		filePath, errr = runtime.SaveFileDialog(ctx, options)
+		filePath, err = runtime.SaveFileDialog(ctx, options)
 		close(done)
 	}()
 
 	<-done
-	if errr != nil {
-		return "", errr
+	if err != nil {
+		return "", err
 	}
 	return filePath, nil
 }
