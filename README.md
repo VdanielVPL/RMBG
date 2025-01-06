@@ -1,13 +1,19 @@
 <div align="center"><img src="./build/appicon.png" width="100px"></div>
 <h1 align="center">RMBG</h1>
-<div align="center">
-  <img alt="RMBG" src="https://github.com/user-attachments/assets/your-banner-image.png">
-</div>
 
 **RMBG** is a simple tool designed to remove backgrounds from images effortlessly on Windows 10/11. It utilizes **Wails** (Go backend) and the Python-based `rembg` CLI library for background removal. You will need **Python version 3.8 to 3.12**, along with the `rembg` library. The frontend is built with **React**, using **Bun** for building, ensuring a smooth and responsive user interface.
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/151b6e26-b891-479c-b13e-1cfa915913e2" alt="Main background removal view" width="45%">
+  <img src="https://github.com/user-attachments/assets/d1876e1b-7607-4522-b9fa-0e394dc84215" alt="Image cropping view" width="45%">
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fb241b5f-e30b-4a88-99e2-66b2c23a4554" alt="Main background removal view 2" width="45%">
+  <img src="https://github.com/user-attachments/assets/e2badf40-4038-4398-b48a-f32b9cd74f5b" alt="Image cropping view 2" width="45%">
+</p>
+
 <div align="center">
-  
+
 [![Downloads](https://img.shields.io/github/downloads/VdanielVPL/RMBG/total.svg?style=for-the-badge)](https://github.com/VdanielVPL/RMBG/releases)  [![GitHub License](https://img.shields.io/github/license/VdanielVPL/RMBG?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0.en.html)  [![Current version](https://img.shields.io/github/v/release/VdanielVPL/RMBG?label=version&style=for-the-badge)](https://github.com/VdanielVPL/RMBG/releases)
 
 </div>
