@@ -39,10 +39,6 @@
   </tr>
 </table>
 
-
-
-</br>
-
 1. **Ensure Prerequisites are Met**:
    - Make sure you have **Python version 3.8 to 3.12** and the **`rembg` library** installed (see [Prerequisites](#prerequisites)).
 
