@@ -20,8 +20,27 @@
 
 ## Downloading the Installer
 <a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
-  <img height='40px' src="https://img.shields.io/badge/download-blue?style=for-the-badge" alt="Download Installer"><span>&#8203;&#8203;</span><img height='40px' src="https://github.com/user-attachments/assets/1ccd8012-3ec5-4458-8e63-9357d0cc7fb5" alt="Download Installer">
+  <table>
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
+          <img height="40"
+               src="https://img.shields.io/badge/download-blue?style=for-the-badge"
+               alt="Download Installer">
+        </a>
+      </td>
+      <td align="center" valign="middle">
+        <a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
+          <img height="40"
+               src="https://github.com/user-attachments/assets/1ccd8012-3ec5-4458-8e63-9357d0cc7fb5"
+               alt="Download Installer">
+        </a>
+      </td>
+    </tr>
+  </table>
 </a>
+
+
 
 </br>
 
