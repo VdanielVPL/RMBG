@@ -65,3 +65,10 @@ Make sure you have:
 
 4. **Run the Installer (If Release Build)**:
    After a successful build and packaging, you will find the `.exe` installer in `./build/bin`. Run it to install and use the application.
+
+## Key Files
+
+- **`main.go`**: The Go backend, which calls `rembg`.
+- **`frontend/`**: Contains the React-based frontend.
+- **`wails.json`**: Wails configuration file.
+
