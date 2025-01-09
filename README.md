@@ -99,12 +99,6 @@ RMBG uses the `rembg` CLI tool for background removal:
 - **React Frontend**: Provides a responsive and modern interface.
 - **Supported Formats**: Handles PNG, JPEG, and WebP.
 
-## Key Files
-
-- **`main.go`**: The Go backend, which calls `rembg`.
-- **`frontend/`**: Contains the React-based frontend.
-- **`wails.json`**: Wails configuration file.
-
 ## License
 
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
