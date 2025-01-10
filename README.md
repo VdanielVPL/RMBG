@@ -110,4 +110,4 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 ## Acknowledgments
 
 - [Wails](https://wails.io/) for enabling cross-platform desktop applications using Go and web technologies.
-- [`rembg`](https://github.com/danielgatis/rembg) for the Python-based background removal library.
+- [rembg](https://github.com/danielgatis/rembg) for the Python-based background removal library.
