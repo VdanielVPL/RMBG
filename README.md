@@ -69,6 +69,7 @@ Before using RMBG, ensure you have the following installed:
 - Switch between **cropping view** and **background removal view**.
 - Supports various image formats (PNG, JPEG, WebP).
 - User-friendly interface with drag-and-drop functionality.
+- Windows 10/11 theme colors in app (Accent color, Mica backdrop).
 - Lightweight and fast.
 
 ## Usage
