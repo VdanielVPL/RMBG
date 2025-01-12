@@ -95,7 +95,7 @@ Once the application is installed and started:
 
 RMBG uses the `rembg` CLI tool for background removal:
 
-- **`rembg` Integration**: The Go backend invokes the Python-based `rembg` CLI.
+- **`rembg` Integration**: The Go backend invokes the Python-based [`rembg`](https://github.com/danielgatis/rembg) CLI for background removal.
 - **Go Backend with Wails**: Ensures efficient performance and a native desktop experience.
 - **React Frontend**: Provides a responsive and modern interface.
 - **Supported Formats**: Handles PNG, JPEG, and WebP.
