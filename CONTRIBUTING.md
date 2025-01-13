@@ -2,7 +2,7 @@
 
 If you wish to build the application yourself, you’ll need additional tools.
 
-## Build Prerequisites
+## 🛠 Build Prerequisites
 
 Make sure you have:
 
@@ -22,7 +22,7 @@ Make sure you have:
 - **iscc (Inno Setup Compiler)**: Download and install from [here](https://jrsoftware.org/isinfo.php) to create the `.exe` installer.
     - Add the Inno Setup installation folder to your PATH environment variable.
 
-## Installation Steps
+## 📝 Installation Steps
 
 1. **Clone the Repository**:
    ```bash
@@ -66,7 +66,7 @@ Make sure you have:
 4. **Run the Installer (If Release Build)**:
    After a successful build and packaging, you will find the `.exe` installer in `./build/bin`. Run it to install and use the application.
 
-## Key Files
+## 🔑 Key Files
 
 - **`main.go`**: The Go backend, which calls `rembg`.
 - **`frontend/`**: Contains the React-based frontend.
