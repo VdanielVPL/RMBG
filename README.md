@@ -18,7 +18,7 @@
 
 </div>
 
-## Downloading the Installer
+## 📥 Downloading the Installer
 
 <table>
   <tr>
@@ -40,13 +40,13 @@
 </table>
 
 1. **Ensure Prerequisites are Met**:
-   - Make sure you have **Python version 3.8 to 3.12** and the **`rembg` library** installed (see [Prerequisites](#prerequisites)).
+   - Make sure you have **Python version 3.8 to 3.12** and the **`rembg` library** installed (see [Prerequisites](#-prerequisites)).
 
 2. **Run the Installer**:
    - Double-click the downloaded `.exe` file to install the application.
    - After installation, the application is ready to use.
 
-## Prerequisites
+## 📝 Prerequisites
 
 Before using RMBG, ensure you have the following installed:
 
@@ -62,7 +62,7 @@ Before using RMBG, ensure you have the following installed:
   ```
   This should show the `rembg` help information.
 
-## Features
+## ✨ Features
 
 - Remove backgrounds from images quickly and easily.
 - **Crop images** before removing the background.
@@ -72,7 +72,7 @@ Before using RMBG, ensure you have the following installed:
 - Windows 10/11 theme colors in app (Accent color, Mica backdrop).
 - Lightweight and fast.
 
-## Usage
+## 🚀 Usage
 
 Once the application is installed and started:
 
@@ -91,7 +91,7 @@ Once the application is installed and started:
 5. **Save the Processed Image**:
    - Save the result with a transparent background to your chosen location.
 
-## How It Works
+## 🛠️ How It Works
 
 RMBG uses the `rembg` CLI tool for background removal:
 
@@ -100,15 +100,15 @@ RMBG uses the `rembg` CLI tool for background removal:
 - **React Frontend**: Provides a responsive and modern interface.
 - **Supported Formats**: Handles PNG, JPEG, and WebP.
 
-## License
+## 📜 License
 
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
 
-## Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request with your improvements. For information on building the application, see [CONTRIBUTING](CONTRIBUTING.md).
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
 - [Wails](https://wails.io/) for enabling cross-platform desktop applications using Go and web technologies.
 - [rembg](https://github.com/danielgatis/rembg) for the Python-based background removal library.
