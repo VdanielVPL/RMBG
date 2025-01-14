@@ -20,7 +20,7 @@
 
 ## 📥 Downloading the Installer
 
-<table>
+<table border="10">
   <tr>
     <td align="center" valign="middle">
       <a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
