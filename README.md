@@ -64,7 +64,7 @@ Before using RMBG, ensure you have the following installed:
 
 ## ✨ Features
 
-- Remove backgrounds from images quickly and easily.
+- **Remove backgrounds** from images quickly and easily.
 - **Crop images** before removing the background.
 - Switch between **cropping view** and **background removal view**.
 - Supports various image formats (PNG, JPEG, WebP).
