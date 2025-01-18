@@ -1,7 +1,7 @@
 <div align="center"><img src="./build/appicon.png" width="100px"></div>
 <h1 align="center">RMBG</h1>
 
-**RMBG** is a simple tool designed to remove backgrounds from images effortlessly on Windows 10/11. It utilizes **Wails** (Go backend) and the Python-based `rembg` CLI library for background removal. You will need **Python version 3.8 to 3.12**, along with the `rembg` library. The frontend is built with **React**, using **Bun** for building, ensuring a smooth and responsive user interface.
+**RMBG** is a simple tool designed to remove backgrounds from images effortlessly on Windows 10/11. It utilizes **Wails** (Go backend) and the Python-based rembg CLI library for background removal. You will need **Python version 3.8 to 3.12**, along with the rembg library. The frontend is built with **React**, using **Bun** for building, ensuring a smooth and responsive user interface.
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/151b6e26-b891-479c-b13e-1cfa915913e2" alt="Main background removal view" width="49.5%">
@@ -40,7 +40,7 @@
 </table>
 
 1. **Ensure Prerequisites are Met**:
-   - Make sure you have **Python version 3.8 to 3.12** and the **`rembg` library** installed (see [Prerequisites](#-prerequisites)).
+   - Make sure you have **Python version 3.8 to 3.12** and the **[`rembg`](https://github.com/danielgatis/rembg) library** installed (see [Prerequisites](#-prerequisites)).
 
 2. **Run the Installer**:
    - Double-click the downloaded `.exe` file to install the application.
@@ -51,7 +51,7 @@
 Before using RMBG, ensure you have the following installed:
 
 - **Python 3.8 to 3.12**: Download from [here](https://www.python.org/downloads/).
-- **`rembg` Library**: Install with:
+- **[`rembg`](https://github.com/danielgatis/rembg) Library**: Install with:
   
   ```bash
   pip install "rembg[cli]"
@@ -60,7 +60,7 @@ Before using RMBG, ensure you have the following installed:
   ```bash
   rembg
   ```
-  This should show the `rembg` help information.
+  This should show the rembg help information.
 
 ## ✨ Features
 
@@ -93,7 +93,7 @@ Once the application is installed and started:
 
 ## 🛠️ How It Works
 
-- **`rembg` Integration**: The Go backend invokes the Python-based [`rembg`](https://github.com/danielgatis/rembg) CLI for background removal.
+- **rembg Integration**: The Go backend invokes the Python-based [`rembg`](https://github.com/danielgatis/rembg) CLI for background removal.
 - **Go Backend with Wails**: Ensures efficient performance and a native desktop experience.
 - **React Frontend**: Provides a responsive and modern interface.
 - **Supported Formats**: Handles PNG, JPEG, and WebP.
