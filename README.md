@@ -50,6 +50,8 @@
 
 Before using RMBG, ensure you have the following installed:
 
+### Option 1: Using Python and Pip
+
 - **Python 3.8 to 3.12**: Download from [here](https://www.python.org/downloads/).
 - **[`rembg`](https://github.com/danielgatis/rembg) Library**: Install with:
   
@@ -61,6 +63,10 @@ Before using RMBG, ensure you have the following installed:
   rembg
   ```
   This should show the rembg help information.
+
+### Option 2: Using the rembg installer
+
+- Download and run the rembg installer from [here](https://github.com/danielgatis/rembg/releases/latest/download/rembg-cli-installer.exe).
 
 ## ✨ Features
 
