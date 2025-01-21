@@ -40,7 +40,7 @@
 </table>
 
 1. **Ensure Prerequisites are Met**:
-   - Make sure you have **Python version 3.8 to 3.12** and the **[`rembg`](https://github.com/danielgatis/rembg) library** installed (see [Prerequisites](#-prerequisites)).
+   - Follow the instructions in the [Prerequisites](#-prerequisites) section to set up your environment with either **Python and rembg** or use the **rembg installer** directly.
 
 2. **Run the Installer**:
    - Double-click the downloaded `.exe` file to install the application.
