@@ -46,6 +46,7 @@ Make sure you have:
      ```
 
 3. **Build the Application**:
+   
    Return to the main directory:
    ```bash
    cd ..
@@ -63,7 +64,7 @@ Make sure you have:
    wails dev
    ```
 
-4. **Run the Installer (If Release Build)**:
+5. **Run the Installer (If Release Build)**:
    After a successful build and packaging, you will find the `.exe` installer in `./build/bin`. Run it to install and use the application.
 
 ## 🔑 Key Files
