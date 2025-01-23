@@ -69,7 +69,7 @@ Make sure you have:
 
 ## 🔑 Key Files
 
-- **`main.go`**: The Go backend, which calls `rembg`.
+- **`main.go`**: The Go backend entry point.
 - **`frontend/`**: Contains the React-based frontend.
 - **`wails.json`**: Wails configuration file.
 
