@@ -6,8 +6,6 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-var hexChars = []byte("0123456789ABCDEF")
-
 func IsWindows11OrGreater() bool {
 	major, _, build := syswindows.RtlGetNtVersionNumbers()
 	return major >= 10 && build >= 22000
@@ -56,6 +54,7 @@ func getRawAccentColor() (uint32, error) {
 }
 
 func byteToHex(b byte) string {
+	hexChars := []byte("0123456789ABCDEF")
 	return string([]byte{hexChars[b>>4], hexChars[b&0xF]})
 }
 
