@@ -44,7 +44,7 @@
 
 2. **Run the Installer**:
    - Double-click the downloaded `.exe` file to install the application.
-   - After installation, the application is ready to use.
+   - After installation and ensuring that the prerequisites are met, the application is ready to use.
 
 ## 📝 Prerequisites
 
