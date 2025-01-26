@@ -53,7 +53,7 @@ Before using RMBG, ensure you have the following installed:
 ### Option 1: Using Python and Pip
 
 - **Python 3.8 to 3.12**: Download from [here](https://www.python.org/downloads/).
-- **[`rembg`](https://github.com/danielgatis/rembg) Library**: Install with:
+- **[`rembg`](https://github.com/danielgatis/rembg) library**: Install with:
   
   ```bash
   pip install "rembg[cli]"
