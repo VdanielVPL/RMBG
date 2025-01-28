@@ -1,6 +1,6 @@
 # Building the Application
 
-If you wish to build the application yourself, you’ll need additional tools.
+If you wish to build the application yourself or contribute to the project, you are more than welcome! Pull requests are highly appreciated. Below are the instructions to build the application.
 
 ## 🛠 Build Prerequisites
 
