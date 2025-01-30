@@ -1,7 +1,7 @@
 <div align="center"><img src="./build/appicon.png" width="100px"></div>
 <h1 align="center">RMBG</h1>
 
-**RMBG** is a simple tool designed to remove backgrounds from images effortlessly on Windows 10/11. It utilizes **Wails** (Go backend) and the Python-based rembg CLI library for background removal. You will need **Python version 3.8 to 3.12**, along with the rembg library. The frontend is built with **React**, using **Bun** for building, ensuring a smooth and responsive user interface.
+**RMBG** is a simple tool designed to remove backgrounds from images effortlessly on Windows 10/11. It utilizes **Wails** (Go backend) and the Python-based rembg CLI library for background removal. You will need **Python**, along with the rembg library. The frontend is built with **React**, using **Bun** for building, ensuring a smooth and responsive user interface.
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/151b6e26-b891-479c-b13e-1cfa915913e2" alt="Main background removal view" width="49.5%">
@@ -52,7 +52,7 @@ Before using RMBG, ensure you have the following installed:
 
 ### Option 1: Using Python and Pip
 
-- **Python 3.8 to 3.12**: Download from [here](https://www.python.org/downloads/).
+- **Python 3.10 to 3.13**: Download from [here](https://www.python.org/downloads/).
 - **[`rembg`](https://github.com/danielgatis/rembg) library**: Install with:
   
   ```bash
