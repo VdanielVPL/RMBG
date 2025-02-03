@@ -20,24 +20,11 @@
 
 ## 📥 Downloading the Installer
 
-<table border="10">
-  <tr>
-    <td align="center" valign="middle">
-      <a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
-        <img height="40"
-             src="https://img.shields.io/badge/download-blue?style=for-the-badge"
-             alt="Download Installer">
-      </a>
-    </td>
-    <td align="center" valign="middle">
-      <a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
-        <img height="40"
-             src="https://github.com/user-attachments/assets/1ccd8012-3ec5-4458-8e63-9357d0cc7fb5"
-             alt="Download Installer">
-      </a>
-    </td>
-  </tr>
-</table>
+<a href="https://github.com/VdanielVPL/RMBG/releases/latest/download/RMBG-setup.exe">
+  <img height="60"
+       src="https://custom-icon-badges.demolab.com/badge/download-660181.svg?logo=rmbg-installericon1&style=for-the-badge"
+       alt="Download Installer">
+</a>
 
 1. **Ensure Prerequisites are Met**:
    - Follow the instructions in the [Prerequisites](#-prerequisites) section to set up your environment with either **Python and rembg** or use the **rembg installer** directly.
