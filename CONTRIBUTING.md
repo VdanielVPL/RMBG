@@ -6,7 +6,7 @@ If you wish to build the application yourself or contribute to the project, you 
 
 Make sure you have:
 
-- **Python 3.8 to 3.12**: Required for the `rembg` library.
+- **Python 3.10 to 3.13**: Required for the `rembg` library.
 - **`rembg`**:
   
   ```bash
