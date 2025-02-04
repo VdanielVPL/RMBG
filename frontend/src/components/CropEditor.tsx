@@ -1,5 +1,5 @@
 import { useContext, useLayoutEffect, useRef, useState, RefObject } from "react";
-import { ImageContext } from "./contexts/ImageContext";
+import { ImageContext } from "./contexts";
 
 type CropEditorProps = {
     rect: DOMRect | null;

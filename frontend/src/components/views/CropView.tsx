@@ -1,11 +1,10 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { InputImageContainer } from "../CropImageContainer";
-import { MainContext } from "../contexts/MainContext";
-import { Button } from "../inputs/Button";
+import { ImageContext, MainContext } from "../contexts";
+import { Button, Switch } from "../inputs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCloudArrowDown, faCopy, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { ImageContext } from "../contexts/ImageContext";
-import { useNavigate } from "react-router-dom";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { CropImage, FromCroptoRMBG, CopyImage, SaveImage } from "../../../wailsjs/go/main/App";
 import { EventsEmit } from "../../../wailsjs/runtime/runtime";
@@ -48,7 +47,11 @@ export function CropView() {
             <span style={{color: isDarkMode?'white':'black'}} className='ViewHeader'>{strings["Crop"]}</span>
             <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center'}}>
-                    <div style={{height: '40px'}}></div>
+                    <div style={{height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
+                        <span></span>
+                        <Switch></Switch>
+                        <span></span>
+                    </div>
                     <InputImageContainer></InputImageContainer>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
                         <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>

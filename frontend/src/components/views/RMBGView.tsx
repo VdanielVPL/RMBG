@@ -2,13 +2,11 @@ import '../../styles/RMBGView.css';
 import { useContext, useLayoutEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCloudArrowDown, faCopy, faCropSimple, faImage, faSpinner, faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import { MainContext } from "../contexts/MainContext";
+import { MainContext, ImageContext } from "../contexts";
 import { InputImageContainer } from '../InputRMBGImageContainer';
-import SelectList, { Selected } from '../inputs/SelectList';
-import { Button } from '../inputs/Button';
+import { Button, SelectList, Selected } from '../inputs';
 import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem, FromRMBGtoCrop } from '../../../wailsjs/go/main/App';
 import { EventsEmit } from '../../../wailsjs/runtime/runtime';
-import { ImageContext } from '../contexts/ImageContext';
 import { useNavigate } from 'react-router-dom';
 
 const tiles: Selected[] = [

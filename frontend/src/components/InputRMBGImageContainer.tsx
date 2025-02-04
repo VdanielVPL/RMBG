@@ -3,8 +3,7 @@ import { OnFileDrop, OnFileDropOff } from "../../wailsjs/runtime/runtime";
 import { HandleDrop, OpenImage } from "../../wailsjs/go/main/App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { ImageContext } from "./contexts/ImageContext";
-import { MainContext } from "./contexts/MainContext";
+import { MainContext, ImageContext } from "./contexts";
 
 export function InputImageContainer() {
     const { accentColor } = useContext(MainContext);

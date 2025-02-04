@@ -2,9 +2,8 @@ import './styles/App.css';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { Nav } from './components/nav/Nav';
 import { MainWrapper } from './components/MainWrapper';
-import { RMBGView } from './components/views/RMBGView';
-import { CropView } from './components/views/CropView';
-import { ImageProvider } from './components/contexts/ImageContext';
+import { RMBGView, CropView } from './components/views';
+import { ImageProvider } from './components/contexts';
 import { AnimatePresence, motion } from 'framer-motion';
 
 function App() {

@@ -1,7 +1,6 @@
 import { ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { EventsOff, EventsOn } from "../../wailsjs/runtime/runtime";
-import { ImageContext } from "./contexts/ImageContext";
-import { MainContext } from "./contexts/MainContext";
+import { MainContext, ImageContext } from "./contexts";
 
 export function MainWrapper({children}: {children: ReactNode}) {
     const { accentColor, strings } = useContext(MainContext);
