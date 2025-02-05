@@ -10,7 +10,7 @@ import { CropImage, FromCroptoRMBG, CopyImage, SaveImage } from "../../../wailsj
 import { EventsEmit } from "../../../wailsjs/runtime/runtime";
 
 export function CropView() {
-    const { strings, isDarkMode } = useContext(MainContext);
+    const { strings, isDarkMode, accentColor } = useContext(MainContext);
     const { cropImage, setCropImage, setInputRMBGImage, cropDimens, cropping } = useContext(ImageContext);
     let navigate = useNavigate();
 
@@ -47,10 +47,10 @@ export function CropView() {
             <span style={{color: isDarkMode?'white':'black'}} className='ViewHeader'>{strings["Crop"]}</span>
             <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center'}}>
-                    <div style={{height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
-                        <span></span>
-                        <Switch></Switch>
-                        <span></span>
+                    <div style={{height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '10px'}}>
+                        <span style={{visibility: cropImage==""?'hidden':'visible'}}>PNG</span>
+                        <Switch visibility={cropImage==""?'hidden':'visible'} primaryColor={accentColor} secondaryColor={accentColor}></Switch>
+                        <span style={{visibility: cropImage==""?'hidden':'visible'}}>JPEG</span>
                     </div>
                     <InputImageContainer></InputImageContainer>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>

@@ -84,3 +84,6 @@ a{
     opacity: 0;
     transition: opacity 300ms;
 }
+.switchComponentCircle{
+    transition: transform 0.35s ease;
+}
