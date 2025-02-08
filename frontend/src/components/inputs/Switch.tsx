@@ -6,24 +6,24 @@ interface SwitchProps{
     primaryColor?: string;
     secondaryColor?: string;
     /**
-     * Switch height
-     * @default 23
-     */
+        * Switch height
+        * @default 23
+    */
     size?: number;
     defaultActive?: boolean;
     /**
-     * @param active contains the value the switch is trying to change to. The change works if there is no **value** set in the Switch component. However, if value is set then you need to use **useState** to handle the Switch value change
-     * @returns void
+        * @param active contains the value the switch is trying to change to. The change works if there is no **value** set in the Switch component. However, if value is set then you need to use **useState** to handle the Switch value change
+        * @returns void
     */
     onChange?: (active: boolean) => void;
     /**
-     * Determines the state of the switch
-     */
+        * Determines the state of the switch
+    */
     value?: boolean;
     /**
-     * Width multiplier for the switch
-     * @default 1.85
-     */
+        * Width multiplier for the switch
+        * @default 1.85
+    */
     widthMultiplier?: number;
     visibility?: 'visible' | 'hidden';
 }
