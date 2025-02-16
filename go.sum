@@ -58,6 +58,8 @@ github.com/wailsapp/mimetype v1.4.1 h1:pQN9ycO7uo4vsUUuPeHEYoUkLVkaRntMnHJxVwYhw
 github.com/wailsapp/mimetype v1.4.1/go.mod h1:9aV5k31bBOv5z6u+QP8TltzvNGJPmNJD4XlAL3U+j3o=
 github.com/wailsapp/wails/v2 v2.9.3 h1:45Oe68FM7oovN8bd/IIX4GzTRnbkL6pUIy+74Qxi5WA=
 github.com/wailsapp/wails/v2 v2.9.3/go.mod h1:P/TmJfTmOqrVkl6PI9HkkNp3JeQ4AfWLjevoHI77UPo=
+github.com/wailsapp/wails/v2 v2.10.0 h1:kfpWnfdNL1nXq0PyqAVPPDQY2pxkqcqWab01NGh3a6w=
+github.com/wailsapp/wails/v2 v2.10.0/go.mod h1:zrebnFV6MQf9kx8HI4iAv63vsR5v67oS7GTEZ7Pz1TY=
 golang.org/x/crypto v0.33.0 h1:IOBPskki6Lysi0lo9qQvbxiQ+FvsCC/YWOecCHAixus=
 golang.org/x/crypto v0.33.0/go.mod h1:bVdXmD7IV/4GdElGPozy6U7lWdRXA4qyRVGJV57uQ5M=
 golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=

@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/disintegration/imaging v1.6.2
-	github.com/wailsapp/wails/v2 v2.9.3
+	github.com/wailsapp/wails/v2 v2.10.0
 	golang.org/x/image v0.24.0
 	golang.org/x/sys v0.30.0
 )
