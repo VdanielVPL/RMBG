@@ -53,7 +53,7 @@ Before using RMBG, ensure you have the following installed:
 
 ### Option 2: Using the rembg installer
 
-- Download and run the rembg installer from [here](https://github.com/danielgatis/rembg/releases/latest/download/rembg-cli-installer.exe).
+- Download and run the **rembg installer** from [here](https://github.com/danielgatis/rembg/releases/latest/download/rembg-cli-installer.exe).
 
 ## ✨ Features
 
