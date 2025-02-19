@@ -1,9 +1,15 @@
 package image
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"errors"
+	"image"
+	"image/color"
+	"image/draw"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"net/http"
 	"os"
@@ -71,7 +77,7 @@ func OpenImageDialog(ctx context.Context) (string, error) {
 	return filePath, nil
 }
 
-func SaveImageDialog(ctx context.Context) (string, error) {
+func SaveImageDialog(ctx context.Context, isJPG bool) (string, error) {
 	options := runtime.SaveDialogOptions{
 		Title: "Save an image",
 		Filters: []runtime.FileFilter{
@@ -81,6 +87,12 @@ func SaveImageDialog(ctx context.Context) (string, error) {
 			},
 		},
 	}
+
+	if isJPG {
+		options.Filters[0].DisplayName = "Image (*.jpg)"
+		options.Filters[0].Pattern = "*.jpg"
+	}
+
 	var filePath string
 	var err error
 	done := make(chan struct{})
@@ -95,4 +107,49 @@ func SaveImageDialog(ctx context.Context) (string, error) {
 		return "", err
 	}
 	return filePath, nil
+}
+
+func ToJPG(pngImgBytes []byte, jpgImgBytes *[]byte) error {
+	img, err := png.Decode(bytes.NewReader(pngImgBytes))
+	if err != nil {
+		return err
+	}
+
+	bounds := img.Bounds()
+
+	rgba := image.NewRGBA(bounds)
+
+	draw.Draw(rgba, bounds, &image.Uniform{C: color.White}, image.Point{}, draw.Src)
+
+	draw.Draw(rgba, bounds, img, bounds.Min, draw.Over)
+
+	var buf bytes.Buffer
+	err = jpeg.Encode(&buf, rgba, &jpeg.Options{Quality: 90})
+	if err != nil {
+		return err
+	}
+	*jpgImgBytes = buf.Bytes()
+	return nil
+}
+
+func ToPNG(jpgImgBytes []byte, pngImgBytes *[]byte) error {
+	img, err := jpeg.Decode(bytes.NewReader(jpgImgBytes))
+	if err != nil {
+		return err
+	}
+	var buf bytes.Buffer
+	err = png.Encode(&buf, img)
+	if err != nil {
+		return err
+	}
+	*pngImgBytes = buf.Bytes()
+	return nil
+}
+
+func GetFormatFromPath(path string) string {
+	return path[strings.LastIndex(path, ".")+1:]
+}
+
+func GetMimeType(bytes []byte) string {
+	return http.DetectContentType(bytes[:512])
 }

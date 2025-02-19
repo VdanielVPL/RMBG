@@ -15,6 +15,15 @@ type ImageContextType = {
     cropImage: string;
     setCropImage: (inputCropImage: string) => void;
 
+    PNGcropImage: string;
+    setPNGCropImage: (inputCropImage: string) => void;
+
+    JPGcropImage: string;
+    setJPGCropImage: (inputCropImage: string) => void;
+
+    isJPG: boolean;
+    setIsJPG: (isJPG: boolean) => void;
+
     cropDimens: {left: number, right: number, top: number, bottom: number};
     setCropDimens: (cropDimens: {left: number, right: number, top: number, bottom: number}) => void;
 
@@ -37,6 +46,15 @@ export const ImageContext = createContext<ImageContextType>({
     cropImage: "",
     setCropImage: () => {},
 
+    JPGcropImage: "",
+    setJPGCropImage: () => {},
+
+    PNGcropImage: "",
+    setPNGCropImage: () => {},
+
+    isJPG: false,
+    setIsJPG: () => {},
+
     cropDimens: {left: 0, right: 0, top: 0, bottom: 0},
     setCropDimens: () => {},
 
@@ -48,6 +66,9 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     const [inputRMBGImage, setInputRMBGImage] = useState<ImageContextType["inputRMBGImage"]>("");
     const [outputRMBGImage, setOutputRMBGImage] = useState<ImageContextType["outputRMBGImage"]>("");
     const [cropImage, setCropImage] = useState<ImageContextType["cropImage"]>("");
+    const [JPGcropImage, setJPGCropImage] = useState<ImageContextType["JPGcropImage"]>("");
+    const [PNGcropImage, setPNGCropImage] = useState<ImageContextType["PNGcropImage"]>("");
+    const [isJPG, setIsJPG] = useState<ImageContextType["isJPG"]>(false);
     const [removingBG, setRemovingBG] = useState<ImageContextType["removingBG"]>(false);
     const [model, setModel] = useState<ImageContextType["model"]>("u2net");
     const [cropDimens, setCropDimens] = useState<ImageContextType["cropDimens"]>({left: 0, right: 0, top: 0, bottom: 0});
@@ -57,7 +78,10 @@ export function ImageProvider({ children }: { children: ReactNode }) {
         <ImageContext.Provider value={{
             inputRMBGImage, setInputRMBGImage, 
             outputRMBGImage, setOutputRMBGImage, 
-            cropImage, setCropImage, 
+            cropImage, setCropImage,
+            JPGcropImage, setJPGCropImage,
+            PNGcropImage, setPNGCropImage,
+            isJPG, setIsJPG,
             removingBG, setRemovingBG, 
             setModel, model,
             cropDimens, setCropDimens,

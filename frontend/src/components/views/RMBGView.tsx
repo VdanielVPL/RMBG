@@ -62,7 +62,7 @@ function OutputImageContainer() {
 
 export function RMBGView() {
     const { strings, isDarkMode } = useContext(MainContext);
-    const { setOutputRMBGImage, setInputRMBGImage, setCropImage, inputRMBGImage, outputRMBGImage, removingBG, setModel } = useContext(ImageContext);
+    const { setOutputRMBGImage, setInputRMBGImage, setCropImage, setPNGCropImage, setJPGCropImage, inputRMBGImage, outputRMBGImage, removingBG, setModel, setIsJPG } = useContext(ImageContext);
     let navigate = useNavigate();
 
     function handleModelChange(selected: Selected) {
@@ -96,13 +96,20 @@ export function RMBGView() {
     function ToCropView(inOrOut: string) {
         if (inOrOut == "in") {
             if (inputRMBGImage != "") {
-                setCropImage(inputRMBGImage);
+                const newImage = inputRMBGImage;
+                setCropImage(newImage);
+                setPNGCropImage(newImage);
+                setJPGCropImage("");
                 FromRMBGtoCrop(0);
                 navigate('/crop');
             }
         }else if (inOrOut == "out") {
             if (outputRMBGImage != "") {
-                setCropImage(outputRMBGImage);
+                setIsJPG(false);
+                const newImage = outputRMBGImage;
+                setPNGCropImage(newImage);
+                setCropImage(newImage);
+                setJPGCropImage("");
                 FromRMBGtoCrop(1);
                 navigate('/crop');
             }

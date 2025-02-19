@@ -8,7 +8,7 @@ import CropEditor from "./CropEditor";
 
 export function InputImageContainer() {
     const { accentColor } = useContext(MainContext);
-    const { cropImage, setCropImage, cropping } = useContext(ImageContext);
+    const { cropImage, setCropImage, setPNGCropImage, setJPGCropImage, cropping, setIsJPG } = useContext(ImageContext);
     const [rect, setRect] = useState<DOMRect | null>(null);
     const [isImageDark, setIsImageDark] = useState<boolean>(true);
     const imageContainer = useRef<HTMLDivElement>(null);
@@ -20,8 +20,21 @@ export function InputImageContainer() {
             HandleDrop("CROP", paths[0], false).then(([base64, fileType]) => {
                 if (base64 == "" || fileType == "") {
                     setCropImage("");
+                    setJPGCropImage("");
+                    setPNGCropImage("");
                 }else{
-                    setCropImage(`data:${fileType};base64,${base64}`);
+                    const newImage = `data:${fileType};base64,${base64}`;
+                    if (fileType == "image/jpeg") {
+                        setIsJPG(true);
+                        setJPGCropImage(newImage);
+                        setCropImage(newImage);
+                        setPNGCropImage("");
+                    } else {
+                        setIsJPG(false);
+                        setPNGCropImage(newImage);
+                        setCropImage(newImage);
+                        setJPGCropImage("");
+                    }
                 }
             });
         };
@@ -88,8 +101,21 @@ export function InputImageContainer() {
                         HandleDrop("CROP", data, true).then(([base64, fileType]) => {
                             if (base64 == "" || fileType == "") {
                                 setCropImage("");
+                                setJPGCropImage("");
+                                setPNGCropImage("");
                             }else{
-                                setCropImage(`data:${fileType};base64,${base64}`);
+                                const newImage = `data:${fileType};base64,${base64}`;
+                                if (fileType == "image/jpeg") {
+                                    setIsJPG(true);
+                                    setJPGCropImage(newImage);
+                                    setCropImage(newImage);
+                                    setPNGCropImage("");
+                                } else {
+                                    setIsJPG(false);
+                                    setPNGCropImage(newImage);
+                                    setCropImage(newImage);
+                                    setJPGCropImage("");
+                                }
                             }
                         });
                         imageContainer.current?.classList.remove('wails-drop-target-active');
@@ -101,7 +127,7 @@ export function InputImageContainer() {
         }
     };
 
-    async function openDialog(e: MouseEvent<HTMLDivElement>) {
+    async function openDialog(_e: MouseEvent<HTMLDivElement>) {
         if (cropImage != "") {
             // const target = e.target as HTMLElement;
             // if (target.parentElement != imageContainer.current) {
@@ -116,8 +142,21 @@ export function InputImageContainer() {
             const [base64, fileType] = result;
             if (base64 == "" || fileType == "") {
                 setCropImage("");
+                setJPGCropImage("");
+                setPNGCropImage("");
             }else{
-                setCropImage(`data:${fileType};base64,${base64}`);
+                const newImage = `data:${fileType};base64,${base64}`;
+                if (fileType == "image/jpeg") {
+                    setIsJPG(true);
+                    setJPGCropImage(newImage);
+                    setCropImage(newImage);
+                    setPNGCropImage("");
+                } else {
+                    setIsJPG(false);
+                    setPNGCropImage(newImage);
+                    setCropImage(newImage);
+                    setJPGCropImage("");
+                }
             }
         }
     }

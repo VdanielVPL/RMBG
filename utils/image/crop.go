@@ -11,14 +11,14 @@ import (
 	_ "golang.org/x/image/webp"
 )
 
-func CropImage(image []byte, left, right, top, bottom float32) []byte {
+func CropImage(image []byte, left, right, top, bottom float32) ([]byte, string) {
 
 	// println("Cropping image...")
 	imgbytes := bytes.NewReader(image)
 	img, format, err := imgpkg.Decode(imgbytes)
 	if err != nil {
 		println(err.Error())
-		return nil
+		return nil, format
 	}
 	// println("Decoded image")
 
@@ -57,15 +57,15 @@ func CropImage(image []byte, left, right, top, bottom float32) []byte {
 		err = jpeg.Encode(&buf, croppedImg, &jpeg.Options{Quality: 90})
 		if err != nil {
 			println(err.Error())
-			return nil
+			return nil, format
 		}
 	} else {
 		err = png.Encode(&buf, croppedImg)
 		if err != nil {
 			println(err.Error())
-			return nil
+			return nil, format
 		}
 	}
 	// println("Cropped image")
-	return buf.Bytes()
+	return buf.Bytes(), format
 }
