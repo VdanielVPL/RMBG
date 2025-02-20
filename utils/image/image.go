@@ -15,6 +15,8 @@ import (
 	"os"
 	"strings"
 
+	_ "golang.org/x/image/webp"
+
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 

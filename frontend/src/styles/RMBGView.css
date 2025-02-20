@@ -50,6 +50,7 @@
     z-index: 4;
     cursor: auto;
     backdrop-filter: brightness(2);
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.75);
     transition: opacity 0.5s ease, outline-color 0.5s ease;
 }
 .cropEditor > div{
@@ -69,6 +70,7 @@
     align-items: center;
     cursor: pointer;
     justify-content: center;
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.75);
     transition: outline-color 0.5s ease;
 }
 

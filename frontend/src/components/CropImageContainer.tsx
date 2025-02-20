@@ -86,7 +86,7 @@ export function InputImageContainer() {
         }
     
         const averageBrightness = totalBrightness / (image.width * image.height);
-        return averageBrightness < 192;
+        return averageBrightness <= 128;
     };
 
     const handleURLDrop = (event: DragEvent<HTMLDivElement>) => {
@@ -176,6 +176,7 @@ export function InputImageContainer() {
                 e.currentTarget.style.width = "100%";
             }
             imageContainer.current.style.borderRadius = '0px';
+            console.log(calculateBrightness(e.currentTarget));
             setIsImageDark(calculateBrightness(e.currentTarget));
             setRect(imageContainer.current.getBoundingClientRect());
             if (alphaPatternRef.current) {

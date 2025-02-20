@@ -31,7 +31,7 @@ export function CropView() {
 
     function CropImageButton() {
         if (cropDimens.left == 0 && cropDimens.right == 0 && cropDimens.top == 0 && cropDimens.bottom == 0) return;
-        CropImage(cropDimens.left, cropDimens.right, cropDimens.top, cropDimens.bottom).then((result) => {
+        CropImage(cropDimens.left, cropDimens.right, cropDimens.top, cropDimens.bottom, isJPG).then((result) => {
             if (result != null) {
                 const [base64, fileType] = result;
                 if (base64 == "" || fileType == "") {

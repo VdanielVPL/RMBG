@@ -301,7 +301,7 @@ func (a *App) ClearImageMem(Imagetype string) {
 	}
 }
 
-func (a *App) CropImage(left, right, top, bottom float32) []string {
+func (a *App) CropImage(left, right, top, bottom float32, isJPG bool) []string {
 	runtime.EventsEmit(a.ctx, "cropping", true)
 	// if a.imgData.pngcropimg == nil {
 	// 	if a.imgData.pngcropimgpath != "" {
@@ -332,14 +332,32 @@ func (a *App) CropImage(left, right, top, bottom float32) []string {
 	// }
 	var imgByte []byte
 
-	if a.imgData.pngcropimg != nil {
-		imgByte = a.imgData.pngcropimg
-	} else if a.imgData.pngcropimgpath != "" {
-		imgByte, _ = image.ToBytesFromPath(a.imgData.pngcropimgpath)
-	} else if a.imgData.jpgcropimg != nil {
-		imgByte = a.imgData.jpgcropimg
-	} else if a.imgData.jpgcropimgpath != "" {
-		imgByte, _ = image.ToBytesFromPath(a.imgData.jpgcropimgpath)
+	// if a.imgData.pngcropimg != nil {
+	// 	imgByte = a.imgData.pngcropimg
+	// 	println("a1")
+	// } else if a.imgData.pngcropimgpath != "" {
+	// 	imgByte, _ = image.ToBytesFromPath(a.imgData.pngcropimgpath)
+	// 	println("a2")
+	// } else if a.imgData.jpgcropimg != nil {
+	// 	imgByte = a.imgData.jpgcropimg
+	// 	println("a3")
+	// } else if a.imgData.jpgcropimgpath != "" {
+	// 	imgByte, _ = image.ToBytesFromPath(a.imgData.jpgcropimgpath)
+	// 	println("a4")
+	// }
+
+	if isJPG {
+		if a.imgData.jpgcropimg != nil {
+			imgByte = a.imgData.jpgcropimg
+		} else if a.imgData.jpgcropimgpath != "" {
+			imgByte, _ = image.ToBytesFromPath(a.imgData.jpgcropimgpath)
+		}
+	} else {
+		if a.imgData.pngcropimg != nil {
+			imgByte = a.imgData.pngcropimg
+		} else if a.imgData.pngcropimgpath != "" {
+			imgByte, _ = image.ToBytesFromPath(a.imgData.pngcropimgpath)
+		}
 	}
 
 	img, format := image.CropImage(imgByte, left, right, top, bottom)
