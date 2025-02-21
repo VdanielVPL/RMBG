@@ -24,6 +24,9 @@ export function MainWrapper({children}: {children: ReactNode}) {
                 case 'REMBG_NOT_FOUND':
                     alertMessage = strings['ErrorREMBG_NOT_FOUND'];
                     break;
+                case 'NO_IMAGE':
+                    alertMessage = strings['ErrorNO_IMAGE'];
+                    break;
                 case 'SAVED':
                     alertMessage = strings['AlertIMAGE_SAVED'];
                     break;

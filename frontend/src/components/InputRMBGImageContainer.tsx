@@ -13,13 +13,18 @@ export function InputImageContainer() {
 
     useEffect(() => {
         const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
-            HandleDrop("RMBG", paths[0], false).then(([base64, fileType]) => {
-                if (base64 == "" || fileType == "") {
-                    setInputRMBGImage("");
-                }else{
-                    setInputRMBGImage(`data:${fileType};base64,${base64}`);
+            for (let i = 0; i < paths.length; i++) {
+                if (paths[i] != "") {
+                    HandleDrop("RMBG", paths[0], false).then(([base64, fileType]) => {
+                        if (base64 == "" || fileType == "") {
+                            setInputRMBGImage("");
+                        }else{
+                            setInputRMBGImage(`data:${fileType};base64,${base64}`);
+                        }
+                    });
+                    return;
                 }
-            });
+            }  
         };
 
         OnFileDrop(handleFileDrop, true);

@@ -73,6 +73,7 @@ export function CropView() {
                             const newImage = `data:${fileType};base64,${base64}`;
                             setJPGCropImage(newImage);
                             setCropImage(newImage);
+                            EventsEmit('cropping', false);
                         }
                     }
                 })
@@ -80,16 +81,7 @@ export function CropView() {
                 setCropImage(JPGcropImage);
             }
         }else{
-            //TODO: JPG to PNG
-            // if (PNGcropImage == "") {
-            //     const newImage = JPGcropImage;
-            //     setPNGCropImage(newImage);
-            //     setCropImage(newImage);
-            // }else{
-            //     const newImage = PNGcropImage;
-            //     setCropImage(newImage);
-            //     setJPGCropImage("");
-            // }
+            //JPG to PNG
             if (PNGcropImage == "") {
                 ToPNG().then((result) => {
                     if (result != null) {
@@ -101,13 +93,13 @@ export function CropView() {
                             const newImage = `data:${fileType};base64,${base64}`;
                             setPNGCropImage(newImage);
                             setCropImage(newImage);
+                            EventsEmit('cropping', false);
                         }
                     }
                 })
             }else{
                 setCropImage(PNGcropImage);
             }
-
         }
     }
 

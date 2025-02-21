@@ -3,7 +3,6 @@ package image
 import (
 	"bytes"
 	imgpkg "image"
-	_ "image/gif"
 	"image/jpeg"
 	"image/png"
 
@@ -11,14 +10,13 @@ import (
 	_ "golang.org/x/image/webp"
 )
 
-func CropImage(image []byte, left, right, top, bottom float32) ([]byte, string) {
+func CropImage(image []byte, left, right, top, bottom float32) ([]byte, string, error) {
 
 	// println("Cropping image...")
 	imgbytes := bytes.NewReader(image)
 	img, format, err := imgpkg.Decode(imgbytes)
 	if err != nil {
-		println(err.Error())
-		return nil, format
+		return nil, format, err
 	}
 	// println("Decoded image")
 
@@ -57,15 +55,15 @@ func CropImage(image []byte, left, right, top, bottom float32) ([]byte, string) 
 		err = jpeg.Encode(&buf, croppedImg, &jpeg.Options{Quality: 90})
 		if err != nil {
 			println(err.Error())
-			return nil, format
+			return nil, format, err
 		}
 	} else {
 		err = png.Encode(&buf, croppedImg)
 		if err != nil {
 			println(err.Error())
-			return nil, format
+			return nil, format, err
 		}
 	}
 	// println("Cropped image")
-	return buf.Bytes(), format
+	return buf.Bytes(), format, nil
 }

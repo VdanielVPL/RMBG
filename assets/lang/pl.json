@@ -11,6 +11,7 @@
     "CropImage": "Kadruj obraz",
     "ErrorUNKNOWN": "Wystąpił nieznany błąd",
     "ErrorREMBG_NOT_FOUND": "Nie znaleziono CLI rembg",
+    "ErrorNO_IMAGE": "Nie znaleziono obrazu",
     "AlertIMAGE_SAVED": "Obraz zapisany",
     "AlertIMAGE_COPIED": "Obraz skopiowany"
 }

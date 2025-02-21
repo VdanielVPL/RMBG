@@ -20,24 +20,38 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+var supportedImageTypes = []string{"image/png", "image/jpeg", "image/webp"}
+
 func ToBase64FromPath(path string) (string, string, error) {
 	fileBytes, err := os.ReadFile(path)
 	if err != nil {
 		return "", "", err
 	}
-	return ToBase64FromBytes(fileBytes)
+	format := GetMimeType(fileBytes)
+	for _, supportedType := range supportedImageTypes {
+		if format == supportedType {
+			return ToBase64FromBytes(fileBytes)
+		}
+	}
+	return "", "", errors.New("NOT_AN_IMAGE")
 }
 func GetImageFromURL(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
+	format := resp.Header.Get("Content-Type")
 	defer resp.Body.Close()
-	fileBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
+	for _, supportedType := range supportedImageTypes {
+		if format == supportedType {
+			fileBytes, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			return fileBytes, nil
+		}
 	}
-	return fileBytes, nil
+	return nil, errors.New("NOT_AN_IMAGE")
 }
 
 func ToBase64FromBytes(fileBytes []byte) (string, string, error) {

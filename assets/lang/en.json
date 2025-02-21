@@ -11,6 +11,7 @@
     "CropImage": "Crop image",
     "ErrorUNKNOWN": "An unknown error occurred",
     "ErrorREMBG_NOT_FOUND": "rembg CLI not found",
+    "ErrorNO_IMAGE": "Image not found",
     "AlertIMAGE_SAVED": "Image saved",
     "AlertIMAGE_COPIED": "Image copied"
 }
