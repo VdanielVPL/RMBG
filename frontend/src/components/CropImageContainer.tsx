@@ -17,26 +17,31 @@ export function InputImageContainer() {
 
     useEffect(() => {
         const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
-            HandleDrop("CROP", paths[0], false).then(([base64, fileType]) => {
-                if (base64 == "" || fileType == "") {
-                    setCropImage("");
-                    setJPGCropImage("");
-                    setPNGCropImage("");
-                }else{
-                    const newImage = `data:${fileType};base64,${base64}`;
-                    if (fileType == "image/jpeg") {
-                        setIsJPG(true);
-                        setJPGCropImage(newImage);
-                        setCropImage(newImage);
-                        setPNGCropImage("");
-                    } else {
-                        setIsJPG(false);
-                        setPNGCropImage(newImage);
-                        setCropImage(newImage);
-                        setJPGCropImage("");
-                    }
+            for (let i = 0; i < paths.length; i++) {
+                if (paths[i] != "") {
+                    HandleDrop("CROP", paths[0], false).then(([base64, fileType]) => {
+                        if (base64 == "" || fileType == "") {
+                            setCropImage("");
+                            setJPGCropImage("");
+                            setPNGCropImage("");
+                        } else {
+                            const newImage = `data:${fileType};base64,${base64}`;
+                            if (fileType == "image/jpeg") {
+                                setIsJPG(true);
+                                setJPGCropImage(newImage);
+                                setCropImage(newImage);
+                                setPNGCropImage("");
+                            } else {
+                                setIsJPG(false);
+                                setPNGCropImage(newImage);
+                                setCropImage(newImage);
+                                setJPGCropImage("");
+                            }
+                        }
+                    });
+                    return;
                 }
-            });
+            }
         };
 
         OnFileDrop(handleFileDrop, true);
@@ -103,7 +108,7 @@ export function InputImageContainer() {
                                 setCropImage("");
                                 setJPGCropImage("");
                                 setPNGCropImage("");
-                            }else{
+                            } else {
                                 const newImage = `data:${fileType};base64,${base64}`;
                                 if (fileType == "image/jpeg") {
                                     setIsJPG(true);
@@ -119,7 +124,7 @@ export function InputImageContainer() {
                             }
                         });
                         imageContainer.current?.classList.remove('wails-drop-target-active');
-                    }else if (data.startsWith('data:')){
+                    } else if (data.startsWith('data:')){
                         imageContainer.current?.classList.remove('wails-drop-target-active');
                     }
                 });
@@ -144,7 +149,7 @@ export function InputImageContainer() {
                 setCropImage("");
                 setJPGCropImage("");
                 setPNGCropImage("");
-            }else{
+            } else {
                 const newImage = `data:${fileType};base64,${base64}`;
                 if (fileType == "image/jpeg") {
                     setIsJPG(true);

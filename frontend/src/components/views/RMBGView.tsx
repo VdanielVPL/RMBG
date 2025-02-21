@@ -97,10 +97,19 @@ export function RMBGView() {
         if (inOrOut == "in") {
             if (inputRMBGImage != "") {
                 const newImage = inputRMBGImage;
-                setCropImage(newImage);
-                setPNGCropImage(newImage);
-                setJPGCropImage("");
-                FromRMBGtoCrop(0);
+                let fileType = newImage.split(';')[0].split(':')[1];
+                if (fileType == "image/jpeg") {
+                    setIsJPG(true);
+                    setJPGCropImage(newImage);
+                    setCropImage(newImage);
+                    setPNGCropImage("");
+                } else {
+                    setIsJPG(false);
+                    setPNGCropImage(newImage);
+                    setCropImage(newImage);
+                    setJPGCropImage("");
+                }
+                FromRMBGtoCrop(0, fileType=="image/jpeg");
                 navigate('/crop');
             }
         }else if (inOrOut == "out") {
@@ -110,7 +119,7 @@ export function RMBGView() {
                 setPNGCropImage(newImage);
                 setCropImage(newImage);
                 setJPGCropImage("");
-                FromRMBGtoCrop(1);
+                FromRMBGtoCrop(1, false);
                 navigate('/crop');
             }
         }

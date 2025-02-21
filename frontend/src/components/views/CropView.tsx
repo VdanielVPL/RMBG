@@ -6,7 +6,7 @@ import { Button, Switch } from "../inputs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCloudArrowDown, faCopy, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
-import { CropImage, FromCroptoRMBG, CopyImage, SaveImage, ToJPG, ToPNG } from "../../../wailsjs/go/main/App";
+import { CropImage, FromCroptoRMBG, CopyImage, SaveImage, ToJPG, ToPNG, ClearImageMem } from "../../../wailsjs/go/main/App";
 import { EventsEmit } from "../../../wailsjs/runtime/runtime";
 
 export function CropView() {
@@ -15,16 +15,17 @@ export function CropView() {
 
     let navigate = useNavigate();
 
-    function clearView() {
+    function ClearView() {
         setCropImage("");
         setJPGCropImage("");
         setPNGCropImage("");
+        ClearImageMem("CROP");
     }
 
     function ToRMBGView() {
         if (cropImage != "") {
             setInputRMBGImage(isJPG?JPGcropImage:PNGcropImage);
-            FromCroptoRMBG()
+            FromCroptoRMBG(isJPG)
             navigate('/');
         }
     }
@@ -116,7 +117,7 @@ export function CropView() {
                     <InputImageContainer></InputImageContainer>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
                         <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={clearView} title={strings["ClearView"]} disabled={cropping}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={ClearView} title={strings["ClearView"]} disabled={cropping}>
                                 <FontAwesomeIcon icon={faTrashCan} size='xl' style={{transform: 'scale(0.8)'}} />
                             </Button>
                             <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={ToRMBGView} title={strings["ToRMBGView"]} disabled={cropping}>

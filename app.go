@@ -351,23 +351,37 @@ func (a *App) CropImage(left, right, top, bottom float32, isJPG bool) []string {
 	}
 }
 
-func (a *App) FromRMBGtoCrop(t int) {
+func (a *App) FromRMBGtoCrop(t int, isJPG bool) {
 	if t == 0 {
 		if a.imgData.rembgimg != nil {
-			a.imgData.pngcropimgpath = ""
-			a.imgData.pngcropimg = a.imgData.rembgimg
-			a.imgData.jpgcropimgpath = ""
-			a.imgData.jpgcropimg = nil
+			if isJPG {
+				a.imgData.pngcropimgpath = ""
+				a.imgData.pngcropimg = nil
+				a.imgData.jpgcropimgpath = ""
+				a.imgData.jpgcropimg = a.imgData.rembgimg
+			} else {
+				a.imgData.pngcropimgpath = ""
+				a.imgData.pngcropimg = a.imgData.rembgimg
+				a.imgData.jpgcropimgpath = ""
+				a.imgData.jpgcropimg = nil
+			}
 		} else if a.imgData.rembgpath != "" {
 			imgBytes, err := image.ToBytesFromPath(a.imgData.rembgpath)
 			if err != nil {
 				runtime.EventsEmit(a.ctx, "alert", err.Error())
 				return
 			}
-			a.imgData.pngcropimgpath = ""
-			a.imgData.pngcropimg = imgBytes
-			a.imgData.jpgcropimgpath = ""
-			a.imgData.jpgcropimg = nil
+			if isJPG {
+				a.imgData.pngcropimgpath = ""
+				a.imgData.pngcropimg = nil
+				a.imgData.jpgcropimgpath = ""
+				a.imgData.jpgcropimg = imgBytes
+			} else {
+				a.imgData.pngcropimgpath = ""
+				a.imgData.pngcropimg = imgBytes
+				a.imgData.jpgcropimgpath = ""
+				a.imgData.jpgcropimg = nil
+			}
 		}
 	} else if t == 1 {
 		if a.imgData.rembgimg2 != nil {
@@ -379,19 +393,23 @@ func (a *App) FromRMBGtoCrop(t int) {
 	}
 }
 
-func (a *App) FromCroptoRMBG() {
-	if a.imgData.pngcropimg != nil {
-		a.imgData.rembgpath = ""
-		a.imgData.rembgimg = a.imgData.pngcropimg
-	} else if a.imgData.pngcropimgpath != "" {
-		a.imgData.rembgimg = nil
-		a.imgData.rembgpath = a.imgData.pngcropimgpath
-	} else if a.imgData.jpgcropimg != nil {
-		a.imgData.rembgpath = ""
-		a.imgData.rembgimg = a.imgData.jpgcropimg
-	} else if a.imgData.jpgcropimgpath != "" {
-		a.imgData.rembgimg = nil
-		a.imgData.rembgpath = a.imgData.jpgcropimgpath
+func (a *App) FromCroptoRMBG(isJPG bool) {
+	if isJPG {
+		if a.imgData.jpgcropimg != nil {
+			a.imgData.rembgpath = ""
+			a.imgData.rembgimg = a.imgData.jpgcropimg
+		} else if a.imgData.jpgcropimgpath != "" {
+			a.imgData.rembgimg = nil
+			a.imgData.rembgpath = a.imgData.jpgcropimgpath
+		}
+	} else {
+		if a.imgData.pngcropimg != nil {
+			a.imgData.rembgpath = ""
+			a.imgData.rembgimg = a.imgData.pngcropimg
+		} else if a.imgData.pngcropimgpath != "" {
+			a.imgData.rembgimg = nil
+			a.imgData.rembgpath = a.imgData.pngcropimgpath
+		}
 	}
 }
 

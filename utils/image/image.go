@@ -33,7 +33,7 @@ func ToBase64FromPath(path string) (string, string, error) {
 			return ToBase64FromBytes(fileBytes)
 		}
 	}
-	return "", "", errors.New("NOT_AN_IMAGE")
+	return "", "", errors.New("NO_IMAGE")
 }
 func GetImageFromURL(url string) ([]byte, error) {
 	resp, err := http.Get(url)
@@ -51,7 +51,7 @@ func GetImageFromURL(url string) ([]byte, error) {
 			return fileBytes, nil
 		}
 	}
-	return nil, errors.New("NOT_AN_IMAGE")
+	return nil, errors.New("NO_IMAGE")
 }
 
 func ToBase64FromBytes(fileBytes []byte) (string, string, error) {
@@ -59,7 +59,7 @@ func ToBase64FromBytes(fileBytes []byte) (string, string, error) {
 	if strings.HasPrefix(fileType, "image/") {
 		return base64.StdEncoding.EncodeToString(fileBytes), fileType, nil
 	} else {
-		return "", "", errors.New("NOT_AN_IMAGE")
+		return "", "", errors.New("NO_IMAGE")
 	}
 }
 
