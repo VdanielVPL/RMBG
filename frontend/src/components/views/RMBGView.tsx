@@ -157,10 +157,10 @@ export function RMBGView() {
                                 <FontAwesomeIcon icon={faCropSimple} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                             <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
-                                <Button style={{width: '40px', height: '40px'}} onClick={() => CopyImage('RMBG')} title={strings["CopyImage"]}>
+                                <Button style={{width: '40px', height: '40px'}} onClick={() => CopyImage('RMBG', false)} title={strings["CopyImage"]}>
                                     <FontAwesomeIcon icon={faCopy} size='xl'style={{transform: 'scale(0.8)'}} />
                                 </Button>
-                                <Button style={{width: '40px', height: '40px'}} onClick={() => SaveImage('RMBG')} title={strings["SaveImage"]}>
+                                <Button style={{width: '40px', height: '40px'}} onClick={() => SaveImage('RMBG', false)} title={strings["SaveImage"]}>
                                     <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
                                 </Button>
                             </div>

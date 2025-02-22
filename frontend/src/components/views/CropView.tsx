@@ -110,9 +110,9 @@ export function CropView() {
             <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center'}}>
                     <div style={{height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '10px'}}>
-                        <span style={{visibility: cropImage==""?'hidden':'visible'}}>PNG</span>
+                        <span style={{visibility: cropImage==""?'hidden':'visible', color: isDarkMode?'white':'black'}}>PNG</span>
                         <Switch visibility={cropImage==""?'hidden':'visible'} primaryColor={accentColor} secondaryColor={accentColor} onChange={OnSwitchChange} value={isJPG}></Switch>
-                        <span style={{visibility: cropImage==""?'hidden':'visible'}}>JPEG</span>
+                        <span style={{visibility: cropImage==""?'hidden':'visible', color: isDarkMode?'white':'black'}}>JPEG</span>
                     </div>
                     <InputImageContainer></InputImageContainer>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
@@ -130,10 +130,10 @@ export function CropView() {
                             </Button>
                         </div>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible'}} onClick={() => CopyImage('CROP')} title={strings["CopyImage"]}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible'}} onClick={() => CopyImage('CROP', isJPG)} title={strings["CopyImage"]}>
                                 <FontAwesomeIcon icon={faCopy} size='xl'style={{transform: 'scale(0.8)'}} />
                             </Button>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible'}} onClick={() => SaveImage('CROP')} title={strings["SaveImage"]}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible'}} onClick={() => SaveImage('CROP', isJPG)} title={strings["SaveImage"]}>
                                 <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                         </div>

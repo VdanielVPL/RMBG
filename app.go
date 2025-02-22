@@ -194,7 +194,7 @@ func (a *App) SetModel(model string) {
 	a.imgData.model = model
 }
 
-func (a *App) SaveImage(ImageType string) error {
+func (a *App) SaveImage(ImageType string, isJPG bool) error {
 	if ImageType == "RMBG" && a.imgData.rembgimg2 != nil {
 		filePath, err := image.SaveImageDialog(a.ctx, false)
 		if err != nil {
@@ -203,47 +203,53 @@ func (a *App) SaveImage(ImageType string) error {
 		if filePath != "" {
 			os.WriteFile(filePath, a.imgData.rembgimg2, 0644)
 		}
-	} else if ImageType == "CROP" && a.imgData.pngcropimg != nil {
-		filePath, err := image.SaveImageDialog(a.ctx, false)
-		if err != nil {
-			return err
-		}
-		if filePath != "" {
-			os.WriteFile(filePath, a.imgData.pngcropimg, 0644)
-		}
-	} else if ImageType == "CROP" && a.imgData.jpgcropimg != nil {
-		filePath, err := image.SaveImageDialog(a.ctx, true)
-		if err != nil {
-			return err
-		}
-		if filePath != "" {
-			os.WriteFile(filePath, a.imgData.jpgcropimg, 0644)
-		}
-	} else if ImageType == "CROP" && a.imgData.pngcropimgpath != "" {
-		filePath, err := image.SaveImageDialog(a.ctx, false)
-		if err != nil {
-			return err
-		}
-		if filePath != "" {
-			imgBytes, err := image.ToBytesFromPath(a.imgData.pngcropimgpath)
-			if err != nil {
-				runtime.EventsEmit(a.ctx, "alert", err.Error())
-				return err
+	} else if ImageType == "CROP" {
+		if isJPG {
+			if a.imgData.jpgcropimg != nil {
+				filePath, err := image.SaveImageDialog(a.ctx, true)
+				if err != nil {
+					return err
+				}
+				if filePath != "" {
+					os.WriteFile(filePath, a.imgData.jpgcropimg, 0644)
+				}
+			} else if a.imgData.jpgcropimgpath != "" {
+				imgBytes, err := image.ToBytesFromPath(a.imgData.jpgcropimgpath)
+				if err != nil {
+					runtime.EventsEmit(a.ctx, "alert", err.Error())
+					return err
+				}
+				filePath, err := image.SaveImageDialog(a.ctx, true)
+				if err != nil {
+					return err
+				}
+				if filePath != "" {
+					os.WriteFile(filePath, imgBytes, 0644)
+				}
 			}
-			os.WriteFile(filePath, imgBytes, 0644)
-		}
-	} else if ImageType == "CROP" && a.imgData.jpgcropimgpath != "" {
-		filePath, err := image.SaveImageDialog(a.ctx, true)
-		if err != nil {
-			return err
-		}
-		if filePath != "" {
-			imgBytes, err := image.ToBytesFromPath(a.imgData.jpgcropimgpath)
-			if err != nil {
-				runtime.EventsEmit(a.ctx, "alert", err.Error())
-				return err
+		} else {
+			if a.imgData.pngcropimg != nil {
+				filePath, err := image.SaveImageDialog(a.ctx, false)
+				if err != nil {
+					return err
+				}
+				if filePath != "" {
+					os.WriteFile(filePath, a.imgData.pngcropimg, 0644)
+				}
+			} else if a.imgData.pngcropimgpath != "" {
+				imgBytes, err := image.ToBytesFromPath(a.imgData.pngcropimgpath)
+				if err != nil {
+					runtime.EventsEmit(a.ctx, "alert", err.Error())
+					return err
+				}
+				filePath, err := image.SaveImageDialog(a.ctx, false)
+				if err != nil {
+					return err
+				}
+				if filePath != "" {
+					os.WriteFile(filePath, imgBytes, 0644)
+				}
 			}
-			os.WriteFile(filePath, imgBytes, 0644)
 		}
 	} else {
 		runtime.EventsEmit(a.ctx, "alert", "NO_IMAGE")
@@ -253,27 +259,36 @@ func (a *App) SaveImage(ImageType string) error {
 	return nil
 }
 
-func (a *App) CopyImage(ImageType string) {
+func (a *App) CopyImage(ImageType string, isJPG bool) {
 	if ImageType == "RMBG" && a.imgData.rembgimg2 != nil {
 		image.CopyToClipboard(a.imgData.rembgimg2, a.kernel32, a.user32, a.imgData.CF_PNG)
-	} else if ImageType == "CROP" && a.imgData.pngcropimg != nil {
-		image.CopyToClipboard(a.imgData.pngcropimg, a.kernel32, a.user32, a.imgData.CF_PNG)
-	} else if ImageType == "CROP" && a.imgData.jpgcropimg != nil {
-		image.CopyToClipboard(a.imgData.jpgcropimg, a.kernel32, a.user32, a.imgData.CF_PNG)
-	} else if ImageType == "CROP" && a.imgData.pngcropimgpath != "" {
-		imgBytes, err := image.ToBytesFromPath(a.imgData.pngcropimgpath)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return
+	} else if ImageType == "CROP" {
+		if isJPG {
+			if a.imgData.jpgcropimg != nil {
+				image.CopyToClipboard(a.imgData.jpgcropimg, a.kernel32, a.user32, a.imgData.CF_PNG)
+			} else if a.imgData.jpgcropimgpath != "" {
+				imgBytes, err := image.ToBytesFromPath(a.imgData.jpgcropimgpath)
+				if err != nil {
+					runtime.EventsEmit(a.ctx, "alert", err.Error())
+					return
+				}
+				image.CopyToClipboard(imgBytes, a.kernel32, a.user32, a.imgData.CF_PNG)
+			}
+		} else {
+			if a.imgData.pngcropimg != nil {
+				image.CopyToClipboard(a.imgData.pngcropimg, a.kernel32, a.user32, a.imgData.CF_PNG)
+			} else if a.imgData.pngcropimgpath != "" {
+				imgBytes, err := image.ToBytesFromPath(a.imgData.pngcropimgpath)
+				if err != nil {
+					runtime.EventsEmit(a.ctx, "alert", err.Error())
+					return
+				}
+				image.CopyToClipboard(imgBytes, a.kernel32, a.user32, a.imgData.CF_PNG)
+			} else {
+				runtime.EventsEmit(a.ctx, "alert", "NO_IMAGE")
+				return
+			}
 		}
-		image.CopyToClipboard(imgBytes, a.kernel32, a.user32, a.imgData.CF_PNG)
-	} else if ImageType == "CROP" && a.imgData.jpgcropimgpath != "" {
-		imgBytes, err := image.ToBytesFromPath(a.imgData.jpgcropimgpath)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return
-		}
-		image.CopyToClipboard(imgBytes, a.kernel32, a.user32, a.imgData.CF_PNG)
 	} else {
 		runtime.EventsEmit(a.ctx, "alert", "NO_IMAGE")
 		return
