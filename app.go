@@ -5,6 +5,7 @@ import (
 	"os"
 	"rmbg/utils"
 	"rmbg/utils/image"
+	goruntime "runtime"
 	"syscall"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -49,14 +50,12 @@ func (a *App) startup(ctx context.Context) {
 	if langData, err := utils.LoadLang(a.kernel32); err == nil {
 		a.LangStrings = langData
 	} else {
-		// runtime.LogError(ctx, "Error loading lang file:"+err.Error())
 		runtime.EventsEmit(ctx, "alert", err.Error())
 	}
 
 	if accentColor, err := utils.GetAccentColor(); err == nil {
 		a.AccentColor = accentColor
 	} else {
-		// runtime.LogError(ctx, "Error getting accent color:"+err.Error())
 		runtime.EventsEmit(ctx, "alert", err.Error())
 	}
 
@@ -68,7 +67,6 @@ func (a *App) startup(ctx context.Context) {
 			CF_PNG: image.RegisterClipboardFormat(formatName, a.user32),
 		}
 	} else {
-		// runtime.LogError(ctx, "Error getting clipboard format:"+err.Error())
 		runtime.EventsEmit(ctx, "alert", err.Error())
 	}
 }
@@ -306,7 +304,10 @@ func (a *App) ClearImageMem(Imagetype string) {
 		a.imgData.pngcropimgpath = ""
 		a.imgData.jpgcropimg = nil
 		a.imgData.jpgcropimgpath = ""
+	} else {
+		return
 	}
+	goruntime.GC()
 }
 
 func (a *App) CropImage(left, right, top, bottom float32, isJPG bool) []string {

@@ -3,7 +3,7 @@ import { ImageContext } from "./contexts";
 
 type CropEditorProps = {
     rect: DOMRect | null;
-    imageRef: RefObject<HTMLImageElement>;
+    imageRef: RefObject<HTMLImageElement | null>;
     isImageDark: boolean;
 };
 
@@ -27,7 +27,7 @@ export default function CropEditor(props: CropEditorProps) {
                 setImageHeight(props.imageRef.current.naturalHeight / props.rect.height);
             }
         }
-    },[props.imageRef.current, props.rect]);
+    },[props.imageRef, props.rect]);
 
     useLayoutEffect(() => {
 

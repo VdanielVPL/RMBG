@@ -18,7 +18,7 @@ export function InputImageContainer() {
                     HandleDrop("RMBG", paths[0], false).then(([base64, fileType]) => {
                         if (base64 == "" || fileType == "") {
                             setInputRMBGImage("");
-                        }else{
+                        } else {
                             setInputRMBGImage(`data:${fileType};base64,${base64}`);
                         }
                     });
@@ -46,12 +46,12 @@ export function InputImageContainer() {
                         HandleDrop("RMBG", data, true).then(([base64, fileType]) => {
                             if (base64 == "" || fileType == "") {
                                 setInputRMBGImage("");
-                            }else{
+                            } else {
                                 setInputRMBGImage(`data:${fileType};base64,${base64}`);
                             }
                         });
                         imageContainer.current?.classList.remove('wails-drop-target-active');
-                    }else if (data.startsWith('data:')){
+                    } else if (data.startsWith('data:')) {
                         imageContainer.current?.classList.remove('wails-drop-target-active');
                     }
                 });
@@ -65,7 +65,7 @@ export function InputImageContainer() {
             const [base64, fileType] = result;
             if (base64 == "" || fileType == "") {
                 setInputRMBGImage("");
-            }else{
+            } else {
                 setInputRMBGImage(`data:${fileType};base64,${base64}`);
             }
         }
@@ -85,7 +85,7 @@ export function InputImageContainer() {
 
     return (
         <div ref={imageContainer} className='imageContainer' onDrop={handleURLDrop} style={{'--wails-drop-target': 'drop'} as CSSProperties} onClick={openDialog}>
-            <img ref={imgRef} src={inputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
+            {inputRMBGImage!="" && <img ref={imgRef} src={inputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>}
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1,}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%'}} />
             </div>

@@ -35,11 +35,11 @@ function OutputImageContainer() {
     const imgRef = useRef<HTMLImageElement>(null);
 
     useLayoutEffect(() => {  
-        if(imgRef.current){
+        if (imgRef.current) {
             if (outputRMBGImage != "") {
                 imgRef.current.style.width = '100%';
                 imgRef.current.style.height = '100%';
-            }else{
+            } else {
                 imgRef.current.style.width = 'auto';
                 imgRef.current.style.height = 'auto';
             }
@@ -48,7 +48,7 @@ function OutputImageContainer() {
     
     return (
         <div className="imageContainer" style={{cursor: 'auto'}}>
-            <img ref={imgRef} src={outputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>
+            {outputRMBGImage!="" && <img ref={imgRef} src={outputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>}
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -2, backgroundColor: 'white'}}>
                 {removingBG?
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%'}} />

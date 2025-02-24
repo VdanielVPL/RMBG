@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"os/exec"
+	"runtime"
 	"syscall"
 )
 
@@ -25,6 +26,7 @@ func RemBG(model string, path string, img []byte) ([]byte, error) {
 			return nil, err
 		}
 		cmd = nil
+		runtime.GC()
 		return out.Bytes(), nil
 	} else if img != nil {
 		cmd := exec.Command("rembg", "i", "-m", model, "-", "-")
@@ -44,6 +46,7 @@ func RemBG(model string, path string, img []byte) ([]byte, error) {
 			return nil, err
 		}
 		cmd = nil
+		runtime.GC()
 		return out.Bytes(), nil
 	}
 	return nil, errors.New("NO_IMAGE")

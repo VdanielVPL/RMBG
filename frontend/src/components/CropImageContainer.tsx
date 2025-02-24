@@ -208,7 +208,9 @@ export function InputImageContainer() {
 
     return (
         <div ref={imageContainer} className='imageContainer imageContainerCrop' onDrop={handleURLDrop} style={{'--wails-drop-target': 'drop', backgroundColor: cropImage!="" && "rgba(255,255,255,0)", cursor: cropImage!="" && 'auto'} as CSSProperties} onClick={openDialog}>
-            <img ref={imageRef} src={cropImage} style={{userSelect: 'none', pointerEvents: 'none', filter: cropImage&& 'brightness(0.5)'}} draggable={false} onLoad={onImageLoad}></img>
+            {cropImage!="" && 
+                <img ref={imageRef} src={cropImage} style={{userSelect: 'none', pointerEvents: 'none', filter: 'brightness(0.5)'}} draggable={false} onLoad={onImageLoad}></img>
+            }
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1, opacity: cropImage!=""?0:1}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
             </div>
