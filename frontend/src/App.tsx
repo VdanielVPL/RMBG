@@ -4,7 +4,7 @@ import { Nav } from './components/nav/Nav';
 import { MainWrapper } from './components/MainWrapper';
 import { RMBGView, CropView } from './components/views';
 import { ImageProvider } from './components/contexts';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 
 function App() {
     return (

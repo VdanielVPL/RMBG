@@ -181,7 +181,7 @@ export function InputImageContainer() {
                 e.currentTarget.style.width = "100%";
             }
             imageContainer.current.style.borderRadius = '0px';
-            console.log(calculateBrightness(e.currentTarget));
+            // console.log(calculateBrightness(e.currentTarget));
             setIsImageDark(calculateBrightness(e.currentTarget));
             setRect(imageContainer.current.getBoundingClientRect());
             if (alphaPatternRef.current) {
