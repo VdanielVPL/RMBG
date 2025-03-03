@@ -140,7 +140,7 @@ func ToJPG(pngImgBytes []byte, jpgImgBytes *[]byte) error {
 	draw.Draw(rgba, bounds, img, bounds.Min, draw.Over)
 
 	var buf bytes.Buffer
-	err = jpeg.Encode(&buf, rgba, &jpeg.Options{Quality: 90})
+	err = jpeg.Encode(&buf, rgba, &jpeg.Options{Quality: 100})
 	if err != nil {
 		return err
 	}
