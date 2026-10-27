@@ -15,6 +15,7 @@ import (
 	"os"
 	"slices"
 	"strings"
+	"time"
 
 	_ "golang.org/x/image/webp"
 
@@ -28,23 +29,35 @@ func IsSupportedImage(fileBytes []byte) bool {
 	return slices.Contains(supportedImageTypes, GetMimeType(fileBytes))
 }
 
+const maxURLImageSize = 100 << 20 // 100 MB
+
+var httpClient = &http.Client{Timeout: 60 * time.Second}
+
 func GetImageFromURL(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
-	format := resp.Header.Get("Content-Type")
-	defer resp.Body.Close()
-	for _, supportedType := range supportedImageTypes {
-		if format == supportedType {
-			fileBytes, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return nil, err
-			}
-			return fileBytes, nil
-		}
+	req.Header.Set("User-Agent", "RMBG") // some servers (e.g. Wikipedia) reject Go's default one
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("NO_IMAGE")
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("NO_IMAGE")
+	}
+
+	fileBytes, err := io.ReadAll(io.LimitReader(resp.Body, maxURLImageSize+1))
+	if err != nil {
+		return nil, err
+	}
+	if len(fileBytes) > maxURLImageSize {
+		return nil, errors.New("NO_IMAGE")
+	}
+	return fileBytes, nil
 }
 
 func ToBase64FromBytes(fileBytes []byte) (string, string, error) {
