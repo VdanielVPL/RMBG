@@ -42,6 +42,7 @@ func main() {
 			DisableResize:    true,
 			BackgroundColour: utils.BgColor(),
 			OnStartup:        app.startup,
+			OnShutdown:       app.shutdown,
 			Windows:          windowsOptions,
 			DragAndDrop: &options.DragAndDrop{
 				EnableFileDrop:  true,

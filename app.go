@@ -5,6 +5,7 @@ import (
 	"os"
 	"rmbg/utils"
 	"rmbg/utils/image"
+	"rmbg/utils/image/clipboard"
 	goruntime "runtime"
 	"syscall"
 
@@ -15,7 +16,6 @@ import (
 type App struct {
 	ctx         context.Context
 	kernel32    *syscall.LazyDLL
-	user32      *syscall.LazyDLL
 	LangStrings map[string]string
 	IsDarkMode  bool
 	AccentColor string
@@ -23,7 +23,6 @@ type App struct {
 }
 
 type imgDataStruct struct {
-	CF_PNG         uint32
 	rembgpath      string
 	rembgimg       []byte
 	rembgimg2      []byte
@@ -45,7 +44,6 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
 	a.kernel32 = syscall.NewLazyDLL("kernel32.dll")
-	a.user32 = syscall.NewLazyDLL("user32.dll")
 
 	if langData, err := utils.LoadLang(a.kernel32); err == nil {
 		a.LangStrings = langData
@@ -61,14 +59,18 @@ func (a *App) startup(ctx context.Context) {
 
 	a.IsDarkMode = utils.IsDarkMode()
 
-	if formatName, err := syscall.UTF16PtrFromString("PNG"); err == nil {
-		a.imgData = &imgDataStruct{
-			model:  "u2net",
-			CF_PNG: image.RegisterClipboardFormat(formatName, a.user32),
-		}
-	} else {
+	a.imgData = &imgDataStruct{
+		model: "u2net",
+	}
+
+	if err := clipboard.Init(); err != nil {
 		runtime.EventsEmit(ctx, "alert", err.Error())
 	}
+}
+
+// shutdown is called when the app is closing
+func (a *App) shutdown(ctx context.Context) {
+	clipboard.Close()
 }
 
 func (a *App) GetLangStrings() map[string]string {
@@ -258,37 +260,38 @@ func (a *App) SaveImage(ImageType string, isJPG bool) error {
 }
 
 func (a *App) CopyImage(ImageType string, isJPG bool) {
+	var imgBytes []byte
+	var err error
+
 	if ImageType == "RMBG" && a.imgData.rembgimg2 != nil {
-		image.CopyToClipboard(a.imgData.rembgimg2, a.kernel32, a.user32, a.imgData.CF_PNG)
+		imgBytes = a.imgData.rembgimg2
 	} else if ImageType == "CROP" {
 		if isJPG {
 			if a.imgData.jpgcropimg != nil {
-				image.CopyToClipboard(a.imgData.jpgcropimg, a.kernel32, a.user32, a.imgData.CF_PNG)
+				imgBytes = a.imgData.jpgcropimg
 			} else if a.imgData.jpgcropimgpath != "" {
-				imgBytes, err := image.ToBytesFromPath(a.imgData.jpgcropimgpath)
-				if err != nil {
-					runtime.EventsEmit(a.ctx, "alert", err.Error())
-					return
-				}
-				image.CopyToClipboard(imgBytes, a.kernel32, a.user32, a.imgData.CF_PNG)
+				imgBytes, err = image.ToBytesFromPath(a.imgData.jpgcropimgpath)
 			}
 		} else {
 			if a.imgData.pngcropimg != nil {
-				image.CopyToClipboard(a.imgData.pngcropimg, a.kernel32, a.user32, a.imgData.CF_PNG)
+				imgBytes = a.imgData.pngcropimg
 			} else if a.imgData.pngcropimgpath != "" {
-				imgBytes, err := image.ToBytesFromPath(a.imgData.pngcropimgpath)
-				if err != nil {
-					runtime.EventsEmit(a.ctx, "alert", err.Error())
-					return
-				}
-				image.CopyToClipboard(imgBytes, a.kernel32, a.user32, a.imgData.CF_PNG)
-			} else {
-				runtime.EventsEmit(a.ctx, "alert", "NO_IMAGE")
-				return
+				imgBytes, err = image.ToBytesFromPath(a.imgData.pngcropimgpath)
 			}
 		}
-	} else {
+	}
+
+	if err != nil {
+		runtime.EventsEmit(a.ctx, "alert", err.Error())
+		return
+	}
+	if imgBytes == nil {
 		runtime.EventsEmit(a.ctx, "alert", "NO_IMAGE")
+		return
+	}
+
+	if err := clipboard.CopyImage(imgBytes); err != nil {
+		runtime.EventsEmit(a.ctx, "alert", err.Error())
 		return
 	}
 	runtime.EventsEmit(a.ctx, "alert", "COPIED")
