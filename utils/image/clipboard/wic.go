@@ -36,10 +36,11 @@ const (
 
 // WICBitmapTransformOptions
 const (
-	wicRotate90     = 1
-	wicRotate180    = 2
-	wicRotate270    = 3
-	wicFlipVertical = 0x10
+	wicRotate90       = 1
+	wicRotate180      = 2
+	wicRotate270      = 3
+	wicFlipHorizontal = 0x8
+	wicFlipVertical   = 0x10
 )
 
 // comObject is the memory layout of any COM interface: a pointer to its method table.
@@ -50,6 +51,10 @@ type comObject struct {
 var wicFactory *comObject // created on first use, owner thread only
 
 // call calls method idx of the object and returns the HRESULT (0 = S_OK).
+// uintptrescapes keeps out-variables passed as uintptr(unsafe.Pointer(&x)) on the heap (like LazyProc.Call),
+// otherwise the stack can move during the call and COM writes the result to the old place.
+//
+//go:uintptrescapes
 func (o *comObject) call(idx int, args ...uintptr) uintptr {
 	r, _, _ := syscall.SyscallN(o.vtbl[idx], append([]uintptr{uintptr(unsafe.Pointer(o))}, args...)...)
 	return r
@@ -82,10 +87,18 @@ func releaseWIC() {
 // WIC flips before rotating, so 90 and 270 are swapped compared to plain rotation.
 func wicTransform(orientation int) uintptr {
 	switch orientation {
+	case 2:
+		return wicFlipHorizontal | wicFlipVertical
 	case 3:
 		return wicRotate180 | wicFlipVertical
+	case 4:
+		return wicRotate180 | wicFlipHorizontal | wicFlipVertical
+	case 5:
+		return wicRotate90 | wicFlipHorizontal | wicFlipVertical
 	case 6:
 		return wicRotate270 | wicFlipVertical
+	case 7:
+		return wicRotate270 | wicFlipHorizontal | wicFlipVertical
 	case 8:
 		return wicRotate90 | wicFlipVertical
 	}
@@ -152,6 +165,7 @@ func decodeWIC(data []byte, orientation int) uintptr {
 		pGlobalFree.Call(hMem)
 		return 0
 	}
+	whitenTransparent(pixels, int(w), int(h))
 
 	pGlobalUnlock.Call(hMem)
 	return hMem

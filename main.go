@@ -19,7 +19,9 @@ func main() {
 	utils.InitAssets(assets)
 
 	if len(os.Args) > 1 {
-		utils.Cli(os.Args)
+		if err := utils.Cli(os.Args); err != nil {
+			println("Error:", err.Error())
+		}
 	} else {
 		app := NewApp()
 

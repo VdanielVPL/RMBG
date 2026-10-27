@@ -12,6 +12,13 @@
     "ErrorUNKNOWN": "An unknown error occurred",
     "ErrorREMBG_NOT_FOUND": "rembg CLI not found",
     "ErrorNO_IMAGE": "Image not found",
+    "ErrorINVALID_IMAGE": "Unsupported or damaged image",
+    "ErrorLOAD_FAILED": "Failed to load image",
+    "ErrorREMBG_FAILED": "Failed to remove background",
+    "ErrorCROP_FAILED": "Failed to crop image",
+    "ErrorCONVERT_FAILED": "Failed to change image format",
+    "ErrorSAVE_FAILED": "Failed to save image",
+    "ErrorCOPY_FAILED": "Failed to copy image",
     "AlertIMAGE_SAVED": "Image saved",
     "AlertIMAGE_COPIED": "Image copied"
 }

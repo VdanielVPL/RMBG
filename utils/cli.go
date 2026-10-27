@@ -29,34 +29,30 @@ func generateUniqueFileName(dir, baseName string) string {
 	}
 }
 
-func Cli(args []string) {
-	if args[1] != "" {
-		absPath, err := filepath.Abs(args[1])
-
-		if err != nil {
-			return
-		}
-
-		dir := filepath.Dir(absPath)
-		dirName := filepath.Base(dir)
-		newFilePath := generateUniqueFileName(dir, dirName)
-
-		if len(args) == 2 {
-			cmd := exec.Command("rembg", "i", absPath, newFilePath)
-			cmd.SysProcAttr = &syscall.SysProcAttr{
-				CreationFlags: 0x08000000,
-				HideWindow:    true,
-			}
-			cmd.Run()
-		}
-
-		if len(args) == 3 {
-			cmd := exec.Command("rembg", "i", "-m", args[2], absPath, newFilePath)
-			cmd.SysProcAttr = &syscall.SysProcAttr{
-				CreationFlags: 0x08000000,
-				HideWindow:    true,
-			}
-			cmd.Run()
-		}
+func Cli(args []string) error {
+	if args[1] == "" {
+		return nil
 	}
+
+	absPath, err := filepath.Abs(args[1])
+	if err != nil {
+		return err
+	}
+
+	dir := filepath.Dir(absPath)
+	dirName := filepath.Base(dir)
+	newFilePath := generateUniqueFileName(dir, dirName)
+
+	rembgArgs := []string{"i", absPath, newFilePath}
+	if len(args) > 2 {
+		rembgArgs = []string{"i", "-m", args[2], absPath, newFilePath}
+	}
+
+	cmd := exec.Command("rembg", rembgArgs...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		CreationFlags: 0x08000000,
+		HideWindow:    true,
+	}
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }

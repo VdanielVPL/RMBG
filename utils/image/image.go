@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -23,10 +24,11 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-var supportedImageTypes = []string{"image/png", "image/jpeg", "image/webp"}
+var supportedImageTypes = []string{"png", "jpeg", "webp"}
 
 func IsSupportedImage(fileBytes []byte) bool {
-	return slices.Contains(supportedImageTypes, GetMimeType(fileBytes))
+	_, format, err := image.DecodeConfig(bytes.NewReader(fileBytes))
+	return err == nil && slices.Contains(supportedImageTypes, format)
 }
 
 const maxURLImageSize = 100 << 20 // 100 MB
@@ -47,7 +49,7 @@ func GetImageFromURL(url string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("NO_IMAGE")
+		return nil, fmt.Errorf("download failed: %s", resp.Status)
 	}
 
 	fileBytes, err := io.ReadAll(io.LimitReader(resp.Body, maxURLImageSize+1))
@@ -55,7 +57,7 @@ func GetImageFromURL(url string) ([]byte, error) {
 		return nil, err
 	}
 	if len(fileBytes) > maxURLImageSize {
-		return nil, errors.New("NO_IMAGE")
+		return nil, errors.New("downloaded image is over 100 MB")
 	}
 	return fileBytes, nil
 }
@@ -83,20 +85,7 @@ func OpenImageDialog(ctx context.Context) (string, error) {
 			},
 		},
 	}
-	var filePath string
-	var err error
-	done := make(chan struct{})
-
-	go func() {
-		filePath, err = runtime.OpenFileDialog(ctx, options)
-		close(done)
-	}()
-
-	<-done
-	if err != nil {
-		return "", err
-	}
-	return filePath, nil
+	return runtime.OpenFileDialog(ctx, options)
 }
 
 func SaveImageDialog(ctx context.Context, isJPG bool) (string, error) {
@@ -115,20 +104,7 @@ func SaveImageDialog(ctx context.Context, isJPG bool) (string, error) {
 		options.Filters[0].Pattern = "*.jpg"
 	}
 
-	var filePath string
-	var err error
-	done := make(chan struct{})
-
-	go func() {
-		filePath, err = runtime.SaveFileDialog(ctx, options)
-		close(done)
-	}()
-
-	<-done
-	if err != nil {
-		return "", err
-	}
-	return filePath, nil
+	return runtime.SaveFileDialog(ctx, options)
 }
 
 func ToJPG(pngImgBytes []byte, jpgImgBytes *[]byte) error {
@@ -179,7 +155,7 @@ func ToSupportedFormat(imgBytes []byte) (newImgBytes []byte, isJPG bool, convert
 
 	img, _, err := image.Decode(bytes.NewReader(imgBytes))
 	if err != nil {
-		return nil, false, false, errors.New("NO_IMAGE")
+		return nil, false, false, errors.New("INVALID_IMAGE")
 	}
 	var buf bytes.Buffer
 	err = png.Encode(&buf, img)
@@ -196,16 +172,30 @@ func decodeOriented(imgBytes []byte) (image.Image, string, error) {
 	}
 
 	if format == "jpeg" {
-		switch ReadOrientation(bytes.NewReader(imgBytes)) {
-		case 6: // 90 CW
-			img = imaging.Rotate270(img)
-		case 3: // 180
-			img = imaging.Rotate180(img)
-		case 8: // 270 CW
-			img = imaging.Rotate90(img)
-		}
+		img = ApplyOrientation(img, ReadOrientation(bytes.NewReader(imgBytes)))
 	}
 	return img, format, nil
+}
+
+// ApplyOrientation turns the image the way EXIF orientation says, like the preview shows it
+func ApplyOrientation(img image.Image, orientation int) image.Image {
+	switch orientation {
+	case 2:
+		return imaging.FlipH(img)
+	case 3:
+		return imaging.Rotate180(img)
+	case 4:
+		return imaging.FlipV(img)
+	case 5:
+		return imaging.Transpose(img)
+	case 6:
+		return imaging.Rotate270(img)
+	case 7:
+		return imaging.Transverse(img)
+	case 8:
+		return imaging.Rotate90(img)
+	}
+	return img
 }
 
 func GetMimeType(bytes []byte) string {

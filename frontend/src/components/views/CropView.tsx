@@ -11,7 +11,7 @@ import { EventsEmit } from "../../../wailsjs/runtime/runtime";
 
 export function CropView() {
     const { strings, isDarkMode, accentColor } = useContext(MainContext);
-    const { cropImage, setCropImage, JPGcropImage, setJPGCropImage, setPNGCropImage, PNGcropImage, setInputRMBGImage, cropDimens, cropping, setIsJPG, isJPG } = useContext(ImageContext);
+    const { cropImage, setCropImage, JPGcropImage, setJPGCropImage, setPNGCropImage, PNGcropImage, setInputRMBGImage, setOutputRMBGImage, cropDimens, cropping, setIsJPG, isJPG } = useContext(ImageContext);
 
     let navigate = useNavigate();
 
@@ -25,6 +25,7 @@ export function CropView() {
     function ToRMBGView() {
         if (cropImage != "") {
             setInputRMBGImage(isJPG?JPGcropImage:PNGcropImage);
+            setOutputRMBGImage("");
             FromCroptoRMBG(isJPG)
             navigate('/');
         }
@@ -76,6 +77,8 @@ export function CropView() {
                             setCropImage(newImage);
                             EventsEmit('cropping', false);
                         }
+                    }else{
+                        setIsJPG(false);
                     }
                 })
             }else{
@@ -96,6 +99,8 @@ export function CropView() {
                             setCropImage(newImage);
                             EventsEmit('cropping', false);
                         }
+                    }else{
+                        setIsJPG(true);
                     }
                 })
             }else{
@@ -111,7 +116,7 @@ export function CropView() {
                 <div style={{display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center'}}>
                     <div style={{height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '10px'}}>
                         <span style={{visibility: cropImage==""?'hidden':'visible', color: isDarkMode?'white':'black'}}>PNG</span>
-                        <Switch visibility={cropImage==""?'hidden':'visible'} primaryColor={accentColor} secondaryColor={accentColor} onChange={OnSwitchChange} value={isJPG}></Switch>
+                        <Switch visibility={cropImage==""?'hidden':'visible'} primaryColor={accentColor} secondaryColor={accentColor} onChange={OnSwitchChange} value={isJPG} disabled={cropping}></Switch>
                         <span style={{visibility: cropImage==""?'hidden':'visible', color: isDarkMode?'white':'black'}}>JPEG</span>
                     </div>
                     <InputImageContainer></InputImageContainer>

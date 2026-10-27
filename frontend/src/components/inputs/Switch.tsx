@@ -26,6 +26,7 @@ interface SwitchProps{
     */
     widthMultiplier?: number;
     visibility?: 'visible' | 'hidden';
+    disabled?: boolean;
 }
 
 export default function Switch(props: SwitchProps){
@@ -49,6 +50,9 @@ export default function Switch(props: SwitchProps){
     }
 
     function onclick(){
+        if(props.disabled){
+            return
+        }
         if(props.value===undefined){
             onChangeTrigger()
             setActive(prev => !prev)
@@ -73,7 +77,8 @@ export default function Switch(props: SwitchProps){
             position: 'relative',
             display: 'flex',
             alignItems: 'center',
-            cursor: 'pointer',
+            cursor: props.disabled?'auto':'pointer',
+            filter: props.disabled?'brightness(60%)':undefined,
             visibility: finalProps.visibility
         }} onClick={onclick}>
             <div className="switchComponentCircle" style={{

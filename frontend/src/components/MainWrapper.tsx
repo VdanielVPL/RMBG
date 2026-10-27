@@ -27,11 +27,32 @@ export function MainWrapper({children}: {children: ReactNode}) {
                 case 'NO_IMAGE':
                     alertMessage = strings['ErrorNO_IMAGE'];
                     break;
+                case 'INVALID_IMAGE':
+                    alertMessage = strings['ErrorINVALID_IMAGE'];
+                    break;
                 case 'SAVED':
                     alertMessage = strings['AlertIMAGE_SAVED'];
                     break;
                 case 'COPIED':
                     alertMessage = strings['AlertIMAGE_COPIED'];
+                    break;
+                case 'LOAD_FAILED':
+                    alertMessage = strings['ErrorLOAD_FAILED'];
+                    break;
+                case 'REMBG_FAILED':
+                    alertMessage = strings['ErrorREMBG_FAILED'];
+                    break;
+                case 'CROP_FAILED':
+                    alertMessage = strings['ErrorCROP_FAILED'];
+                    break;
+                case 'CONVERT_FAILED':
+                    alertMessage = strings['ErrorCONVERT_FAILED'];
+                    break;
+                case 'SAVE_FAILED':
+                    alertMessage = strings['ErrorSAVE_FAILED'];
+                    break;
+                case 'COPY_FAILED':
+                    alertMessage = strings['ErrorCOPY_FAILED'];
                     break;
                 default:
                     alertMessage = strings['ErrorUNKNOWN'];

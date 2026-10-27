@@ -12,6 +12,13 @@
     "ErrorUNKNOWN": "Wystąpił nieznany błąd",
     "ErrorREMBG_NOT_FOUND": "Nie znaleziono CLI rembg",
     "ErrorNO_IMAGE": "Nie znaleziono obrazu",
+    "ErrorINVALID_IMAGE": "Nieobsługiwany lub uszkodzony obraz",
+    "ErrorLOAD_FAILED": "Nie udało się wczytać obrazu",
+    "ErrorREMBG_FAILED": "Nie udało się usunąć tła",
+    "ErrorCROP_FAILED": "Nie udało się wykadrować obrazu",
+    "ErrorCONVERT_FAILED": "Nie udało się zmienić formatu obrazu",
+    "ErrorSAVE_FAILED": "Nie udało się zapisać obrazu",
+    "ErrorCOPY_FAILED": "Nie udało się skopiować obrazu",
     "AlertIMAGE_SAVED": "Obraz zapisany",
     "AlertIMAGE_COPIED": "Obraz skopiowany"
 }

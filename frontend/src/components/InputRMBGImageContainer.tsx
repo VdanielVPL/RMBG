@@ -7,7 +7,7 @@ import { MainContext, ImageContext } from "./contexts";
 
 export function InputImageContainer() {
     const { accentColor } = useContext(MainContext);
-    const { inputRMBGImage, setInputRMBGImage } = useContext(ImageContext);
+    const { inputRMBGImage, setInputRMBGImage, setOutputRMBGImage } = useContext(ImageContext);
     const imageContainer = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
@@ -15,11 +15,16 @@ export function InputImageContainer() {
         const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
             for (let i = 0; i < paths.length; i++) {
                 if (paths[i] != "") {
-                    HandleDrop("RMBG", paths[0], false).then(([base64, fileType]) => {
+                    HandleDrop("RMBG", paths[0], false).then((result) => {
+                        if (result == null) {
+                            return;
+                        }
+                        const [base64, fileType] = result;
                         if (base64 == "" || fileType == "") {
                             setInputRMBGImage("");
                         } else {
                             setInputRMBGImage(`data:${fileType};base64,${base64}`);
+                            setOutputRMBGImage("");
                         }
                     });
                     return;
@@ -43,11 +48,16 @@ export function InputImageContainer() {
                 item.getAsString((data) => {
                     if (data.startsWith('http://') || data.startsWith('https://')) {
                         // console.log('Dropped URL:', data);
-                        HandleDrop("RMBG", data, true).then(([base64, fileType]) => {
+                        HandleDrop("RMBG", data, true).then((result) => {
+                            if (result == null) {
+                                return;
+                            }
+                            const [base64, fileType] = result;
                             if (base64 == "" || fileType == "") {
                                 setInputRMBGImage("");
                             } else {
                                 setInputRMBGImage(`data:${fileType};base64,${base64}`);
+                                setOutputRMBGImage("");
                             }
                         });
                         imageContainer.current?.classList.remove('wails-drop-target-active');
@@ -67,6 +77,7 @@ export function InputImageContainer() {
                 setInputRMBGImage("");
             } else {
                 setInputRMBGImage(`data:${fileType};base64,${base64}`);
+                setOutputRMBGImage("");
             }
         }
     }

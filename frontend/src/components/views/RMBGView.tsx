@@ -109,7 +109,13 @@ export function RMBGView() {
                     setCropImage(newImage);
                     setJPGCropImage("");
                 }
-                FromRMBGtoCrop(0, fileType=="image/jpeg");
+                FromRMBGtoCrop(0, fileType=="image/jpeg").then((ok) => {
+                    if (!ok) {
+                        setCropImage("");
+                        setPNGCropImage("");
+                        setJPGCropImage("");
+                    }
+                });
                 navigate('/crop');
             }
         }else if (inOrOut == "out") {

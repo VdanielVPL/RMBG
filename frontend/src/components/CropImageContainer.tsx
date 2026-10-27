@@ -19,7 +19,11 @@ export function InputImageContainer() {
         const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
             for (let i = 0; i < paths.length; i++) {
                 if (paths[i] != "") {
-                    HandleDrop("CROP", paths[0], false).then(([base64, fileType]) => {
+                    HandleDrop("CROP", paths[0], false).then((result) => {
+                        if (result == null) {
+                            return;
+                        }
+                        const [base64, fileType] = result;
                         if (base64 == "" || fileType == "") {
                             setCropImage("");
                             setJPGCropImage("");
@@ -86,9 +90,6 @@ export function InputImageContainer() {
             const b = data[i + 2];
             totalBrightness += (r + g + b) / 3;
         }
-        if (canvas.parentNode) {
-            document.body.removeChild(canvas);
-        }
     
         const averageBrightness = totalBrightness / (image.width * image.height);
         return averageBrightness <= 128;
@@ -103,7 +104,11 @@ export function InputImageContainer() {
                 item.getAsString((data) => {
                     if (data.startsWith('http://') || data.startsWith('https://')) {
                         // console.log('Dropped URL:', data);
-                        HandleDrop("CROP", data, true).then(([base64, fileType]) => {
+                        HandleDrop("CROP", data, true).then((result) => {
+                            if (result == null) {
+                                return;
+                            }
+                            const [base64, fileType] = result;
                             if (base64 == "" || fileType == "") {
                                 setCropImage("");
                                 setJPGCropImage("");

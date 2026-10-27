@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+
 	"github.com/wailsapp/wails/v2/pkg/options"
 	syswindows "golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
@@ -53,19 +55,10 @@ func getRawAccentColor() (uint32, error) {
 	return uint32(value), nil
 }
 
-func byteToHex(b byte) string {
-	hexChars := []byte("0123456789ABCDEF")
-	return string([]byte{hexChars[b>>4], hexChars[b&0xF]})
-}
-
 func GetAccentColor() (string, error) {
 	accentColor, err := getRawAccentColor()
 	if err != nil {
 		return "", err
 	}
-	r := byteToHex(byte(accentColor >> 16))
-	g := byteToHex(byte(accentColor >> 8))
-	b := byteToHex(byte(accentColor))
-
-	return "#" + r + g + b, nil
+	return fmt.Sprintf("#%06X", accentColor&0xFFFFFF), nil
 }

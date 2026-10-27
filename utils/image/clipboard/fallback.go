@@ -7,7 +7,7 @@ import (
 	"image/draw"
 	"runtime/debug"
 
-	"github.com/disintegration/imaging"
+	imgutil "rmbg/utils/image"
 )
 
 // decodeGo is the fallback for images WIC can't decode, using the registered Go decoders.
@@ -17,14 +17,7 @@ func decodeGo(data []byte, orientation int) uintptr {
 		return 0
 	}
 
-	switch orientation {
-	case 3:
-		img = imaging.Rotate180(img)
-	case 6:
-		img = imaging.Rotate270(img)
-	case 8:
-		img = imaging.Rotate90(img)
-	}
+	img = imgutil.ApplyOrientation(img, orientation)
 
 	b := img.Bounds()
 	w, h := b.Dx(), b.Dy()
@@ -35,6 +28,7 @@ func decodeGo(data []byte, orientation int) uintptr {
 	}
 
 	writePixels(pixels, img, w, h)
+	whitenTransparent(pixels, w, h)
 	pGlobalUnlock.Call(hMem)
 
 	go debug.FreeOSMemory() // give the decoded image back to the OS without delaying the paste

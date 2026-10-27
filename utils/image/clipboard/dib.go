@@ -55,3 +55,24 @@ func newDIBV5(w, h int) (hMem, pixels uintptr) {
 
 	return hMem, ptr + dibHeaderSize
 }
+
+// whitenTransparent makes fully transparent pixels white instead of (usually) black,
+// so apps that ignore alpha (e.g. Paint) paste a white background. Alpha-aware apps don't see the change.
+func whitenTransparent(pixels uintptr, w, h int) {
+	stride := w * 4
+	row := make([]byte, stride)
+	for y := range h {
+		p := pixels + uintptr(y*stride)
+		readMemory(row, p)
+		changed := false
+		for i := 0; i < stride; i += 4 {
+			if row[i+3] == 0 {
+				row[i], row[i+1], row[i+2] = 0xFF, 0xFF, 0xFF
+				changed = true
+			}
+		}
+		if changed {
+			writeMemory(p, row)
+		}
+	}
+}

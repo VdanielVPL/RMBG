@@ -28,6 +28,11 @@ func globalFromBytes(b []byte) uintptr {
 	return hMem
 }
 
+// readMemory copies memory that is not managed by Go to b.
+func readMemory(b []byte, src uintptr) {
+	pRtlMoveMemory.Call(uintptr(unsafe.Pointer(&b[0])), src, uintptr(len(b)))
+}
+
 // writeMemory copies b to memory that is not managed by Go.
 func writeMemory(dst uintptr, b []byte) {
 	pRtlMoveMemory.Call(dst, uintptr(unsafe.Pointer(&b[0])), uintptr(len(b)))
