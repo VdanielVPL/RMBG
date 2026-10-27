@@ -8,13 +8,13 @@ import (
 
 var Assets embed.FS
 
+var getUserDefaultUILanguage = syscall.NewLazyDLL("kernel32.dll").NewProc("GetUserDefaultUILanguage")
+
 func InitAssets(fs embed.FS) {
 	Assets = fs
 }
 
-func getSystemLanguage(kernel32 *syscall.LazyDLL) string {
-	getUserDefaultUILanguage := kernel32.NewProc("GetUserDefaultUILanguage")
-
+func getSystemLanguage() string {
 	langID, _, _ := getUserDefaultUILanguage.Call()
 	primaryLangID := langID & 0x3ff
 
@@ -48,6 +48,6 @@ func loadLangFile(lang string) (map[string]string, error) {
 	return langData, nil
 }
 
-func LoadLang(kernel32 *syscall.LazyDLL) (map[string]string, error) {
-	return loadLangFile(getSystemLanguage(kernel32))
+func LoadLang() (map[string]string, error) {
+	return loadLangFile(getSystemLanguage())
 }

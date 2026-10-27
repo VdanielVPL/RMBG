@@ -7,7 +7,6 @@ import (
 	"rmbg/utils/image"
 	"rmbg/utils/image/clipboard"
 	goruntime "runtime"
-	"syscall"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -15,7 +14,6 @@ import (
 // App struct
 type App struct {
 	ctx         context.Context
-	kernel32    *syscall.LazyDLL
 	LangStrings map[string]string
 	IsDarkMode  bool
 	AccentColor string
@@ -43,9 +41,7 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
-	a.kernel32 = syscall.NewLazyDLL("kernel32.dll")
-
-	if langData, err := utils.LoadLang(a.kernel32); err == nil {
+	if langData, err := utils.LoadLang(); err == nil {
 		a.LangStrings = langData
 	} else {
 		runtime.EventsEmit(ctx, "alert", err.Error())
