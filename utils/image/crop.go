@@ -6,33 +6,14 @@ import (
 	"image/jpeg"
 	"image/png"
 
-	"github.com/disintegration/imaging"
 	_ "golang.org/x/image/webp"
 )
 
 func CropImage(image []byte, left, right, top, bottom float32) ([]byte, string, error) {
 
-	// println("Cropping image...")
-	imgbytes := bytes.NewReader(image)
-	img, format, err := imgpkg.Decode(imgbytes)
+	img, format, err := decodeOriented(image)
 	if err != nil {
 		return nil, format, err
-	}
-	// println("Decoded image")
-
-	if format == "jpeg" {
-		imgbytes.Seek(0, 0)
-		orientation := ReadOrientation(imgbytes)
-		// println("Orientation:", orientation)
-
-		switch orientation {
-		case 6: // 90 CW
-			img = imaging.Rotate270(img)
-		case 3: // 180
-			img = imaging.Rotate180(img)
-		case 8: // 270 CW
-			img = imaging.Rotate90(img)
-		}
 	}
 
 	bounds := img.Bounds()

@@ -41,13 +41,10 @@ func ReadOrientation(image io.Reader) int {
 
 			switch nextByte {
 			case 0xE1:
-				println("EXIF marker found")
 				return processExifData(reader)
 			case 0xD8:
-				println("Found start of JPEG image")
 				continue
 			case 0xDA:
-				println("Found start of image data")
 				return 1
 			case 0xE0:
 				// Skipping JFIF segment
@@ -56,7 +53,10 @@ func ReadOrientation(image io.Reader) int {
 					return 1
 				}
 				length := int(skipBytes[0])<<8 | int(skipBytes[1])
-				if _, err := io.ReadFull(reader, make([]byte, length-2)); err != nil {
+				if length < 2 {
+					return 1
+				}
+				if _, err := reader.Discard(length - 2); err != nil {
 					return 1
 				}
 				bytesRead += length
@@ -83,7 +83,7 @@ func processExifData(reader *bufio.Reader) int {
 	}
 
 	// Skip 2 zeros
-	if _, err := io.ReadFull(reader, make([]byte, 2)); err != nil {
+	if _, err := reader.Discard(2); err != nil {
 		return 1
 	}
 
@@ -119,7 +119,10 @@ func processExifData(reader *bufio.Reader) int {
 	ifdOffset := getUint32(offsetBytes[:], littleEndian)
 
 	// Skiping to IFD0
-	if _, err := io.ReadFull(reader, make([]byte, ifdOffset-8)); err != nil {
+	if ifdOffset < 8 {
+		return 1
+	}
+	if _, err := reader.Discard(int(ifdOffset - 8)); err != nil {
 		return 1
 	}
 

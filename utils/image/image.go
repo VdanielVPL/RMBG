@@ -13,28 +13,21 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"slices"
 	"strings"
 
 	_ "golang.org/x/image/webp"
 
+	"github.com/disintegration/imaging"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var supportedImageTypes = []string{"image/png", "image/jpeg", "image/webp"}
 
-func ToBase64FromPath(path string) (string, string, error) {
-	fileBytes, err := os.ReadFile(path)
-	if err != nil {
-		return "", "", err
-	}
-	format := GetMimeType(fileBytes)
-	for _, supportedType := range supportedImageTypes {
-		if format == supportedType {
-			return ToBase64FromBytes(fileBytes)
-		}
-	}
-	return "", "", errors.New("NO_IMAGE")
+func IsSupportedImage(fileBytes []byte) bool {
+	return slices.Contains(supportedImageTypes, GetMimeType(fileBytes))
 }
+
 func GetImageFromURL(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -126,7 +119,7 @@ func SaveImageDialog(ctx context.Context, isJPG bool) (string, error) {
 }
 
 func ToJPG(pngImgBytes []byte, jpgImgBytes *[]byte) error {
-	img, err := png.Decode(bytes.NewReader(pngImgBytes))
+	img, _, err := decodeOriented(pngImgBytes)
 	if err != nil {
 		return err
 	}
@@ -149,7 +142,7 @@ func ToJPG(pngImgBytes []byte, jpgImgBytes *[]byte) error {
 }
 
 func ToPNG(jpgImgBytes []byte, pngImgBytes *[]byte) error {
-	img, err := jpeg.Decode(bytes.NewReader(jpgImgBytes))
+	img, _, err := decodeOriented(jpgImgBytes)
 	if err != nil {
 		return err
 	}
@@ -162,10 +155,46 @@ func ToPNG(jpgImgBytes []byte, pngImgBytes *[]byte) error {
 	return nil
 }
 
-func GetFormatFromPath(path string) string {
-	return path[strings.LastIndex(path, ".")+1:]
+// JPG and PNG stay untouched, other formats are converted to lossless PNG
+func ToSupportedFormat(imgBytes []byte) (newImgBytes []byte, isJPG bool, converted bool, err error) {
+	switch GetMimeType(imgBytes) {
+	case "image/jpeg":
+		return imgBytes, true, false, nil
+	case "image/png":
+		return imgBytes, false, false, nil
+	}
+
+	img, _, err := image.Decode(bytes.NewReader(imgBytes))
+	if err != nil {
+		return nil, false, false, errors.New("NO_IMAGE")
+	}
+	var buf bytes.Buffer
+	err = png.Encode(&buf, img)
+	if err != nil {
+		return nil, false, false, err
+	}
+	return buf.Bytes(), false, true, nil
+}
+
+func decodeOriented(imgBytes []byte) (image.Image, string, error) {
+	img, format, err := image.Decode(bytes.NewReader(imgBytes))
+	if err != nil {
+		return nil, format, err
+	}
+
+	if format == "jpeg" {
+		switch ReadOrientation(bytes.NewReader(imgBytes)) {
+		case 6: // 90 CW
+			img = imaging.Rotate270(img)
+		case 3: // 180
+			img = imaging.Rotate180(img)
+		case 8: // 270 CW
+			img = imaging.Rotate90(img)
+		}
+	}
+	return img, format, nil
 }
 
 func GetMimeType(bytes []byte) string {
-	return http.DetectContentType(bytes[:512])
+	return http.DetectContentType(bytes)
 }
