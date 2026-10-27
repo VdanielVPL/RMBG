@@ -7,6 +7,7 @@ import (
 	"rmbg/utils/image"
 	"rmbg/utils/image/clipboard"
 	goruntime "runtime"
+	"sync"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -18,12 +19,16 @@ type App struct {
 	IsDarkMode  bool
 	AccentColor string
 	imgData     *imgDataStruct
+
+	rmbgMu sync.Mutex // not held while rembg runs
+	cropMu sync.Mutex // never held together with rmbgMu
 }
 
 type imgDataStruct struct {
 	rembgpath      string
 	rembgimg       []byte
 	rembgimg2      []byte
+	rembgGen       int // changes with every new RMBG input
 	model          string
 	pngcropimgpath string
 	pngcropimg     []byte
@@ -121,12 +126,12 @@ func (a *App) setInputImage(Imagetype string, path string, imgBytes []byte) []st
 	}
 
 	if Imagetype == "RMBG" {
-		a.imgData.rembgpath = path
-		a.imgData.rembgimg = nil
-		if path == "" {
-			a.imgData.rembgimg = imgBytes
-		}
+		a.rmbgMu.Lock()
+		defer a.rmbgMu.Unlock()
+		a.setRMBGImage(path, imgBytes)
 	} else if Imagetype == "CROP" {
+		a.cropMu.Lock()
+		defer a.cropMu.Unlock()
 		var err error
 		imgBytes, err = a.setCropImage(path, imgBytes)
 		if err != nil {
@@ -141,6 +146,15 @@ func (a *App) setInputImage(Imagetype string, path string, imgBytes []byte) []st
 		return nil
 	}
 	return []string{str, fileType}
+}
+
+func (a *App) setRMBGImage(path string, imgBytes []byte) {
+	a.imgData.rembgpath = path
+	a.imgData.rembgimg = nil
+	if path == "" {
+		a.imgData.rembgimg = imgBytes
+	}
+	a.imgData.rembgGen++
 }
 
 // JPG and PNG files are kept as paths, other formats are converted to PNG and kept in memory
@@ -170,44 +184,61 @@ func (a *App) setCropImage(path string, imgBytes []byte) ([]byte, error) {
 
 func (a *App) cropImageBytes(isJPG bool) ([]byte, error) {
 	if isJPG {
-		if a.imgData.jpgcropimg != nil {
-			return a.imgData.jpgcropimg, nil
-		} else if a.imgData.jpgcropimgpath != "" {
-			return image.ToBytesFromPath(a.imgData.jpgcropimgpath)
-		}
-	} else {
-		if a.imgData.pngcropimg != nil {
-			return a.imgData.pngcropimg, nil
-		} else if a.imgData.pngcropimgpath != "" {
-			return image.ToBytesFromPath(a.imgData.pngcropimgpath)
-		}
+		return readImage(a.imgData.jpgcropimg, a.imgData.jpgcropimgpath)
 	}
-	return nil, nil
+	return readImage(a.imgData.pngcropimg, a.imgData.pngcropimgpath)
+}
+
+func readImage(imgBytes []byte, path string) ([]byte, error) {
+	if imgBytes != nil || path == "" {
+		return imgBytes, nil
+	}
+	return image.ToBytesFromPath(path)
+}
+
+func (a *App) cropFailed(alert string) {
+	runtime.EventsEmit(a.ctx, "cropping", false)
+	runtime.EventsEmit(a.ctx, "alert", alert)
 }
 
 func (a *App) RemoveBackground() []string {
-	var err error
-	if a.imgData.rembgimg != nil || a.imgData.rembgpath != "" {
-		runtime.EventsEmit(a.ctx, "removingbg", true)
-		a.imgData.rembgimg2, err = image.RemBG(a.imgData.model, a.imgData.rembgpath, a.imgData.rembgimg)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "removingbg", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return nil
-		}
-		str, fileType, err := image.ToBase64FromBytes(a.imgData.rembgimg2)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "removingbg", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return nil
-		}
-		return []string{str, fileType}
+	a.rmbgMu.Lock()
+	path, img, model, gen := a.imgData.rembgpath, a.imgData.rembgimg, a.imgData.model, a.imgData.rembgGen
+	a.imgData.rembgimg2 = nil
+	a.rmbgMu.Unlock()
+
+	if img == nil && path == "" {
+		runtime.EventsEmit(a.ctx, "alert", "NO_IMAGE")
+		return nil
 	}
-	runtime.EventsEmit(a.ctx, "alert", "NO_IMAGE")
-	return nil
+
+	runtime.EventsEmit(a.ctx, "removingbg", true)
+	result, err := image.RemBG(model, path, img)
+	if err != nil {
+		runtime.EventsEmit(a.ctx, "removingbg", false)
+		runtime.EventsEmit(a.ctx, "alert", err.Error())
+		return nil
+	}
+	str, fileType, err := image.ToBase64FromBytes(result)
+	if err != nil {
+		runtime.EventsEmit(a.ctx, "removingbg", false)
+		runtime.EventsEmit(a.ctx, "alert", err.Error())
+		return nil
+	}
+
+	a.rmbgMu.Lock()
+	defer a.rmbgMu.Unlock()
+	if gen != a.imgData.rembgGen {
+		runtime.EventsEmit(a.ctx, "removingbg", false)
+		return nil
+	}
+	a.imgData.rembgimg2 = result
+	return []string{str, fileType}
 }
 
 func (a *App) SetModel(model string) {
+	a.rmbgMu.Lock()
+	defer a.rmbgMu.Unlock()
 	a.imgData.model = model
 }
 
@@ -216,10 +247,14 @@ func (a *App) SaveImage(ImageType string, isJPG bool) error {
 	var err error
 
 	if ImageType == "RMBG" {
+		a.rmbgMu.Lock()
 		imgBytes = a.imgData.rembgimg2
+		a.rmbgMu.Unlock()
 		isJPG = false
 	} else if ImageType == "CROP" {
+		a.cropMu.Lock()
 		imgBytes, err = a.cropImageBytes(isJPG)
+		a.cropMu.Unlock()
 	}
 
 	if err != nil {
@@ -253,9 +288,13 @@ func (a *App) CopyImage(ImageType string, isJPG bool) {
 	var err error
 
 	if ImageType == "RMBG" {
+		a.rmbgMu.Lock()
 		imgBytes = a.imgData.rembgimg2
+		a.rmbgMu.Unlock()
 	} else if ImageType == "CROP" {
+		a.cropMu.Lock()
 		imgBytes, err = a.cropImageBytes(isJPG)
+		a.cropMu.Unlock()
 	}
 
 	if err != nil {
@@ -276,14 +315,17 @@ func (a *App) CopyImage(ImageType string, isJPG bool) {
 
 func (a *App) ClearImageMem(Imagetype string) {
 	if Imagetype == "RMBG" {
-		a.imgData.rembgimg = nil
+		a.rmbgMu.Lock()
+		a.setRMBGImage("", nil)
 		a.imgData.rembgimg2 = nil
-		a.imgData.rembgpath = ""
+		a.rmbgMu.Unlock()
 	} else if Imagetype == "CROP" {
+		a.cropMu.Lock()
 		a.imgData.pngcropimg = nil
 		a.imgData.pngcropimgpath = ""
 		a.imgData.jpgcropimg = nil
 		a.imgData.jpgcropimgpath = ""
+		a.cropMu.Unlock()
 	} else {
 		return
 	}
@@ -293,80 +335,62 @@ func (a *App) ClearImageMem(Imagetype string) {
 func (a *App) CropImage(left, right, top, bottom float32, isJPG bool) []string {
 	runtime.EventsEmit(a.ctx, "cropping", true)
 
-	var imgByte []byte
+	a.cropMu.Lock()
+	defer a.cropMu.Unlock()
 
-	if isJPG {
-		if a.imgData.jpgcropimg != nil {
-			imgByte = a.imgData.jpgcropimg
-		} else if a.imgData.jpgcropimgpath != "" {
-			var err error
-			imgByte, err = image.ToBytesFromPath(a.imgData.jpgcropimgpath)
-			if err != nil {
-				runtime.EventsEmit(a.ctx, "cropping", false)
-				runtime.EventsEmit(a.ctx, "alert", err.Error())
-				return nil
-			}
-		}
-	} else {
-		if a.imgData.pngcropimg != nil {
-			imgByte = a.imgData.pngcropimg
-		} else if a.imgData.pngcropimgpath != "" {
-			var err error
-			imgByte, err = image.ToBytesFromPath(a.imgData.pngcropimgpath)
-			if err != nil {
-				runtime.EventsEmit(a.ctx, "cropping", false)
-				runtime.EventsEmit(a.ctx, "alert", err.Error())
-				return nil
-			}
-		}
-	}
-
-	img, format, err := image.CropImage(imgByte, left, right, top, bottom)
+	imgBytes, err := a.cropImageBytes(isJPG)
 	if err != nil {
-		runtime.EventsEmit(a.ctx, "cropping", false)
-		runtime.EventsEmit(a.ctx, "alert", err.Error())
+		a.cropFailed(err.Error())
 		return nil
 	}
-	if img != nil {
-		if format == "jpeg" {
-			a.imgData.jpgcropimg = img
-		} else {
-			a.imgData.pngcropimg = img
-		}
-		str, fileType, err := image.ToBase64FromBytes(img)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "cropping", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return nil
-		}
-		return []string{str, fileType}
-	} else {
-		runtime.EventsEmit(a.ctx, "cropping", false)
-		runtime.EventsEmit(a.ctx, "alert", "NO_IMAGE")
+	if imgBytes == nil {
+		a.cropFailed("NO_IMAGE")
 		return nil
 	}
+
+	img, _, err := image.CropImage(imgBytes, left, right, top, bottom)
+	if err != nil {
+		a.cropFailed(err.Error())
+		return nil
+	}
+
+	img, err = a.setCropImage("", img)
+	if err != nil {
+		a.cropFailed(err.Error())
+		return nil
+	}
+
+	str, fileType, err := image.ToBase64FromBytes(img)
+	if err != nil {
+		a.cropFailed(err.Error())
+		return nil
+	}
+	return []string{str, fileType}
 }
 
 func (a *App) FromRMBGtoCrop(t int, isJPG bool) {
+	a.rmbgMu.Lock()
+	imgBytes, path, output := a.imgData.rembgimg, a.imgData.rembgpath, a.imgData.rembgimg2
+	a.rmbgMu.Unlock()
+
+	a.cropMu.Lock()
+	defer a.cropMu.Unlock()
+
 	if t == 0 {
-		imgBytes := a.imgData.rembgimg
-		if imgBytes == nil && a.imgData.rembgpath != "" {
-			var err error
-			imgBytes, err = image.ToBytesFromPath(a.imgData.rembgpath)
-			if err != nil {
-				runtime.EventsEmit(a.ctx, "alert", err.Error())
-				return
-			}
+		imgBytes, err := readImage(imgBytes, path)
+		if err != nil {
+			runtime.EventsEmit(a.ctx, "alert", err.Error())
+			return
 		}
 		if imgBytes != nil {
-			if _, err := a.setCropImage(a.imgData.rembgpath, imgBytes); err != nil {
+			if _, err := a.setCropImage(path, imgBytes); err != nil {
 				runtime.EventsEmit(a.ctx, "alert", err.Error())
 			}
 		}
 	} else if t == 1 {
-		if a.imgData.rembgimg2 != nil {
+		if output != nil {
 			a.imgData.pngcropimgpath = ""
-			a.imgData.pngcropimg = a.imgData.rembgimg2
+			a.imgData.pngcropimg = output
 			a.imgData.jpgcropimgpath = ""
 			a.imgData.jpgcropimg = nil
 		}
@@ -374,52 +398,49 @@ func (a *App) FromRMBGtoCrop(t int, isJPG bool) {
 }
 
 func (a *App) FromCroptoRMBG(isJPG bool) {
+	a.cropMu.Lock()
+	var imgBytes []byte
+	var path string
 	if isJPG {
-		if a.imgData.jpgcropimg != nil {
-			a.imgData.rembgpath = ""
-			a.imgData.rembgimg = a.imgData.jpgcropimg
-		} else if a.imgData.jpgcropimgpath != "" {
-			a.imgData.rembgimg = nil
-			a.imgData.rembgpath = a.imgData.jpgcropimgpath
-		}
+		imgBytes, path = a.imgData.jpgcropimg, a.imgData.jpgcropimgpath
 	} else {
-		if a.imgData.pngcropimg != nil {
-			a.imgData.rembgpath = ""
-			a.imgData.rembgimg = a.imgData.pngcropimg
-		} else if a.imgData.pngcropimgpath != "" {
-			a.imgData.rembgimg = nil
-			a.imgData.rembgpath = a.imgData.pngcropimgpath
-		}
+		imgBytes, path = a.imgData.pngcropimg, a.imgData.pngcropimgpath
 	}
+	a.cropMu.Unlock()
+
+	if imgBytes != nil {
+		path = ""
+	} else if path == "" {
+		return
+	}
+
+	a.rmbgMu.Lock()
+	defer a.rmbgMu.Unlock()
+	a.setRMBGImage(path, imgBytes)
 }
 
 func (a *App) ToJPG() []string {
 	runtime.EventsEmit(a.ctx, "cropping", true)
-	if a.imgData.pngcropimg != nil {
-		err := image.ToJPG(a.imgData.pngcropimg, &a.imgData.jpgcropimg)
+
+	a.cropMu.Lock()
+	defer a.cropMu.Unlock()
+
+	pngBytes, err := a.cropImageBytes(false)
+	if err != nil {
+		a.cropFailed(err.Error())
+		return nil
+	}
+	if pngBytes != nil {
+		err = image.ToJPG(pngBytes, &a.imgData.jpgcropimg)
 		if err != nil {
-			runtime.EventsEmit(a.ctx, "cropping", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return nil
-		}
-	} else if a.imgData.pngcropimgpath != "" {
-		imgBytes, err := image.ToBytesFromPath(a.imgData.pngcropimgpath)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "cropping", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return nil
-		}
-		err = image.ToJPG(imgBytes, &a.imgData.jpgcropimg)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "cropping", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
+			a.cropFailed(err.Error())
 			return nil
 		}
 	}
+
 	str, fileType, err := image.ToBase64FromBytes(a.imgData.jpgcropimg)
 	if err != nil {
-		runtime.EventsEmit(a.ctx, "cropping", false)
-		runtime.EventsEmit(a.ctx, "alert", err.Error())
+		a.cropFailed(err.Error())
 		return nil
 	}
 	return []string{str, fileType}
@@ -427,31 +448,26 @@ func (a *App) ToJPG() []string {
 
 func (a *App) ToPNG() []string {
 	runtime.EventsEmit(a.ctx, "cropping", true)
-	if a.imgData.jpgcropimg != nil {
-		err := image.ToPNG(a.imgData.jpgcropimg, &a.imgData.pngcropimg)
+
+	a.cropMu.Lock()
+	defer a.cropMu.Unlock()
+
+	jpgBytes, err := a.cropImageBytes(true)
+	if err != nil {
+		a.cropFailed(err.Error())
+		return nil
+	}
+	if jpgBytes != nil {
+		err = image.ToPNG(jpgBytes, &a.imgData.pngcropimg)
 		if err != nil {
-			runtime.EventsEmit(a.ctx, "cropping", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return nil
-		}
-	} else if a.imgData.jpgcropimgpath != "" {
-		imgBytes, err := image.ToBytesFromPath(a.imgData.jpgcropimgpath)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "cropping", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
-			return nil
-		}
-		err = image.ToPNG(imgBytes, &a.imgData.pngcropimg)
-		if err != nil {
-			runtime.EventsEmit(a.ctx, "cropping", false)
-			runtime.EventsEmit(a.ctx, "alert", err.Error())
+			a.cropFailed(err.Error())
 			return nil
 		}
 	}
+
 	str, fileType, err := image.ToBase64FromBytes(a.imgData.pngcropimg)
 	if err != nil {
-		runtime.EventsEmit(a.ctx, "cropping", false)
-		runtime.EventsEmit(a.ctx, "alert", err.Error())
+		a.cropFailed(err.Error())
 		return nil
 	}
 	return []string{str, fileType}
