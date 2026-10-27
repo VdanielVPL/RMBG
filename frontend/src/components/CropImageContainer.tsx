@@ -8,41 +8,25 @@ import CropEditor from "./CropEditor";
 
 export function InputImageContainer() {
     const { accentColor } = useContext(MainContext);
-    const { cropImage, setCropImage, setPNGCropImage, setJPGCropImage, cropping, setIsJPG } = useContext(ImageContext);
+    const { cropImage, cropping, setCropImageByType } = useContext(ImageContext);
     const [rect, setRect] = useState<DOMRect | null>(null);
     const [isImageDark, setIsImageDark] = useState<boolean>(true);
     const imageContainer = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLImageElement>(null);
     const alphaPatternRef = useRef<HTMLDivElement>(null);
 
+    function setLoadedImage(result: string[] | null) {
+        if (result != null) {
+            const [base64, fileType] = result;
+            setCropImageByType(`data:${fileType};base64,${base64}`, fileType);
+        }
+    }
+
     useEffect(() => {
         const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
             for (let i = 0; i < paths.length; i++) {
                 if (paths[i] != "") {
-                    HandleDrop("CROP", paths[0], false).then((result) => {
-                        if (result == null) {
-                            return;
-                        }
-                        const [base64, fileType] = result;
-                        if (base64 == "" || fileType == "") {
-                            setCropImage("");
-                            setJPGCropImage("");
-                            setPNGCropImage("");
-                        } else {
-                            const newImage = `data:${fileType};base64,${base64}`;
-                            if (fileType == "image/jpeg") {
-                                setIsJPG(true);
-                                setJPGCropImage(newImage);
-                                setCropImage(newImage);
-                                setPNGCropImage("");
-                            } else {
-                                setIsJPG(false);
-                                setPNGCropImage(newImage);
-                                setCropImage(newImage);
-                                setJPGCropImage("");
-                            }
-                        }
-                    });
+                    HandleDrop("CROP", paths[0], false).then(setLoadedImage);
                     return;
                 }
             }
@@ -104,30 +88,7 @@ export function InputImageContainer() {
                 item.getAsString((data) => {
                     if (data.startsWith('http://') || data.startsWith('https://')) {
                         // console.log('Dropped URL:', data);
-                        HandleDrop("CROP", data, true).then((result) => {
-                            if (result == null) {
-                                return;
-                            }
-                            const [base64, fileType] = result;
-                            if (base64 == "" || fileType == "") {
-                                setCropImage("");
-                                setJPGCropImage("");
-                                setPNGCropImage("");
-                            } else {
-                                const newImage = `data:${fileType};base64,${base64}`;
-                                if (fileType == "image/jpeg") {
-                                    setIsJPG(true);
-                                    setJPGCropImage(newImage);
-                                    setCropImage(newImage);
-                                    setPNGCropImage("");
-                                } else {
-                                    setIsJPG(false);
-                                    setPNGCropImage(newImage);
-                                    setCropImage(newImage);
-                                    setJPGCropImage("");
-                                }
-                            }
-                        });
+                        HandleDrop("CROP", data, true).then(setLoadedImage);
                         imageContainer.current?.classList.remove('wails-drop-target-active');
                     } else if (data.startsWith('data:')){
                         imageContainer.current?.classList.remove('wails-drop-target-active');
@@ -147,28 +108,7 @@ export function InputImageContainer() {
             return;
         }
         // console.log(e.target)
-        const result = await OpenImage("CROP")
-        if (result != null) {
-            const [base64, fileType] = result;
-            if (base64 == "" || fileType == "") {
-                setCropImage("");
-                setJPGCropImage("");
-                setPNGCropImage("");
-            } else {
-                const newImage = `data:${fileType};base64,${base64}`;
-                if (fileType == "image/jpeg") {
-                    setIsJPG(true);
-                    setJPGCropImage(newImage);
-                    setCropImage(newImage);
-                    setPNGCropImage("");
-                } else {
-                    setIsJPG(false);
-                    setPNGCropImage(newImage);
-                    setCropImage(newImage);
-                    setJPGCropImage("");
-                }
-            }
-        }
+        setLoadedImage(await OpenImage("CROP"))
     }
 
     function onImageLoad(e: SyntheticEvent<HTMLImageElement>) {

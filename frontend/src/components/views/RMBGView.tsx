@@ -62,7 +62,7 @@ function OutputImageContainer() {
 
 export function RMBGView() {
     const { strings, isDarkMode } = useContext(MainContext);
-    const { setOutputRMBGImage, setInputRMBGImage, setCropImage, setPNGCropImage, setJPGCropImage, inputRMBGImage, outputRMBGImage, removingBG, setModel, setIsJPG } = useContext(ImageContext);
+    const { setOutputRMBGImage, setInputRMBGImage, setCropImage, setPNGCropImage, setJPGCropImage, inputRMBGImage, outputRMBGImage, removingBG, setModel, cropping, setCropImageByType } = useContext(ImageContext);
     let navigate = useNavigate();
 
     function handleModelChange(selected: Selected) {
@@ -76,12 +76,8 @@ export function RMBGView() {
             RemoveBackground().then((result) => {
                 if (result != null) {
                     const [base64, fileType] = result;
-                    if (base64 == "" || fileType == "") {
-                        setOutputRMBGImage("");
-                    } else {
-                        setOutputRMBGImage(`data:${fileType};base64,${base64}`);
-                        EventsEmit('removingbg', false);
-                    }
+                    setOutputRMBGImage(`data:${fileType};base64,${base64}`);
+                    EventsEmit('removingbg', false);
                 }
             });
         }
@@ -96,20 +92,8 @@ export function RMBGView() {
     function ToCropView(inOrOut: string) {
         if (inOrOut == "in") {
             if (inputRMBGImage != "") {
-                const newImage = inputRMBGImage;
-                let fileType = newImage.split(';')[0].split(':')[1];
-                if (fileType == "image/jpeg") {
-                    setIsJPG(true);
-                    setJPGCropImage(newImage);
-                    setCropImage(newImage);
-                    setPNGCropImage("");
-                } else {
-                    setIsJPG(false);
-                    setPNGCropImage(newImage);
-                    setCropImage(newImage);
-                    setJPGCropImage("");
-                }
-                FromRMBGtoCrop(0, fileType=="image/jpeg").then((ok) => {
+                setCropImageByType(inputRMBGImage, inputRMBGImage.split(';')[0].split(':')[1]);
+                FromRMBGtoCrop(0).then((ok) => {
                     if (!ok) {
                         setCropImage("");
                         setPNGCropImage("");
@@ -120,12 +104,8 @@ export function RMBGView() {
             }
         }else if (inOrOut == "out") {
             if (outputRMBGImage != "") {
-                setIsJPG(false);
-                const newImage = outputRMBGImage;
-                setPNGCropImage(newImage);
-                setCropImage(newImage);
-                setJPGCropImage("");
-                FromRMBGtoCrop(1, false);
+                setCropImageByType(outputRMBGImage, "image/png");
+                FromRMBGtoCrop(1);
                 navigate('/crop');
             }
         }
@@ -143,7 +123,7 @@ export function RMBGView() {
                             <Button style={{width: '40px', height: '40px'}} onClick={ClearView} title={strings["ClearView"]}>
                                 <FontAwesomeIcon icon={faTrashCan} size='xl' style={{transform: 'scale(0.8)'}} />
                             </Button>
-                            <Button style={{width: '40px', height: '40px'}} onClick={() => ToCropView('in')} title={strings["ToCropView"]}>
+                            <Button style={{width: '40px', height: '40px', filter: cropping?'brightness(60%) contrast(100%)':undefined}} onClick={() => ToCropView('in')} title={strings["ToCropView"]} disabled={cropping}>
                                 <FontAwesomeIcon icon={faCropSimple} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                         </div>
@@ -159,7 +139,7 @@ export function RMBGView() {
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                         <OutputImageContainer></OutputImageContainer>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px'}} onClick={() => ToCropView('out')} title={strings["ToCropView"]}>
+                            <Button style={{width: '40px', height: '40px', filter: cropping?'brightness(60%) contrast(100%)':undefined}} onClick={() => ToCropView('out')} title={strings["ToCropView"]} disabled={cropping}>
                                 <FontAwesomeIcon icon={faCropSimple} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                             <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>

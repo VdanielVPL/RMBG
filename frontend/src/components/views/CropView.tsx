@@ -11,7 +11,7 @@ import { EventsEmit } from "../../../wailsjs/runtime/runtime";
 
 export function CropView() {
     const { strings, isDarkMode, accentColor } = useContext(MainContext);
-    const { cropImage, setCropImage, JPGcropImage, setJPGCropImage, setPNGCropImage, PNGcropImage, setInputRMBGImage, setOutputRMBGImage, cropDimens, cropping, setIsJPG, isJPG } = useContext(ImageContext);
+    const { cropImage, setCropImage, JPGcropImage, setJPGCropImage, setPNGCropImage, PNGcropImage, setInputRMBGImage, setOutputRMBGImage, cropDimens, cropping, setIsJPG, isJPG, setCropImageByType } = useContext(ImageContext);
 
     let navigate = useNavigate();
 
@@ -36,26 +36,8 @@ export function CropView() {
         CropImage(cropDimens.left, cropDimens.right, cropDimens.top, cropDimens.bottom, isJPG).then((result) => {
             if (result != null) {
                 const [base64, fileType] = result;
-                if (base64 == "" || fileType == "") {
-                    setCropImage("");
-                    setPNGCropImage("");
-                    setJPGCropImage("");
-                    EventsEmit('cropping', false);
-                }else{
-                    const newImage = `data:${fileType};base64,${base64}`;
-                    if (fileType == "image/jpeg") {
-                        setIsJPG(true);
-                        setJPGCropImage(newImage);
-                        setCropImage(newImage);
-                        setPNGCropImage("");
-                    } else {
-                        setIsJPG(false);
-                        setPNGCropImage(newImage);
-                        setCropImage(newImage);
-                        setJPGCropImage("");
-                    }
-                    EventsEmit('cropping', false);
-                }
+                setCropImageByType(`data:${fileType};base64,${base64}`, fileType);
+                EventsEmit('cropping', false);
             }
         });
     }
@@ -68,15 +50,10 @@ export function CropView() {
                 ToJPG().then((result) => {
                     if (result != null) {
                         const [base64, fileType] = result;
-                        if (base64 == "" || fileType == "") {
-                            setJPGCropImage("");
-                            setCropImage("");
-                        }else{
-                            const newImage = `data:${fileType};base64,${base64}`;
-                            setJPGCropImage(newImage);
-                            setCropImage(newImage);
-                            EventsEmit('cropping', false);
-                        }
+                        const newImage = `data:${fileType};base64,${base64}`;
+                        setJPGCropImage(newImage);
+                        setCropImage(newImage);
+                        EventsEmit('cropping', false);
                     }else{
                         setIsJPG(false);
                     }
@@ -90,15 +67,10 @@ export function CropView() {
                 ToPNG().then((result) => {
                     if (result != null) {
                         const [base64, fileType] = result;
-                        if (base64 == "" || fileType == "") {
-                            setPNGCropImage("");
-                            setCropImage("");
-                        }else{
-                            const newImage = `data:${fileType};base64,${base64}`;
-                            setPNGCropImage(newImage);
-                            setCropImage(newImage);
-                            EventsEmit('cropping', false);
-                        }
+                        const newImage = `data:${fileType};base64,${base64}`;
+                        setPNGCropImage(newImage);
+                        setCropImage(newImage);
+                        EventsEmit('cropping', false);
                     }else{
                         setIsJPG(true);
                     }

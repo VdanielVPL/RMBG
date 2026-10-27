@@ -11,22 +11,19 @@ export function InputImageContainer() {
     const imageContainer = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
+    function setLoadedImage(result: string[] | null) {
+        if (result != null) {
+            const [base64, fileType] = result;
+            setInputRMBGImage(`data:${fileType};base64,${base64}`);
+            setOutputRMBGImage("");
+        }
+    }
+
     useEffect(() => {
         const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
             for (let i = 0; i < paths.length; i++) {
                 if (paths[i] != "") {
-                    HandleDrop("RMBG", paths[0], false).then((result) => {
-                        if (result == null) {
-                            return;
-                        }
-                        const [base64, fileType] = result;
-                        if (base64 == "" || fileType == "") {
-                            setInputRMBGImage("");
-                        } else {
-                            setInputRMBGImage(`data:${fileType};base64,${base64}`);
-                            setOutputRMBGImage("");
-                        }
-                    });
+                    HandleDrop("RMBG", paths[0], false).then(setLoadedImage);
                     return;
                 }
             }  
@@ -48,18 +45,7 @@ export function InputImageContainer() {
                 item.getAsString((data) => {
                     if (data.startsWith('http://') || data.startsWith('https://')) {
                         // console.log('Dropped URL:', data);
-                        HandleDrop("RMBG", data, true).then((result) => {
-                            if (result == null) {
-                                return;
-                            }
-                            const [base64, fileType] = result;
-                            if (base64 == "" || fileType == "") {
-                                setInputRMBGImage("");
-                            } else {
-                                setInputRMBGImage(`data:${fileType};base64,${base64}`);
-                                setOutputRMBGImage("");
-                            }
-                        });
+                        HandleDrop("RMBG", data, true).then(setLoadedImage);
                         imageContainer.current?.classList.remove('wails-drop-target-active');
                     } else if (data.startsWith('data:')) {
                         imageContainer.current?.classList.remove('wails-drop-target-active');
@@ -70,16 +56,7 @@ export function InputImageContainer() {
     };
 
     async function openDialog() {
-        const result = await OpenImage("RMBG")
-        if (result != null) {
-            const [base64, fileType] = result;
-            if (base64 == "" || fileType == "") {
-                setInputRMBGImage("");
-            } else {
-                setInputRMBGImage(`data:${fileType};base64,${base64}`);
-                setOutputRMBGImage("");
-            }
-        }
+        setLoadedImage(await OpenImage("RMBG"))
     }
 
     useLayoutEffect(() => {  

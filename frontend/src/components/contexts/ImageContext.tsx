@@ -24,6 +24,8 @@ type ImageContextType = {
     isJPG: boolean;
     setIsJPG: (isJPG: boolean) => void;
 
+    setCropImageByType: (newImage: string, fileType: string) => void;
+
     cropDimens: {left: number, right: number, top: number, bottom: number};
     setCropDimens: (cropDimens: {left: number, right: number, top: number, bottom: number}) => void;
 
@@ -55,6 +57,8 @@ export const ImageContext = createContext<ImageContextType>({
     isJPG: false,
     setIsJPG: () => {},
 
+    setCropImageByType: () => {},
+
     cropDimens: {left: 0, right: 0, top: 0, bottom: 0},
     setCropDimens: () => {},
 
@@ -74,6 +78,15 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     const [cropDimens, setCropDimens] = useState<ImageContextType["cropDimens"]>({left: 0, right: 0, top: 0, bottom: 0});
     const [cropping, setCropping] = useState<ImageContextType["cropping"]>(false);
 
+    // shows the image in the crop view and keeps it as JPG or PNG, the other format is dropped
+    function setCropImageByType(newImage: string, fileType: string) {
+        const jpg = fileType == "image/jpeg";
+        setIsJPG(jpg);
+        setCropImage(newImage);
+        setJPGCropImage(jpg?newImage:"");
+        setPNGCropImage(jpg?"":newImage);
+    }
+
     return (
         <ImageContext.Provider value={{
             inputRMBGImage, setInputRMBGImage, 
@@ -82,6 +95,7 @@ export function ImageProvider({ children }: { children: ReactNode }) {
             JPGcropImage, setJPGCropImage,
             PNGcropImage, setPNGCropImage,
             isJPG, setIsJPG,
+            setCropImageByType,
             removingBG, setRemovingBG, 
             setModel, model,
             cropDimens, setCropDimens,

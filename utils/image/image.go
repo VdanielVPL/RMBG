@@ -20,7 +20,7 @@ import (
 
 	_ "golang.org/x/image/webp"
 
-	"github.com/disintegration/imaging"
+	"github.com/kovidgoyal/imaging"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -107,10 +107,10 @@ func SaveImageDialog(ctx context.Context, isJPG bool) (string, error) {
 	return runtime.SaveFileDialog(ctx, options)
 }
 
-func ToJPG(pngImgBytes []byte, jpgImgBytes *[]byte) error {
+func ToJPG(pngImgBytes []byte) ([]byte, error) {
 	img, _, err := decodeOriented(pngImgBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	bounds := img.Bounds()
@@ -124,29 +124,27 @@ func ToJPG(pngImgBytes []byte, jpgImgBytes *[]byte) error {
 	var buf bytes.Buffer
 	err = jpeg.Encode(&buf, rgba, &jpeg.Options{Quality: 100})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	*jpgImgBytes = buf.Bytes()
-	return nil
+	return buf.Bytes(), nil
 }
 
-func ToPNG(jpgImgBytes []byte, pngImgBytes *[]byte) error {
+func ToPNG(jpgImgBytes []byte) ([]byte, error) {
 	img, _, err := decodeOriented(jpgImgBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	var buf bytes.Buffer
 	err = png.Encode(&buf, img)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	*pngImgBytes = buf.Bytes()
-	return nil
+	return buf.Bytes(), nil
 }
 
 // JPG and PNG stay untouched, other formats are converted to lossless PNG
 func ToSupportedFormat(imgBytes []byte) (newImgBytes []byte, isJPG bool, converted bool, err error) {
-	switch GetMimeType(imgBytes) {
+	switch http.DetectContentType(imgBytes) {
 	case "image/jpeg":
 		return imgBytes, true, false, nil
 	case "image/png":
@@ -196,8 +194,4 @@ func ApplyOrientation(img image.Image, orientation int) image.Image {
 		return imaging.Rotate90(img)
 	}
 	return img
-}
-
-func GetMimeType(bytes []byte) string {
-	return http.DetectContentType(bytes)
 }
