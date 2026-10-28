@@ -1,5 +1,5 @@
 import { ReactNode, useContext, useEffect, useRef, useState } from "react";
-import { EventsOff, EventsOn } from "../../wailsjs/runtime/runtime";
+import { Events } from "@wailsio/runtime";
 import { MainContext, ImageContext } from "./contexts";
 
 export function MainWrapper({children}: {children: ReactNode}) {
@@ -61,14 +61,14 @@ export function MainWrapper({children}: {children: ReactNode}) {
             setAlertString(alertMessage);
         }
 
-        EventsOn('removingbg', handleRemBGstatus);
-        EventsOn('cropping', handleCropStatus);
-        EventsOn('alert', handleAlert);
+        const offRemovingBG = Events.On('removingbg', (event) => handleRemBGstatus(event.data));
+        const offCropping = Events.On('cropping', (event) => handleCropStatus(event.data));
+        const offAlert = Events.On('alert', (event) => handleAlert(event.data));
 
         return () => {
-            EventsOff('removingbg');
-            EventsOff('cropping');
-            EventsOff('alert');
+            offRemovingBG();
+            offCropping();
+            offAlert();
         }
     }, [strings, accentColor]);
 

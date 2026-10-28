@@ -6,7 +6,7 @@ DefaultDirName={commonpf}\RMBG
 DefaultGroupName=RMBG
 DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\RMBG.exe
-OutputDir=build\bin
+OutputDir=bin
 OutputBaseFilename=RMBG-setup
 AppVerName=RMBG 1.0
 SetupIconFile=build/installericon.ico
@@ -48,7 +48,7 @@ Name: "startmenuicon"; Description: "{cm:CreateStartMenuIcon}"; GroupDescription
 Name: "addassoc"; Description: "{cm:AddContextOption}"; GroupDescription: "{cm:AdditionalOptions}"; Flags: unchecked
 
 [Files]
-Source: "build\bin\RMBG.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\RMBG.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
 Root: HKCR; Subkey: "SystemFileAssociations\image\shell\rmbg"; ValueType: string; ValueName: ""; ValueData: "{cm:ContextQuick}"; Flags: uninsdeletekey; Check: WizardIsTaskSelected('addassoc')

@@ -1,6 +1,6 @@
-import { useEffect, useRef, CSSProperties, useContext, useLayoutEffect } from "react";
-import { OnFileDrop, OnFileDropOff } from "../../wailsjs/runtime/runtime";
-import { HandleDrop, OpenImage } from "../../wailsjs/go/main/App";
+import { useEffect, useRef, useContext, useLayoutEffect } from "react";
+import { Events } from "@wailsio/runtime";
+import { HandleDrop, OpenImage } from "../../bindings/rmbg/app";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { MainContext, ImageContext } from "./contexts";
@@ -11,8 +11,8 @@ export function InputImageContainer() {
     const imageContainer = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
-    function setLoadedImage(result: string[] | null) {
-        if (result != null) {
+    function setLoadedImage(result: string[]) {
+        if (result.length > 0) {
             const [base64, fileType] = result;
             setInputRMBGImage(`data:${fileType};base64,${base64}`);
             setOutputRMBGImage("");
@@ -20,20 +20,11 @@ export function InputImageContainer() {
     }
 
     useEffect(() => {
-        const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
-            for (let i = 0; i < paths.length; i++) {
-                if (paths[i] != "") {
-                    HandleDrop("RMBG", paths[0], false).then(setLoadedImage);
-                    return;
-                }
-            }  
-        };
-
-        OnFileDrop(handleFileDrop, true);
-
-        return () => {
-            OnFileDropOff();
-        };
+        return Events.On('filedrop', (event) => {
+            if (event.data?.[0] == "RMBG") {
+                HandleDrop("RMBG", event.data[1], false).then(setLoadedImage);
+            }
+        });
     }, []);
 
     const handleURLDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -46,9 +37,9 @@ export function InputImageContainer() {
                     if (data.startsWith('http://') || data.startsWith('https://')) {
                         // console.log('Dropped URL:', data);
                         HandleDrop("RMBG", data, true).then(setLoadedImage);
-                        imageContainer.current?.classList.remove('wails-drop-target-active');
+                        imageContainer.current?.classList.remove('file-drop-target-active');
                     } else if (data.startsWith('data:')) {
-                        imageContainer.current?.classList.remove('wails-drop-target-active');
+                        imageContainer.current?.classList.remove('file-drop-target-active');
                     }
                 });
             }
@@ -72,7 +63,7 @@ export function InputImageContainer() {
     }, [inputRMBGImage]);
 
     return (
-        <div ref={imageContainer} className='imageContainer' onDrop={handleURLDrop} style={{'--wails-drop-target': 'drop'} as CSSProperties} onClick={openDialog}>
+        <div ref={imageContainer} id='RMBG' className='imageContainer' onDrop={handleURLDrop} data-file-drop-target onClick={openDialog}>
             {inputRMBGImage!="" && <img ref={imgRef} src={inputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>}
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1,}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%'}} />

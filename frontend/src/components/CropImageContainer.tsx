@@ -1,6 +1,6 @@
 import { useEffect, useRef, CSSProperties, useContext, useState, SyntheticEvent, MouseEvent, useLayoutEffect, DragEvent } from "react";
-import { OnFileDrop, OnFileDropOff } from "../../wailsjs/runtime/runtime";
-import { HandleDrop, OpenImage } from "../../wailsjs/go/main/App";
+import { Events } from "@wailsio/runtime";
+import { HandleDrop, OpenImage } from "../../bindings/rmbg/app";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { ImageContext, MainContext } from "./contexts";
@@ -15,28 +15,19 @@ export function InputImageContainer() {
     const imageRef = useRef<HTMLImageElement>(null);
     const alphaPatternRef = useRef<HTMLDivElement>(null);
 
-    function setLoadedImage(result: string[] | null) {
-        if (result != null) {
+    function setLoadedImage(result: string[]) {
+        if (result.length > 0) {
             const [base64, fileType] = result;
             setCropImageByType(`data:${fileType};base64,${base64}`, fileType);
         }
     }
 
     useEffect(() => {
-        const handleFileDrop = (_x: number, _y: number, paths: string[]) => {
-            for (let i = 0; i < paths.length; i++) {
-                if (paths[i] != "") {
-                    HandleDrop("CROP", paths[0], false).then(setLoadedImage);
-                    return;
-                }
+        return Events.On('filedrop', (event) => {
+            if (event.data?.[0] == "CROP") {
+                HandleDrop("CROP", event.data[1], false).then(setLoadedImage);
             }
-        };
-
-        OnFileDrop(handleFileDrop, true);
-
-        return () => {
-            OnFileDropOff();
-        };
+        });
     }, []);
 
     useLayoutEffect(() => {
@@ -89,9 +80,9 @@ export function InputImageContainer() {
                     if (data.startsWith('http://') || data.startsWith('https://')) {
                         // console.log('Dropped URL:', data);
                         HandleDrop("CROP", data, true).then(setLoadedImage);
-                        imageContainer.current?.classList.remove('wails-drop-target-active');
+                        imageContainer.current?.classList.remove('file-drop-target-active');
                     } else if (data.startsWith('data:')){
-                        imageContainer.current?.classList.remove('wails-drop-target-active');
+                        imageContainer.current?.classList.remove('file-drop-target-active');
                     }
                 });
             }
@@ -152,7 +143,7 @@ export function InputImageContainer() {
     } as CSSProperties;
 
     return (
-        <div ref={imageContainer} className='imageContainer imageContainerCrop' onDrop={handleURLDrop} style={{'--wails-drop-target': 'drop', backgroundColor: cropImage!="" && "rgba(255,255,255,0)", cursor: cropImage!="" && 'auto'} as CSSProperties} onClick={openDialog}>
+        <div ref={imageContainer} id='CROP' className='imageContainer imageContainerCrop' onDrop={handleURLDrop} data-file-drop-target style={{backgroundColor: cropImage!="" && "rgba(255,255,255,0)", cursor: cropImage!="" && 'auto'} as CSSProperties} onClick={openDialog}>
             {cropImage!="" && 
                 <img ref={imageRef} src={cropImage} style={{userSelect: 'none', pointerEvents: 'none', filter: 'brightness(0.5)'}} draggable={false} onLoad={onImageLoad}></img>
             }

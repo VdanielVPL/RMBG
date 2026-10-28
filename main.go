@@ -5,10 +5,8 @@ import (
 	"os"
 	"rmbg/utils"
 
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
 )
 
 //go:embed all:frontend/dist all:assets
@@ -23,40 +21,39 @@ func main() {
 			println("Error:", err.Error())
 		}
 	} else {
-		app := NewApp()
+		rmbg := NewApp()
 
-		windowsOptions := &windows.Options{}
-
-		if utils.IsWindows11OrGreater() {
-			windowsOptions.WindowIsTranslucent = true
-			windowsOptions.BackdropType = windows.Mica
-		}
-
-		err := wails.Run(&options.App{
-			Title:     "RMBG",
-			Width:     1200,
-			Height:    700,
-			MinWidth:  920,
-			MinHeight: 600,
-			AssetServer: &assetserver.Options{
-				Assets: assets,
+		app := application.New(application.Options{
+			Name: "RMBG",
+			Services: []application.Service{
+				application.NewService(rmbg),
 			},
-			DisableResize:    true,
-			BackgroundColour: utils.BgColor(),
-			OnStartup:        app.startup,
-			OnShutdown:       app.shutdown,
-			Windows:          windowsOptions,
-			DragAndDrop: &options.DragAndDrop{
-				EnableFileDrop:  true,
-				CSSDropProperty: "--wails-drop-target",
-				CSSDropValue:    "drop",
-			},
-			Bind: []interface{}{
-				app,
+			Assets: application.AssetOptions{
+				Handler: application.AssetFileServerFS(assets),
 			},
 		})
 
-		if err != nil {
+		windowOptions := application.WebviewWindowOptions{
+			Title:                      "RMBG",
+			Width:                      1200,
+			Height:                     700,
+			MinWidth:                   920,
+			MinHeight:                  600,
+			DisableResize:              true,
+			BackgroundColour:           utils.BgColor(),
+			EnableFileDrop:             true,
+			DefaultContextMenuDisabled: true,
+		}
+
+		if utils.IsWindows11OrGreater() {
+			windowOptions.BackgroundType = application.BackgroundTypeTranslucent
+			windowOptions.Windows.BackdropType = application.Mica
+		}
+
+		window := app.Window.NewWithOptions(windowOptions)
+		window.OnWindowEvent(events.Common.WindowFilesDropped, rmbg.filesDropped)
+
+		if err := app.Run(); err != nil {
 			println("Error:", err.Error())
 		}
 	}

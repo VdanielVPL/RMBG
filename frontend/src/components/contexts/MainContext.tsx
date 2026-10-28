@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState, ReactNode } from 'react';
-import { GetLangStrings, GetDarkMode, GetAccentColor } from '../../../wailsjs/go/main/App';
+import { GetLangStrings, GetDarkMode, GetAccentColor } from '../../../bindings/rmbg/app';
 
 type MainContextType = { 
     strings: {[key: string]: string};
@@ -27,7 +27,7 @@ export function MainProvider({ children }: { children: ReactNode }) {
             GetAccentColor()
         ]).then(([strings, darkMode, accentColor]) => {
             setContextData({
-                strings: strings,
+                strings: (strings ?? {}) as {[key: string]: string},
                 isDarkMode: darkMode,
                 accentColor: accentColor
             });

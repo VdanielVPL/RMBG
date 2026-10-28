@@ -1,0 +1,17 @@
+dev_mode:
+  root_path: .
+  log_level: warn
+  debounce: 1000
+  ignore:
+    watched_extension:
+      - "*.go"
+  executes:
+    - cmd: wails3 build DEV=true
+      type: blocking
+    - cmd: bun run dev --host 127.0.0.1 --port 9245
+      dir: frontend
+      type: background
+      readiness:
+        tcp: 127.0.0.1:9245
+    - cmd: bin\RMBG.exe
+      type: primary

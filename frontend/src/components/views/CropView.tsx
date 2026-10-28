@@ -6,12 +6,11 @@ import { Button, Switch } from "../inputs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCloudArrowDown, faCopy, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
-import { CropImage, FromCroptoRMBG, CopyImage, SaveImage, ToJPG, ToPNG, ClearImageMem } from "../../../wailsjs/go/main/App";
-import { EventsEmit } from "../../../wailsjs/runtime/runtime";
+import { CropImage, FromCroptoRMBG, CopyImage, SaveImage, ToJPG, ToPNG, ClearImageMem } from "../../../bindings/rmbg/app";
 
 export function CropView() {
     const { strings, isDarkMode, accentColor } = useContext(MainContext);
-    const { cropImage, setCropImage, JPGcropImage, setJPGCropImage, setPNGCropImage, PNGcropImage, setInputRMBGImage, setOutputRMBGImage, cropDimens, cropping, setIsJPG, isJPG, setCropImageByType } = useContext(ImageContext);
+    const { cropImage, setCropImage, JPGcropImage, setJPGCropImage, setPNGCropImage, PNGcropImage, setInputRMBGImage, setOutputRMBGImage, cropDimens, cropping, setCropping, setIsJPG, isJPG, setCropImageByType } = useContext(ImageContext);
 
     let navigate = useNavigate();
 
@@ -34,10 +33,10 @@ export function CropView() {
     function CropImageButton() {
         if (cropDimens.left == 0 && cropDimens.right == 0 && cropDimens.top == 0 && cropDimens.bottom == 0) return;
         CropImage(cropDimens.left, cropDimens.right, cropDimens.top, cropDimens.bottom, isJPG).then((result) => {
-            if (result != null) {
+            if (result.length > 0) {
                 const [base64, fileType] = result;
                 setCropImageByType(`data:${fileType};base64,${base64}`, fileType);
-                EventsEmit('cropping', false);
+                setCropping(false);
             }
         });
     }
@@ -48,12 +47,12 @@ export function CropView() {
             //PNG to JPG
             if (JPGcropImage == "") {
                 ToJPG().then((result) => {
-                    if (result != null) {
+                    if (result.length > 0) {
                         const [base64, fileType] = result;
                         const newImage = `data:${fileType};base64,${base64}`;
                         setJPGCropImage(newImage);
                         setCropImage(newImage);
-                        EventsEmit('cropping', false);
+                        setCropping(false);
                     }else{
                         setIsJPG(false);
                     }
@@ -65,12 +64,12 @@ export function CropView() {
             //JPG to PNG
             if (PNGcropImage == "") {
                 ToPNG().then((result) => {
-                    if (result != null) {
+                    if (result.length > 0) {
                         const [base64, fileType] = result;
                         const newImage = `data:${fileType};base64,${base64}`;
                         setPNGCropImage(newImage);
                         setCropImage(newImage);
-                        EventsEmit('cropping', false);
+                        setCropping(false);
                     }else{
                         setIsJPG(true);
                     }

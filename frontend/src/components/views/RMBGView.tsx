@@ -5,8 +5,7 @@ import { faArrowRight, faCloudArrowDown, faCopy, faCropSimple, faImage, faSpinne
 import { MainContext, ImageContext } from "../contexts";
 import { InputImageContainer } from '../InputRMBGImageContainer';
 import { Button, SelectList, Selected } from '../inputs';
-import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem, FromRMBGtoCrop } from '../../../wailsjs/go/main/App';
-import { EventsEmit } from '../../../wailsjs/runtime/runtime';
+import { CopyImage, RemoveBackground, SaveImage, SetModel, ClearImageMem, FromRMBGtoCrop } from '../../../bindings/rmbg/app';
 import { useNavigate } from 'react-router-dom';
 
 const tiles: Selected[] = [
@@ -62,7 +61,7 @@ function OutputImageContainer() {
 
 export function RMBGView() {
     const { strings, isDarkMode } = useContext(MainContext);
-    const { setOutputRMBGImage, setInputRMBGImage, setCropImage, setPNGCropImage, setJPGCropImage, inputRMBGImage, outputRMBGImage, removingBG, setModel, cropping, setCropImageByType } = useContext(ImageContext);
+    const { setOutputRMBGImage, setInputRMBGImage, setCropImage, setPNGCropImage, setJPGCropImage, inputRMBGImage, outputRMBGImage, removingBG, setRemovingBG, setModel, cropping, setCropImageByType } = useContext(ImageContext);
     let navigate = useNavigate();
 
     function handleModelChange(selected: Selected) {
@@ -74,10 +73,10 @@ export function RMBGView() {
         setOutputRMBGImage("");
         if (inputRMBGImage != "") {
             RemoveBackground().then((result) => {
-                if (result != null) {
+                if (result.length > 0) {
                     const [base64, fileType] = result;
                     setOutputRMBGImage(`data:${fileType};base64,${base64}`);
-                    EventsEmit('removingbg', false);
+                    setRemovingBG(false);
                 }
             });
         }

@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  build:
+    summary: Builds bin/RMBG.exe, DEV=true skips obfuscation and reuses the built frontend
+    env:
+      GOAMD64: v1
+    cmds:
+      - defer: powershell Remove-Item *.syso, wails_obfuscated.gen.go -ErrorAction Ignore
+      - wails3 generate bindings -ts{{if ne .DEV "true"}} -obfuscated{{end}}
+      - task: build:frontend
+      - wails3 generate icons -input build/appicon.png -windowsfilename build/windows/icon.ico -macfilename ""
+      - wails3 generate syso -icon build/windows/icon.ico -manifest build/windows/wails.exe.manifest -arch {{ARCH}}
+      - '{{if eq .DEV "true"}}go build{{else}}garble -tiny build -tags production,wails_obfuscated -trimpath -ldflags="-w -s -H windowsgui"{{end}} -o bin/RMBG.exe'
+
+  build:frontend:
+    dir: frontend
+    status:
+      - '{{if eq .DEV "true"}}test -f dist/index.html{{else}}false{{end}}'
+    cmds:
+      - bun install
+      - bun run build

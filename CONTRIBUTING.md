@@ -16,7 +16,12 @@ Make sure you have:
 - **Wails CLI**:
   
   ```bash
-  go install github.com/wailsapp/wails/v2/cmd/wails@latest
+  go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+  ```
+- **garble**: Obfuscates the release build.
+  
+  ```bash
+  go install mvdan.cc/garble@latest
   ```
 - **Bun**: Install from [here](https://bun.sh/).
 - **iscc (Inno Setup Compiler)**: Download and install from [here](https://jrsoftware.org/isinfo.php) to create the `.exe` installer.
@@ -54,22 +59,22 @@ Make sure you have:
    
    Run the build command:
    ```bash
-   wails build -platform windows -ldflags "-s -w" -trimpath -tags "-B"; if($?) { iscc setup.iss }
+   wails3 build; if($?) { iscc setup.iss }
    ```
    
    This command will build the application and then use `iscc` to create the `.exe` installer.
 
    For development:
    ```bash
-   wails dev
+   wails3 dev
    ```
 
 5. **Run the Installer (If Release Build)**:
-   After a successful build and packaging, you will find the `.exe` installer in `./build/bin`. Run it to install and use the application.
+   After a successful build and packaging, you will find the `.exe` installer in `./bin`. Run it to install and use the application.
 
 ## 🔑 Key Files
 
 - **`main.go`**: The Go backend entry point.
 - **`frontend/`**: Contains the React-based frontend.
-- **`wails.json`**: Wails configuration file.
+- **`Taskfile.yml`**: Build steps used by `wails3 build`.
 

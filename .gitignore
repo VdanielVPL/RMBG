@@ -1,8 +1,7 @@
-build/bin
-build/windows
+bin
+build/windows/icon.ico
 node_modules
 frontend/dist
-frontend/wailsjs
+frontend/bindings
 package-lock.json
-package.json.md5
 bun.lockb

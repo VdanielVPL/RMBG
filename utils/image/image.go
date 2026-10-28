@@ -2,7 +2,6 @@ package image
 
 import (
 	"bytes"
-	"context"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -21,7 +20,7 @@ import (
 	_ "golang.org/x/image/webp"
 
 	"github.com/kovidgoyal/imaging"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 var supportedImageTypes = []string{"png", "jpeg", "webp"}
@@ -75,28 +74,33 @@ func ToBytesFromPath(path string) ([]byte, error) {
 	return os.ReadFile(path)
 }
 
-func OpenImageDialog(ctx context.Context) (string, error) {
-	options := runtime.OpenDialogOptions{
+// The dialogs return an empty path when canceled (Wails reports canceling as an error too)
+
+func OpenImageDialog() string {
+	options := &application.OpenFileDialogOptions{
 		Title: "Select an image",
-		Filters: []runtime.FileFilter{
+		Filters: []application.FileFilter{
 			{
 				DisplayName: "Images (*.png, *.jpg, *.jpeg, *.webp)",
 				Pattern:     "*.png;*.jpg;*.jpeg;*.webp",
 			},
 		},
+		Window: application.Get().Window.Current(),
 	}
-	return runtime.OpenFileDialog(ctx, options)
+	path, _ := application.Get().Dialog.OpenFileWithOptions(options).PromptForSingleSelection()
+	return path
 }
 
-func SaveImageDialog(ctx context.Context, isJPG bool) (string, error) {
-	options := runtime.SaveDialogOptions{
+func SaveImageDialog(isJPG bool) string {
+	options := &application.SaveFileDialogOptions{
 		Title: "Save an image",
-		Filters: []runtime.FileFilter{
+		Filters: []application.FileFilter{
 			{
 				DisplayName: "Image (*.png)",
 				Pattern:     "*.png",
 			},
 		},
+		Window: application.Get().Window.Current(),
 	}
 
 	if isJPG {
@@ -104,7 +108,8 @@ func SaveImageDialog(ctx context.Context, isJPG bool) (string, error) {
 		options.Filters[0].Pattern = "*.jpg"
 	}
 
-	return runtime.SaveFileDialog(ctx, options)
+	path, _ := application.Get().Dialog.SaveFileWithOptions(options).PromptForSingleSelection()
+	return path
 }
 
 func ToJPG(pngImgBytes []byte) ([]byte, error) {

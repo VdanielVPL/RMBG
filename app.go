@@ -9,12 +9,12 @@ import (
 	"runtime/debug"
 	"sync"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // App struct
 type App struct {
-	ctx         context.Context
+	app         *application.App
 	LangStrings map[string]string
 	IsDarkMode  bool
 	AccentColor string
@@ -45,21 +45,20 @@ func NewApp() *App {
 	return &App{}
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
-func (a *App) startup(ctx context.Context) {
-	a.ctx = ctx
+// ServiceStartup is called by Wails when the app starts
+func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
+	a.app = application.Get()
 
 	if langData, err := utils.LoadLang(); err == nil {
 		a.LangStrings = langData
 	} else {
-		runtime.LogError(ctx, err.Error())
+		a.app.Logger.Error(err.Error())
 	}
 
 	if accentColor, err := utils.GetAccentColor(); err == nil {
 		a.AccentColor = accentColor
 	} else {
-		runtime.LogError(ctx, err.Error())
+		a.app.Logger.Error(err.Error())
 	}
 
 	a.IsDarkMode = utils.IsDarkMode()
@@ -69,18 +68,20 @@ func (a *App) startup(ctx context.Context) {
 	}
 
 	if err := clipboard.Init(); err != nil {
-		runtime.LogError(ctx, err.Error())
+		a.app.Logger.Error(err.Error())
 	}
+	return nil
 }
 
-// shutdown is called when the app is closing
-func (a *App) shutdown(ctx context.Context) {
+// ServiceShutdown is called by Wails when the app is closing
+func (a *App) ServiceShutdown() error {
 	a.rmbgMu.Lock()
 	a.stopRembg()
 	a.rmbgMu.Unlock()
 	a.rembgRuns.Wait()
 
 	clipboard.Close()
+	return nil
 }
 
 func (a *App) GetLangStrings() map[string]string {
@@ -96,7 +97,7 @@ func (a *App) GetAccentColor() string {
 }
 
 func (a *App) alert(key string) {
-	runtime.EventsEmit(a.ctx, "alert", key)
+	a.app.Event.Emit("alert", key)
 }
 
 // alertError shows a translated message, technical details only go to the log
@@ -105,14 +106,14 @@ func (a *App) alertError(key string, err error) {
 		if msg := err.Error(); msg == "NO_IMAGE" || msg == "INVALID_IMAGE" || msg == "REMBG_NOT_FOUND" {
 			key = msg
 		} else {
-			runtime.LogError(a.ctx, msg)
+			a.app.Logger.Error(msg)
 		}
 	}
 	a.alert(key)
 }
 
 func (a *App) cropFailed(key string, err error) {
-	runtime.EventsEmit(a.ctx, "cropping", false)
+	a.app.Event.Emit("cropping", false)
 	a.alertError(key, err)
 }
 
@@ -140,14 +141,24 @@ func (a *App) HandleDrop(ImageType string, path string, isUrl bool) []string {
 }
 
 func (a *App) OpenImage(ImageType string) []string {
-	path, err := image.OpenImageDialog(a.ctx)
-	if err != nil || path == "" {
+	path := image.OpenImageDialog()
+	if path == "" {
 		return nil
 	}
 
 	load := a.newLoad(ImageType)
 	imgBytes, err := image.ToBytesFromPath(path)
 	return a.setInputImage(ImageType, load, path, imgBytes, err)
+}
+
+// filesDropped passes the file dropped on an image container (its id is the tab) to the frontend,
+// which loads it with HandleDrop. Images dragged from a browser have no path, they are loaded from the URL
+func (a *App) filesDropped(event *application.WindowEvent) {
+	files, target := event.Context().DroppedFiles(), event.Context().DropTargetDetails()
+	if len(files) == 0 || files[0] == "" || target == nil {
+		return
+	}
+	a.app.Event.Emit("filedrop", []string{target.ElementID, files[0]})
 }
 
 func (a *App) newLoad(ImageType string) int {
@@ -246,10 +257,10 @@ func (a *App) RemoveBackground() []string {
 	defer a.rembgRuns.Done()
 	a.rmbgMu.Unlock()
 
-	runtime.EventsEmit(a.ctx, "removingbg", true)
+	a.app.Event.Emit("removingbg", true)
 	output, err := image.RemBG(ctx, model, path, img)
 	if err != nil {
-		runtime.EventsEmit(a.ctx, "removingbg", false)
+		a.app.Event.Emit("removingbg", false)
 		if ctx.Err() == nil { // canceled because the image changed, not an error
 			a.alertError("REMBG_FAILED", err)
 		}
@@ -257,7 +268,7 @@ func (a *App) RemoveBackground() []string {
 	}
 	result, err := toFrontend(output)
 	if err != nil {
-		runtime.EventsEmit(a.ctx, "removingbg", false)
+		a.app.Event.Emit("removingbg", false)
 		a.alertError("REMBG_FAILED", err)
 		return nil
 	}
@@ -265,7 +276,7 @@ func (a *App) RemoveBackground() []string {
 	a.rmbgMu.Lock()
 	defer a.rmbgMu.Unlock()
 	if gen != a.imgData.rembgGen {
-		runtime.EventsEmit(a.ctx, "removingbg", false)
+		a.app.Event.Emit("removingbg", false)
 		return nil
 	}
 	a.imgData.rembgimg2 = output
@@ -327,7 +338,7 @@ func readImage(imgBytes []byte, path string) ([]byte, error) {
 }
 
 func (a *App) CropImage(left, right, top, bottom float32, isJPG bool) []string {
-	runtime.EventsEmit(a.ctx, "cropping", true)
+	a.app.Event.Emit("cropping", true)
 
 	a.cropMu.Lock()
 	defer a.cropMu.Unlock()
@@ -373,7 +384,7 @@ func (a *App) ToPNG() []string {
 // convertCropImage makes the crop image in the other format and keeps both,
 // when there is nothing to convert it returns the one that is already there
 func (a *App) convertCropImage(toJPG bool) []string {
-	runtime.EventsEmit(a.ctx, "cropping", true)
+	a.app.Event.Emit("cropping", true)
 
 	a.cropMu.Lock()
 	defer a.cropMu.Unlock()
@@ -435,11 +446,7 @@ func (a *App) SaveImage(ImageType string, isJPG bool) {
 		return
 	}
 
-	filePath, err := image.SaveImageDialog(a.ctx, isJPG)
-	if err != nil {
-		a.alertError("SAVE_FAILED", err)
-		return
-	}
+	filePath := image.SaveImageDialog(isJPG)
 	if filePath == "" {
 		return
 	}

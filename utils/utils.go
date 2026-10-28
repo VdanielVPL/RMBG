@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 
-	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v3/pkg/application"
 	syswindows "golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
 )
@@ -28,14 +28,14 @@ func IsDarkMode() bool {
 	return value == 0
 }
 
-func BgColor() *options.RGBA {
+func BgColor() application.RGBA {
 	if IsWindows11OrGreater() {
-		return options.NewRGBA(0, 0, 0, 0)
+		return application.NewRGBA(0, 0, 0, 0)
 	} else {
 		if IsDarkMode() {
-			return options.NewRGBA(32, 32, 32, 255)
+			return application.NewRGBA(32, 32, 32, 255)
 		} else {
-			return options.NewRGBA(245, 241, 248, 255)
+			return application.NewRGBA(245, 241, 248, 255)
 		}
 	}
 }

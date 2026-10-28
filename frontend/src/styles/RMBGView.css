@@ -95,11 +95,11 @@
     transform: translateX(-50%);
 }
 
-.wails-drop-target-active{
+.file-drop-target-active{
     background-color: rgba(255, 255, 255, 0);
     border-color: var(--accent-color);
 }
-.wails-drop-target-active > .dropView{
+.file-drop-target-active > .dropView{
     opacity: 1 !important;
 }
 .supu2net{
