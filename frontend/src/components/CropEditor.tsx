@@ -21,8 +21,6 @@ export default function CropEditor(props: CropEditorProps) {
                 cropEditorRef.current.style.opacity = '1';
             }
             if (props.imageRef.current) {
-                // console.log('Image Width:', props.imageRef.current.naturalWidth);
-                // console.log('Image Height:', props.imageRef.current.naturalHeight);
                 setImageWidth(props.imageRef.current.naturalWidth / props.rect.width);
                 setImageHeight(props.imageRef.current.naturalHeight / props.rect.height);
             }
@@ -34,8 +32,6 @@ export default function CropEditor(props: CropEditorProps) {
         const handlemouseup = () => {
             if (dragging) {
                 setDragging(false);
-                // console.log('widthRatio:', imageWidth);
-                // console.log('heightRatio:', imageHeight);
                 setCropDimens({
                     left: parseInt(cropEditorRef.current?.style.left || '0', 10) * imageWidth,
                     right: parseInt(cropEditorRef.current?.style.right || '0', 10) * imageWidth,

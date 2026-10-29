@@ -37,7 +37,6 @@ a{
 }
 .Button{
     filter: brightness(100%) contrast(105%);
-    /* background-color: purple; */
     padding: 10px;
     border-radius: 10px;
     text-transform: capitalize;
@@ -56,11 +55,9 @@ a{
     transition: background-color 0.3s ease, opacity 0.5s ease, filter 0.3s ease;
 }
 .NavButton:hover, .Button:hover{
-    /* background-color: #4c166d; */
     filter: brightness(80%) contrast(100%);
 }
 .NavButton:active, .Button:active{
-    /* background-color: #3c1157; */
     filter: brightness(60%) contrast(100%);
 }
 
@@ -69,21 +66,6 @@ a{
     color: white !important;
 }
 
-/* View animations */
-.fade-enter {
-    opacity: 0;
-}
-.fade-enter-active {
-    opacity: 1;
-    transition: opacity 300ms;
-}
-.fade-exit {
-    opacity: 1;
-    }
-.fade-exit-active {
-    opacity: 0;
-    transition: opacity 300ms;
-}
 .switchComponentCircle{
     transition: transform 0.35s ease;
 }

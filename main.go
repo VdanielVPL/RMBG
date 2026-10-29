@@ -26,7 +26,7 @@ func main() {
 		app := application.New(application.Options{
 			Name: "RMBG",
 			Services: []application.Service{
-				application.NewService(rmbg),
+				application.NewServiceWithOptions(rmbg, application.ServiceOptions{Route: "/images"}),
 			},
 			Assets: application.AssetOptions{
 				Handler: application.AssetFileServerFS(assets),

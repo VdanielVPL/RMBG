@@ -1,4 +1,4 @@
-import { useEffect, useRef, CSSProperties, useContext, useState, SyntheticEvent, MouseEvent, useLayoutEffect, DragEvent } from "react";
+import { useEffect, useRef, CSSProperties, useContext, useState, SyntheticEvent, useLayoutEffect, DragEvent } from "react";
 import { Events } from "@wailsio/runtime";
 import { HandleDrop, OpenImage } from "../../bindings/rmbg/app";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,8 +17,8 @@ export function InputImageContainer() {
 
     function setLoadedImage(result: string[]) {
         if (result.length > 0) {
-            const [base64, fileType] = result;
-            setCropImageByType(`data:${fileType};base64,${base64}`, fileType);
+            const [url, fileType] = result;
+            setCropImageByType(url, fileType);
         }
     }
 
@@ -71,42 +71,21 @@ export function InputImageContainer() {
     };
 
     const handleURLDrop = (event: DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        const items = event.dataTransfer?.items;
-        if (items) {
-            const item = items[0];
-            if (item.kind === 'string') {
-                item.getAsString((data) => {
-                    if (data.startsWith('http://') || data.startsWith('https://')) {
-                        // console.log('Dropped URL:', data);
-                        HandleDrop("CROP", data, true).then(setLoadedImage);
-                        imageContainer.current?.classList.remove('file-drop-target-active');
-                    } else if (data.startsWith('data:')){
-                        imageContainer.current?.classList.remove('file-drop-target-active');
-                    }
-                });
-            }
+        const url = event.dataTransfer.getData('URL') || event.dataTransfer.getData('text/plain');
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            HandleDrop("CROP", url, true).then(setLoadedImage);
         }
     };
 
-    async function openDialog(_e: MouseEvent<HTMLDivElement>) {
+    async function openDialog() {
         if (cropImage != "") {
-            // const target = e.target as HTMLElement;
-            // if (target.parentElement != imageContainer.current) {
-            //     console.log(target.parentElement, imageContainer.current);
-            //     return;
-            // }
             return;
         }
-        // console.log(e.target)
         setLoadedImage(await OpenImage("CROP"))
     }
 
     function onImageLoad(e: SyntheticEvent<HTMLImageElement>) {
         if(imageContainer.current != null){
-            // console.log(e.currentTarget.offsetWidth, e.currentTarget.offsetHeight);
-            // console.log(e.currentTarget.width, e.currentTarget.height);
-            // console.log(e.currentTarget.clientWidth, e.currentTarget.clientHeight);
             if (e.currentTarget.width < e.currentTarget.height) {
                 imageContainer.current.style.width = "fit-content";
                 imageContainer.current.style.height = '450px';
@@ -117,7 +96,6 @@ export function InputImageContainer() {
                 e.currentTarget.style.width = "100%";
             }
             imageContainer.current.style.borderRadius = '0px';
-            // console.log(calculateBrightness(e.currentTarget));
             setIsImageDark(calculateBrightness(e.currentTarget));
             setRect(imageContainer.current.getBoundingClientRect());
             if (alphaPatternRef.current) {

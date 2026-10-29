@@ -15,9 +15,7 @@ export function CropView() {
     let navigate = useNavigate();
 
     function ClearView() {
-        setCropImage("");
-        setJPGCropImage("");
-        setPNGCropImage("");
+        setCropImageByType("", "");
         ClearImageMem("CROP");
     }
 
@@ -34,8 +32,8 @@ export function CropView() {
         if (cropDimens.left == 0 && cropDimens.right == 0 && cropDimens.top == 0 && cropDimens.bottom == 0) return;
         CropImage(cropDimens.left, cropDimens.right, cropDimens.top, cropDimens.bottom, isJPG).then((result) => {
             if (result.length > 0) {
-                const [base64, fileType] = result;
-                setCropImageByType(`data:${fileType};base64,${base64}`, fileType);
+                const [url, fileType] = result;
+                setCropImageByType(url, fileType);
                 setCropping(false);
             }
         });
@@ -48,8 +46,7 @@ export function CropView() {
             if (JPGcropImage == "") {
                 ToJPG().then((result) => {
                     if (result.length > 0) {
-                        const [base64, fileType] = result;
-                        const newImage = `data:${fileType};base64,${base64}`;
+                        const newImage = result[0];
                         setJPGCropImage(newImage);
                         setCropImage(newImage);
                         setCropping(false);
@@ -65,8 +62,7 @@ export function CropView() {
             if (PNGcropImage == "") {
                 ToPNG().then((result) => {
                     if (result.length > 0) {
-                        const [base64, fileType] = result;
-                        const newImage = `data:${fileType};base64,${base64}`;
+                        const newImage = result[0];
                         setPNGCropImage(newImage);
                         setCropImage(newImage);
                         setCropping(false);

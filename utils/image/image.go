@@ -2,7 +2,6 @@ package image
 
 import (
 	"bytes"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"image"
@@ -14,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"slices"
-	"strings"
 	"time"
 
 	_ "golang.org/x/image/webp"
@@ -59,15 +57,6 @@ func GetImageFromURL(url string) ([]byte, error) {
 		return nil, errors.New("downloaded image is over 100 MB")
 	}
 	return fileBytes, nil
-}
-
-func ToBase64FromBytes(fileBytes []byte) (string, string, error) {
-	fileType := http.DetectContentType(fileBytes)
-	if strings.HasPrefix(fileType, "image/") {
-		return base64.StdEncoding.EncodeToString(fileBytes), fileType, nil
-	} else {
-		return "", "", errors.New("NO_IMAGE")
-	}
 }
 
 func ToBytesFromPath(path string) ([]byte, error) {

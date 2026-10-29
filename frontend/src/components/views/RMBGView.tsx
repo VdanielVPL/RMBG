@@ -61,7 +61,7 @@ function OutputImageContainer() {
 
 export function RMBGView() {
     const { strings, isDarkMode } = useContext(MainContext);
-    const { setOutputRMBGImage, setInputRMBGImage, setCropImage, setPNGCropImage, setJPGCropImage, inputRMBGImage, outputRMBGImage, removingBG, setRemovingBG, setModel, cropping, setCropImageByType } = useContext(ImageContext);
+    const { setOutputRMBGImage, setInputRMBGImage, inputRMBGImage, outputRMBGImage, removingBG, setRemovingBG, setModel, cropping, setCropImageByType } = useContext(ImageContext);
     let navigate = useNavigate();
 
     function handleModelChange(selected: Selected) {
@@ -74,8 +74,7 @@ export function RMBGView() {
         if (inputRMBGImage != "") {
             RemoveBackground().then((result) => {
                 if (result.length > 0) {
-                    const [base64, fileType] = result;
-                    setOutputRMBGImage(`data:${fileType};base64,${base64}`);
+                    setOutputRMBGImage(result[0]);
                     setRemovingBG(false);
                 }
             });
@@ -89,24 +88,16 @@ export function RMBGView() {
     }
 
     function ToCropView(inOrOut: string) {
-        if (inOrOut == "in") {
-            if (inputRMBGImage != "") {
-                setCropImageByType(inputRMBGImage, inputRMBGImage.split(';')[0].split(':')[1]);
-                FromRMBGtoCrop(0).then((ok) => {
-                    if (!ok) {
-                        setCropImage("");
-                        setPNGCropImage("");
-                        setJPGCropImage("");
-                    }
-                });
-                navigate('/crop');
-            }
-        }else if (inOrOut == "out") {
-            if (outputRMBGImage != "") {
-                setCropImageByType(outputRMBGImage, "image/png");
-                FromRMBGtoCrop(1);
-                navigate('/crop');
-            }
+        const image = inOrOut == "in" ? inputRMBGImage : outputRMBGImage;
+        if (image != "") {
+            setCropImageByType("", "");
+            FromRMBGtoCrop(inOrOut == "in" ? 0 : 1).then((result) => {
+                if (result.length > 0) {
+                    const [url, fileType] = result;
+                    setCropImageByType(url, fileType);
+                }
+            });
+            navigate('/crop');
         }
     }
 

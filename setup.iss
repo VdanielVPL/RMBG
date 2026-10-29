@@ -1,14 +1,14 @@
 [Setup]
 AppName=RMBG
-AppVersion=1.0
-VersionInfoVersion=1.0.0.0
+AppVersion=1.1
+VersionInfoVersion=1.1.0.0
 DefaultDirName={commonpf}\RMBG
 DefaultGroupName=RMBG
 DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\RMBG.exe
 OutputDir=bin
 OutputBaseFilename=RMBG-setup
-AppVerName=RMBG 1.0
+AppVerName=RMBG 1.1
 SetupIconFile=build/installericon.ico
 WizardStyle=modern
 

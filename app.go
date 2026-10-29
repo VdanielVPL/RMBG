@@ -2,12 +2,17 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"rmbg/utils"
 	"rmbg/utils/image"
 	"rmbg/utils/image/clipboard"
 	"runtime/debug"
+	"strconv"
+	"strings"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -19,16 +24,22 @@ type App struct {
 	IsDarkMode  bool
 	AccentColor string
 	imgData     *imgDataStruct
+	lastImageID atomic.Uint64
 
 	rmbgMu    sync.Mutex // not held while rembg runs
 	cropMu    sync.Mutex // never held together with rmbgMu
 	rembgRuns sync.WaitGroup
 }
 
+// Every image has an ID that is in its URL, an ID always shows the same image
+// and stays when the image moves between the views, so the frontend has it in cache.
+// IDs start from the startup time, so the cache never shows an image from an earlier run
 type imgDataStruct struct {
 	rembgpath      string
 	rembgimg       []byte
+	rembgID        uint64
 	rembgimg2      []byte
+	rembg2ID       uint64
 	rembgGen       int                // changes with every new RMBG input
 	rembgCancel    context.CancelFunc // kills the running rembg
 	rmbgLoad       int                // changes with every image loaded into the tab,
@@ -36,8 +47,10 @@ type imgDataStruct struct {
 	model          string
 	pngcropimgpath string
 	pngcropimg     []byte
+	pngcropID      uint64
 	jpgcropimgpath string
 	jpgcropimg     []byte
+	jpgcropID      uint64
 }
 
 // NewApp creates a new App application struct
@@ -66,6 +79,7 @@ func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOpt
 	a.imgData = &imgDataStruct{
 		model: "u2net",
 	}
+	a.lastImageID.Store(uint64(time.Now().UnixNano()))
 
 	if err := clipboard.Init(); err != nil {
 		a.app.Logger.Error(err.Error())
@@ -117,13 +131,53 @@ func (a *App) cropFailed(key string, err error) {
 	a.alertError(key, err)
 }
 
-// toFrontend returns the image as [base64, fileType]
-func toFrontend(imgBytes []byte) ([]string, error) {
-	str, fileType, err := image.ToBase64FromBytes(imgBytes)
-	if err != nil {
-		return nil, err
+func (a *App) newImageID() uint64 {
+	return a.lastImageID.Add(1)
+}
+
+// toFrontend returns the image as [URL, fileType]
+func toFrontend(id uint64, imgBytes []byte) []string {
+	return []string{"/images/" + strconv.FormatUint(id, 10), http.DetectContentType(imgBytes)}
+}
+
+// ServeHTTP serves the images to the frontend, Wails mounts it at /images
+func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseUint(strings.TrimPrefix(r.URL.Path, "/"), 10, 64)
+	var imgBytes []byte
+	if err == nil && id != 0 {
+		imgBytes, err = a.imageByID(id)
 	}
-	return []string{str, fileType}, nil
+	if err != nil || imgBytes == nil {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", http.DetectContentType(imgBytes))
+	w.Header().Set("Cache-Control", "max-age=31536000, immutable")
+	w.Write(imgBytes)
+}
+
+func (a *App) imageByID(id uint64) ([]byte, error) {
+	a.rmbgMu.Lock()
+	imgBytes, path, inputID := a.imgData.rembgimg, a.imgData.rembgpath, a.imgData.rembgID
+	output, outputID := a.imgData.rembgimg2, a.imgData.rembg2ID
+	a.rmbgMu.Unlock()
+
+	switch id {
+	case inputID:
+		return readImage(imgBytes, path)
+	case outputID:
+		return output, nil
+	}
+
+	a.cropMu.Lock()
+	defer a.cropMu.Unlock()
+	switch id {
+	case a.imgData.pngcropID:
+		return a.cropImageBytes(false)
+	case a.imgData.jpgcropID:
+		return a.cropImageBytes(true)
+	}
+	return nil, nil
 }
 
 func (a *App) HandleDrop(ImageType string, path string, isUrl bool) []string {
@@ -205,16 +259,11 @@ func (a *App) setInputImage(ImageType string, load int, path string, imgBytes []
 	}
 
 	if ImageType == "RMBG" {
-		a.setRMBGImage(path, imgBytes)
-	} else {
-		imgBytes, err = a.setCropImage(path, imgBytes)
-		if err != nil {
-			a.alertError("LOAD_FAILED", err)
-			return nil
-		}
+		a.setRMBGImage(path, imgBytes, a.newImageID())
+		return toFrontend(a.imgData.rembgID, imgBytes)
 	}
 
-	result, err := toFrontend(imgBytes)
+	result, err := a.setCropImage(path, imgBytes, a.newImageID())
 	if err != nil {
 		a.alertError("LOAD_FAILED", err)
 		return nil
@@ -222,13 +271,14 @@ func (a *App) setInputImage(ImageType string, load int, path string, imgBytes []
 	return result
 }
 
-func (a *App) setRMBGImage(path string, imgBytes []byte) {
+func (a *App) setRMBGImage(path string, imgBytes []byte, id uint64) {
 	a.imgData.rembgpath = path
 	a.imgData.rembgimg = nil
 	if path == "" {
 		a.imgData.rembgimg = imgBytes
 	}
-	a.imgData.rembgimg2 = nil
+	a.imgData.rembgID = id
+	a.imgData.rembgimg2, a.imgData.rembg2ID = nil, 0
 	a.imgData.rembgGen++
 	a.stopRembg()
 }
@@ -244,7 +294,7 @@ func (a *App) stopRembg() {
 func (a *App) RemoveBackground() []string {
 	a.rmbgMu.Lock()
 	path, img, model, gen := a.imgData.rembgpath, a.imgData.rembgimg, a.imgData.model, a.imgData.rembgGen
-	a.imgData.rembgimg2 = nil
+	a.imgData.rembgimg2, a.imgData.rembg2ID = nil, 0
 	if img == nil && path == "" {
 		a.rmbgMu.Unlock()
 		a.alert("NO_IMAGE")
@@ -266,12 +316,6 @@ func (a *App) RemoveBackground() []string {
 		}
 		return nil
 	}
-	result, err := toFrontend(output)
-	if err != nil {
-		a.app.Event.Emit("removingbg", false)
-		a.alertError("REMBG_FAILED", err)
-		return nil
-	}
 
 	a.rmbgMu.Lock()
 	defer a.rmbgMu.Unlock()
@@ -279,8 +323,8 @@ func (a *App) RemoveBackground() []string {
 		a.app.Event.Emit("removingbg", false)
 		return nil
 	}
-	a.imgData.rembgimg2 = output
-	return result
+	a.imgData.rembgimg2, a.imgData.rembg2ID = output, a.newImageID()
+	return toFrontend(a.imgData.rembg2ID, output)
 }
 
 func (a *App) SetModel(model string) {
@@ -290,13 +334,13 @@ func (a *App) SetModel(model string) {
 }
 
 // JPG and PNG files are kept as paths, other formats are converted to PNG and kept in memory
-func (a *App) setCropImage(path string, imgBytes []byte) ([]byte, error) {
+func (a *App) setCropImage(path string, imgBytes []byte, id uint64) ([]string, error) {
 	imgBytes, isJPG, converted, err := image.ToSupportedFormat(imgBytes)
 	if err != nil {
 		return nil, err
 	}
 	if converted {
-		path = ""
+		path, id = "", a.newImageID()
 	}
 
 	var inMemory []byte
@@ -306,16 +350,16 @@ func (a *App) setCropImage(path string, imgBytes []byte) ([]byte, error) {
 
 	a.clearCropImage()
 	if isJPG {
-		a.imgData.jpgcropimgpath, a.imgData.jpgcropimg = path, inMemory
+		a.imgData.jpgcropimgpath, a.imgData.jpgcropimg, a.imgData.jpgcropID = path, inMemory, id
 	} else {
-		a.imgData.pngcropimgpath, a.imgData.pngcropimg = path, inMemory
+		a.imgData.pngcropimgpath, a.imgData.pngcropimg, a.imgData.pngcropID = path, inMemory, id
 	}
-	return imgBytes, nil
+	return toFrontend(id, imgBytes), nil
 }
 
 func (a *App) clearCropImage() {
-	a.imgData.pngcropimgpath, a.imgData.pngcropimg = "", nil
-	a.imgData.jpgcropimgpath, a.imgData.jpgcropimg = "", nil
+	a.imgData.pngcropimgpath, a.imgData.pngcropimg, a.imgData.pngcropID = "", nil, 0
+	a.imgData.jpgcropimgpath, a.imgData.jpgcropimg, a.imgData.jpgcropID = "", nil, 0
 }
 
 // cropImage returns the crop image in the given format, only one of bytes and path is set
@@ -359,13 +403,7 @@ func (a *App) CropImage(left, right, top, bottom float32, isJPG bool) []string {
 		return nil
 	}
 
-	img, err = a.setCropImage("", img)
-	if err != nil {
-		a.cropFailed("CROP_FAILED", err)
-		return nil
-	}
-
-	result, err := toFrontend(img)
+	result, err := a.setCropImage("", img, a.newImageID())
 	if err != nil {
 		a.cropFailed("CROP_FAILED", err)
 		return nil
@@ -389,9 +427,9 @@ func (a *App) convertCropImage(toJPG bool) []string {
 	a.cropMu.Lock()
 	defer a.cropMu.Unlock()
 
-	convert, target := image.ToPNG, &a.imgData.pngcropimg
+	convert, target, targetID := image.ToPNG, &a.imgData.pngcropimg, &a.imgData.pngcropID
 	if toJPG {
-		convert, target = image.ToJPG, &a.imgData.jpgcropimg
+		convert, target, targetID = image.ToJPG, &a.imgData.jpgcropimg, &a.imgData.jpgcropID
 	}
 
 	imgBytes, err := a.cropImageBytes(!toJPG)
@@ -405,15 +443,14 @@ func (a *App) convertCropImage(toJPG bool) []string {
 			a.cropFailed("CONVERT_FAILED", err)
 			return nil
 		}
-		*target = converted
+		*target, *targetID = converted, a.newImageID()
 	}
 
-	result, err := toFrontend(*target)
-	if err != nil {
-		a.cropFailed("CONVERT_FAILED", err)
+	if *target == nil {
+		a.cropFailed("NO_IMAGE", nil)
 		return nil
 	}
-	return result
+	return toFrontend(*targetID, *target)
 }
 
 // outputImage returns the image that is saved or copied from the tab
@@ -480,7 +517,7 @@ func (a *App) ClearImageMem(ImageType string) {
 	switch ImageType {
 	case "RMBG":
 		a.rmbgMu.Lock()
-		a.setRMBGImage("", nil)
+		a.setRMBGImage("", nil, 0)
 		a.imgData.rmbgLoad++
 		a.rmbgMu.Unlock()
 	case "CROP":
@@ -494,43 +531,51 @@ func (a *App) ClearImageMem(ImageType string) {
 	debug.FreeOSMemory()
 }
 
-// FromRMBGtoCrop returns false when the image couldn't be loaded, the crop view is then cleared
-func (a *App) FromRMBGtoCrop(t int) bool {
+// FromRMBGtoCrop moves the input (0) or the image without background (1) to the crop view,
+// when nothing could be moved the crop view is cleared
+func (a *App) FromRMBGtoCrop(t int) []string {
 	a.rmbgMu.Lock()
-	imgBytes, path, output := a.imgData.rembgimg, a.imgData.rembgpath, a.imgData.rembgimg2
+	imgBytes, path, id := a.imgData.rembgimg, a.imgData.rembgpath, a.imgData.rembgID
+	output, outputID := a.imgData.rembgimg2, a.imgData.rembg2ID
 	a.rmbgMu.Unlock()
 
 	a.cropMu.Lock()
 	defer a.cropMu.Unlock()
 	a.imgData.cropLoad++
+	a.clearCropImage()
 
 	switch t {
 	case 0: // input image
 		if imgBytes == nil && path == "" {
-			break
+			return nil
 		}
-		var err error
-		imgBytes, err = readImage(imgBytes, path)
+		imgBytes, err := readImage(imgBytes, path)
+		var result []string
 		if err == nil {
-			_, err = a.setCropImage(path, imgBytes)
+			result, err = a.setCropImage(path, imgBytes, id)
 		}
 		if err != nil {
-			a.clearCropImage()
 			a.alertError("LOAD_FAILED", err)
-			return false
+			return nil
 		}
+		return result
 	case 1: // image without background
-		if output != nil {
-			a.clearCropImage()
-			a.imgData.pngcropimg = output
+		if output == nil {
+			return nil
 		}
+		a.imgData.pngcropimg, a.imgData.pngcropID = output, outputID
+		return toFrontend(outputID, output)
 	}
-	return true
+	return nil
 }
 
 func (a *App) FromCroptoRMBG(isJPG bool) {
 	a.cropMu.Lock()
 	imgBytes, path := a.cropImage(isJPG)
+	id := a.imgData.pngcropID
+	if isJPG {
+		id = a.imgData.jpgcropID
+	}
 	a.cropMu.Unlock()
 
 	if imgBytes == nil && path == "" {
@@ -542,6 +587,6 @@ func (a *App) FromCroptoRMBG(isJPG bool) {
 
 	a.rmbgMu.Lock()
 	defer a.rmbgMu.Unlock()
-	a.setRMBGImage(path, imgBytes)
+	a.setRMBGImage(path, imgBytes, id)
 	a.imgData.rmbgLoad++
 }

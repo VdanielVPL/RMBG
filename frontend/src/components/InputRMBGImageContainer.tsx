@@ -8,13 +8,11 @@ import { MainContext, ImageContext } from "./contexts";
 export function InputImageContainer() {
     const { accentColor } = useContext(MainContext);
     const { inputRMBGImage, setInputRMBGImage, setOutputRMBGImage } = useContext(ImageContext);
-    const imageContainer = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
     function setLoadedImage(result: string[]) {
         if (result.length > 0) {
-            const [base64, fileType] = result;
-            setInputRMBGImage(`data:${fileType};base64,${base64}`);
+            setInputRMBGImage(result[0]);
             setOutputRMBGImage("");
         }
     }
@@ -28,21 +26,9 @@ export function InputImageContainer() {
     }, []);
 
     const handleURLDrop = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        const items = event.dataTransfer?.items;
-        if (items) {
-            const item = items[0];
-            if (item.kind === 'string') {
-                item.getAsString((data) => {
-                    if (data.startsWith('http://') || data.startsWith('https://')) {
-                        // console.log('Dropped URL:', data);
-                        HandleDrop("RMBG", data, true).then(setLoadedImage);
-                        imageContainer.current?.classList.remove('file-drop-target-active');
-                    } else if (data.startsWith('data:')) {
-                        imageContainer.current?.classList.remove('file-drop-target-active');
-                    }
-                });
-            }
+        const url = event.dataTransfer.getData('URL') || event.dataTransfer.getData('text/plain');
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            HandleDrop("RMBG", url, true).then(setLoadedImage);
         }
     };
 
@@ -63,7 +49,7 @@ export function InputImageContainer() {
     }, [inputRMBGImage]);
 
     return (
-        <div ref={imageContainer} id='RMBG' className='imageContainer' onDrop={handleURLDrop} data-file-drop-target onClick={openDialog}>
+        <div id='RMBG' className='imageContainer' onDrop={handleURLDrop} data-file-drop-target onClick={openDialog}>
             {inputRMBGImage!="" && <img ref={imgRef} src={inputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>}
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1,}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%'}} />
