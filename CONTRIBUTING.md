@@ -6,13 +6,13 @@ If you wish to build the application yourself or contribute to the project, you 
 
 Make sure you have:
 
-- **Python 3.10 to 3.13**: Required for the `rembg` library.
+- **Python 3.11 to 3.13**: Required for the `rembg` library.
 - **`rembg`**:
   
   ```bash
-  pip install "rembg[cli]"
+  pip install "rembg[cpu,cli]"
   ```
-- **Go**: Install from [here](https://golang.org/dl/).
+- **Go 1.27 or newer**: Install from [here](https://golang.org/dl/).
 - **Wails CLI**:
   
   ```bash
@@ -38,11 +38,11 @@ Make sure you have:
 2. **Install Dependencies**:
    - **Python Dependencies**:
      ```bash
-     pip install "rembg[cli]"
+     pip install "rembg[cpu,cli]"
      ```
    - **Go Dependencies**:
      ```bash
-     go mod tidy
+     go mod download
      ```
    - **Bun Dependencies**:
      ```bash
@@ -58,7 +58,7 @@ Make sure you have:
    ```
    
    Run the build command:
-   ```bash
+   ```powershell
    wails3 build; if($?) { iscc setup.iss }
    ```
    
@@ -69,12 +69,14 @@ Make sure you have:
    wails3 dev
    ```
 
-5. **Run the Installer (If Release Build)**:
+4. **Run the Installer (If Release Build)**:
    After a successful build and packaging, you will find the `.exe` installer in `./bin`. Run it to install and use the application.
 
 ## 🔑 Key Files
 
 - **`main.go`**: The Go backend entry point.
+- **`app.go`**: The methods called by the frontend, it also serves the images to it.
 - **`frontend/`**: Contains the React-based frontend.
 - **`Taskfile.yml`**: Build steps used by `wails3 build`.
+- **`setup.iss`**: The Inno Setup installer script.
 
