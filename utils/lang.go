@@ -6,13 +6,7 @@ import (
 	"syscall"
 )
 
-var Assets embed.FS
-
 var getUserDefaultUILanguage = syscall.NewLazyDLL("kernel32.dll").NewProc("GetUserDefaultUILanguage")
-
-func InitAssets(fs embed.FS) {
-	Assets = fs
-}
 
 func getSystemLanguage() string {
 	langID, _, _ := getUserDefaultUILanguage.Call()
@@ -28,14 +22,14 @@ func getSystemLanguage() string {
 	}
 }
 
-func loadLangFile(lang string) (map[string]string, error) {
+func loadLangFile(assets embed.FS, lang string) (map[string]string, error) {
 	var filename string = "assets/lang/en.json"
 
 	if lang == "pl" {
 		filename = "assets/lang/pl.json"
 	}
 
-	data, err := Assets.ReadFile(filename)
+	data, err := assets.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +42,6 @@ func loadLangFile(lang string) (map[string]string, error) {
 	return langData, nil
 }
 
-func LoadLang() (map[string]string, error) {
-	return loadLangFile(getSystemLanguage())
+func LoadLang(assets embed.FS) (map[string]string, error) {
+	return loadLangFile(assets, getSystemLanguage())
 }

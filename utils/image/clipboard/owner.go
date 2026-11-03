@@ -70,7 +70,9 @@ func wndProc(h, msg, wp, lp uintptr) uintptr {
 	case wmRENDERALLFORMATS: // we are closing while still owning the clipboard
 		if r, _, _ := pOpenClipboard.Call(h); r != 0 {
 			if owner, _, _ := pGetClipboardOwner.Call(); owner == h {
-				render(cfPNG)
+				if bytes.HasPrefix(current, pngSignature) {
+					render(cfPNG)
+				}
 				render(cfDIBV5)
 			}
 			pCloseClipboard.Call()

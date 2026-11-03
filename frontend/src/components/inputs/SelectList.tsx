@@ -44,8 +44,6 @@ export default function SelectList(props: SelectListProps) {
     useEffect(()=>{
         if(expanded){
             window.addEventListener("click", handleClickOutside)
-        }else{
-            window.removeEventListener("click", handleClickOutside)
         }
         return ()=>{
             window.removeEventListener("click", handleClickOutside)
@@ -73,10 +71,10 @@ export default function SelectList(props: SelectListProps) {
                         <FontAwesomeIcon icon={faAngleUp} />
                     </div>
                 </div>
-                <div style={{display:expanded?'block':'none', position: 'absolute', top: '100%', width: '100%', backgroundColor: (props.isDarkMode!==null&&props.isDarkMode)?'rgb(30, 32, 33)':'white', zIndex: '3', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px', outlineWidth: '2px', outlineColor: props.accentColor, outlineOffset: '-2px', outlineStyle: 'solid'}}>
+                <div style={{display:expanded?'block':'none', position: 'absolute', top: '100%', width: '100%', backgroundColor: props.isDarkMode?'rgb(30, 32, 33)':'white', zIndex: '3', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px', outlineWidth: '2px', outlineColor: props.accentColor, outlineOffset: '-2px', outlineStyle: 'solid'}}>
                     <div style={{padding: '5px 5px 5px 5px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
                         {props.tiles.map((item)=>(
-                            <div className="selectListOption" onClick={()=>{onClickOption(item.text, item.value)}} style={{padding: '5px',fontSize: '15px', fontWeight: 500, textAlign: 'left', backgroundColor: item.text==selected?.text?(props.isDarkMode!==null&&props.isDarkMode)?'rgb(34, 38, 39)':'rgb(220, 220, 220)':'inherit', borderRadius: '10px', transition: 'background-color 0.35s ease, color 0.35s ease', color: (props.isDarkMode!==null&&props.isDarkMode)?'white':'black'}} key={item.value}><span style={{position: 'relative'}} dangerouslySetInnerHTML={{__html: item.text}}></span></div>
+                            <div className="selectListOption" onClick={()=>{onClickOption(item.text, item.value)}} style={{padding: '5px',fontSize: '15px', fontWeight: 500, textAlign: 'left', backgroundColor: item.text==selected?.text?(props.isDarkMode?'rgb(34, 38, 39)':'rgb(220, 220, 220)'):'inherit', borderRadius: '10px', transition: 'background-color 0.35s ease, color 0.35s ease', color: props.isDarkMode?'white':'black'}} key={item.value}><span style={{position: 'relative'}} dangerouslySetInnerHTML={{__html: item.text}}></span></div>
                         ))}
                     </div>
                 </div>

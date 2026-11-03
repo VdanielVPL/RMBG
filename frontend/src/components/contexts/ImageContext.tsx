@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
 
 type ImageContextType = { 
     inputRMBGImage: string;
@@ -31,6 +31,9 @@ type ImageContextType = {
 
     cropping: boolean;
     setCropping: (cropping: boolean) => void;
+
+    loadingCropImage: boolean;
+    setLoadingCropDrop: Dispatch<SetStateAction<symbol | null>>;
 };
 
 export const ImageContext = createContext<ImageContextType>({
@@ -63,7 +66,10 @@ export const ImageContext = createContext<ImageContextType>({
     setCropDimens: () => {},
 
     cropping: false,
-    setCropping: () => {}
+    setCropping: () => {},
+
+    loadingCropImage: false,
+    setLoadingCropDrop: () => {}
 });
 
 export function ImageProvider({ children }: { children: ReactNode }) {
@@ -77,8 +83,8 @@ export function ImageProvider({ children }: { children: ReactNode }) {
     const [model, setModel] = useState<ImageContextType["model"]>("u2net");
     const [cropDimens, setCropDimens] = useState<ImageContextType["cropDimens"]>({left: 0, right: 0, top: 0, bottom: 0});
     const [cropping, setCropping] = useState<ImageContextType["cropping"]>(false);
+    const [loadingCropDrop, setLoadingCropDrop] = useState<symbol | null>(null);
 
-    // shows the image in the crop view and keeps it as JPG or PNG, the other format is dropped
     function setCropImageByType(newImage: string, fileType: string) {
         const jpg = fileType == "image/jpeg";
         setIsJPG(jpg);
@@ -99,9 +105,20 @@ export function ImageProvider({ children }: { children: ReactNode }) {
             removingBG, setRemovingBG, 
             setModel, model,
             cropDimens, setCropDimens,
-            cropping, setCropping
+            cropping, setCropping,
+            loadingCropImage: loadingCropDrop != null, setLoadingCropDrop
         }}>
             {children}
+            <KeepImagesLoaded images={[inputRMBGImage, outputRMBGImage, JPGcropImage, PNGcropImage]}/>
         </ImageContext.Provider>
     );
+}
+
+// The browser can drop the images of a closed view, then they show up late when it opens again
+function KeepImagesLoaded({ images }: { images: string[] }) {
+    return (
+        <div style={{display: 'none'}}>
+            {images.map((url, i) => url != "" && <img key={i} src={url}/>)}
+        </div>
+    )
 }

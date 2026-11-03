@@ -23,16 +23,12 @@
 .imageContainer > img {
     max-width: 100%;
     max-height: 100%;
-    height: 100%;
     width: 100%;
-    width: auto;
-    height: auto;
+    height: 100%;
     object-fit: contain;
     overflow: hidden;
     position: relative;
-    opacity: 1;
     z-index: 3;
-    transition: opacity 0.35s ease;
 }
 .imageContainerCrop{
     width: 450px;
@@ -40,6 +36,11 @@
     border: none;
     max-width: 450px;
     max-height: 450px;
+}
+/* the crop container fits itself to the image in onImageLoad, so the image keeps its own size */
+.imageContainerCrop > img {
+    width: auto;
+    height: auto;
 }
 .cropEditor{
     position: absolute;

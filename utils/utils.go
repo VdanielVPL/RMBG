@@ -31,13 +31,11 @@ func IsDarkMode() bool {
 func BgColor() application.RGBA {
 	if IsWindows11OrGreater() {
 		return application.NewRGBA(0, 0, 0, 0)
-	} else {
-		if IsDarkMode() {
-			return application.NewRGBA(32, 32, 32, 255)
-		} else {
-			return application.NewRGBA(245, 241, 248, 255)
-		}
 	}
+	if IsDarkMode() {
+		return application.NewRGBA(32, 32, 32, 255)
+	}
+	return application.NewRGBA(245, 241, 248, 255)
 }
 
 func getRawAccentColor() (uint32, error) {

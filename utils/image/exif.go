@@ -3,22 +3,9 @@ package image
 import (
 	"bufio"
 	"bytes"
+	"encoding/binary"
 	"io"
 )
-
-func getUint16(data []byte, littleEndian bool) uint16 {
-	if littleEndian {
-		return uint16(data[0]) | uint16(data[1])<<8
-	}
-	return uint16(data[1]) | uint16(data[0])<<8
-}
-
-func getUint32(data []byte, littleEndian bool) uint32 {
-	if littleEndian {
-		return uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24
-	}
-	return uint32(data[3]) | uint32(data[2])<<8 | uint32(data[1])<<16 | uint32(data[0])<<24
-}
 
 func ReadOrientation(image io.Reader) int {
 	reader := bufio.NewReader(image)
@@ -78,28 +65,29 @@ func processExifData(tiff []byte) int {
 	}
 
 	// Checking format (II or MM)
-	var littleEndian bool
-	if string(tiff[0:2]) == "II" {
-		littleEndian = true
-	} else if string(tiff[0:2]) == "MM" {
-		littleEndian = false
-	} else {
+	var order binary.ByteOrder
+	switch string(tiff[0:2]) {
+	case "II":
+		order = binary.LittleEndian
+	case "MM":
+		order = binary.BigEndian
+	default:
 		return 1
 	}
 
 	// Checking tag TIFF
-	if getUint16(tiff[2:4], littleEndian) != 0x002A {
+	if order.Uint16(tiff[2:4]) != 0x002A {
 		return 1
 	}
 
 	// Reading offset IFD0 (counted from the start of the TIFF header)
-	ifdOffset := int64(getUint32(tiff[4:8], littleEndian))
+	ifdOffset := int64(order.Uint32(tiff[4:8]))
 	if ifdOffset < 8 || ifdOffset+2 > int64(len(tiff)) {
 		return 1
 	}
 
 	// Reading number of entries in IFD0
-	entries := int64(getUint16(tiff[ifdOffset:], littleEndian))
+	entries := int64(order.Uint16(tiff[ifdOffset:]))
 
 	// Searching for orientation tag (0x0112)
 	for i := int64(0); i < entries; i++ {
@@ -109,8 +97,8 @@ func processExifData(tiff []byte) int {
 		}
 		entry := tiff[start : start+12]
 
-		if getUint16(entry[0:2], littleEndian) == 0x0112 {
-			orientation := int(getUint16(entry[8:10], littleEndian))
+		if order.Uint16(entry[0:2]) == 0x0112 {
+			orientation := int(order.Uint16(entry[8:10]))
 			if orientation < 1 || orientation > 8 {
 				return 1
 			}

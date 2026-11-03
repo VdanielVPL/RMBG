@@ -110,10 +110,6 @@ export default function CropEditor(props: CropEditorProps) {
         }
     },[cropImage]);
 
-    function resetClick(e: React.MouseEvent<HTMLDivElement>) {
-        e.preventDefault();
-    }
-
     function mouseDown(side: string) {
         setDraggingSide(side);
         setDragging(true);
@@ -121,16 +117,16 @@ export default function CropEditor(props: CropEditorProps) {
 
     return (
         <div ref={cropEditorRef} className="cropEditor" style={{top: '0px',right: '0px', left: '0px', bottom: '0px', opacity: '0', outlineColor: props.isImageDark?'white':'black'}}>
-            <div className="top" onClick={resetClick}>
+            <div className="top">
                 <div onMouseDown={() => mouseDown("top")} style={{height: '30px', width: '60px', outlineColor: props.isImageDark?'white':'black'}}></div>
             </div>
-            <div className="left" onClick={resetClick}>
+            <div className="left">
                 <div onMouseDown={() => mouseDown("left")} style={{height: '60px', width: '30px', outlineColor: props.isImageDark?'white':'black'}}></div>
             </div>
-            <div className="bottom" onClick={resetClick}>
+            <div className="bottom">
                 <div onMouseDown={() => mouseDown("bottom")} style={{height: '30px', width: '60px', outlineColor: props.isImageDark?'white':'black'}}></div>
             </div>
-            <div className="right" onClick={resetClick}>
+            <div className="right">
                 <div onMouseDown={() => mouseDown("right")} style={{height: '60px', width: '30px', outlineColor: props.isImageDark?'white':'black'}}></div>
             </div>
         </div>

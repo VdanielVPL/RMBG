@@ -11,7 +11,6 @@ import (
 	"image/png"
 	"io"
 	"net/http"
-	"os"
 	"slices"
 	"time"
 
@@ -57,10 +56,6 @@ func GetImageFromURL(url string) ([]byte, error) {
 		return nil, errors.New("downloaded image is over 100 MB")
 	}
 	return fileBytes, nil
-}
-
-func ToBytesFromPath(path string) ([]byte, error) {
-	return os.ReadFile(path)
 }
 
 // The dialogs return an empty path when canceled (Wails reports canceling as an error too)
@@ -169,7 +164,6 @@ func decodeOriented(imgBytes []byte) (image.Image, string, error) {
 	return img, format, nil
 }
 
-// ApplyOrientation turns the image the way EXIF orientation says, like the preview shows it
 func ApplyOrientation(img image.Image, orientation int) image.Image {
 	switch orientation {
 	case 2:

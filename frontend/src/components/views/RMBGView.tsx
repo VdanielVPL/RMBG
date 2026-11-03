@@ -1,5 +1,5 @@
 import '../../styles/RMBGView.css';
-import { useContext, useLayoutEffect, useRef } from "react";
+import { useContext } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCloudArrowDown, faCopy, faCropSimple, faImage, faSpinner, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { MainContext, ImageContext } from "../contexts";
@@ -31,28 +31,15 @@ function OptionBar(props: {callback: (selected: Selected) => void}) {
 
 function OutputImageContainer() {
     const { outputRMBGImage, removingBG } = useContext(ImageContext);
-    const imgRef = useRef<HTMLImageElement>(null);
 
-    useLayoutEffect(() => {  
-        if (imgRef.current) {
-            if (outputRMBGImage != "") {
-                imgRef.current.style.width = '100%';
-                imgRef.current.style.height = '100%';
-            } else {
-                imgRef.current.style.width = 'auto';
-                imgRef.current.style.height = 'auto';
-            }
-        }
-    }, [outputRMBGImage]);
-    
     return (
         <div className="imageContainer" style={{cursor: 'auto'}}>
-            {outputRMBGImage!="" && <img ref={imgRef} src={outputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>}
+            {outputRMBGImage!="" && <img src={outputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>}
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -2, backgroundColor: 'white'}}>
                 {removingBG?
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%'}} />
                 :
-                    (!outputRMBGImage || outputRMBGImage === "") && <FontAwesomeIcon icon={faImage} color='lightgray' style={{height: '50%', width: '50%', fontSize: '50%'}}/>
+                    outputRMBGImage=="" && <FontAwesomeIcon icon={faImage} color='lightgray' style={{height: '50%', width: '50%', fontSize: '50%'}}/>
                 }
             </div>
         </div>
@@ -61,7 +48,7 @@ function OutputImageContainer() {
 
 export function RMBGView() {
     const { strings, isDarkMode } = useContext(MainContext);
-    const { setOutputRMBGImage, setInputRMBGImage, inputRMBGImage, outputRMBGImage, removingBG, setRemovingBG, setModel, cropping, setCropImageByType } = useContext(ImageContext);
+    const { setOutputRMBGImage, setInputRMBGImage, inputRMBGImage, outputRMBGImage, removingBG, setRemovingBG, setModel, cropping, loadingCropImage, setCropImageByType } = useContext(ImageContext);
     let navigate = useNavigate();
 
     function handleModelChange(selected: Selected) {
@@ -72,12 +59,12 @@ export function RMBGView() {
     function removeBackground() {
         setOutputRMBGImage("");
         if (inputRMBGImage != "") {
+            setRemovingBG(true);
             RemoveBackground().then((result) => {
                 if (result.length > 0) {
                     setOutputRMBGImage(result[0]);
-                    setRemovingBG(false);
                 }
-            });
+            }).finally(() => setRemovingBG(false));
         }
     }
 
@@ -113,14 +100,14 @@ export function RMBGView() {
                             <Button style={{width: '40px', height: '40px'}} onClick={ClearView} title={strings["ClearView"]}>
                                 <FontAwesomeIcon icon={faTrashCan} size='xl' style={{transform: 'scale(0.8)'}} />
                             </Button>
-                            <Button style={{width: '40px', height: '40px', filter: cropping?'brightness(60%) contrast(100%)':undefined}} onClick={() => ToCropView('in')} title={strings["ToCropView"]} disabled={cropping}>
+                            <Button style={{width: '40px', height: '40px'}} onClick={() => ToCropView('in')} title={strings["ToCropView"]} disabled={cropping || loadingCropImage}>
                                 <FontAwesomeIcon icon={faCropSimple} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                         </div>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%', gap: '10px'}}>
                         <div style={{flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                            <Button style={{borderRadius: '100%', width: '45px', height: '45px', filter: removingBG?'brightness(60%) contrast(100%)':undefined}} onClick={removeBackground} disabled={removingBG} title={strings["RemoveBG"]}>
+                            <Button style={{borderRadius: '100%', width: '45px', height: '45px'}} onClick={removeBackground} disabled={removingBG} title={strings["RemoveBG"]}>
                                 <FontAwesomeIcon icon={faArrowRight} size='2xl'/>
                             </Button>
                         </div>
@@ -129,7 +116,7 @@ export function RMBGView() {
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '10px'}}>
                         <OutputImageContainer></OutputImageContainer>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px', filter: cropping?'brightness(60%) contrast(100%)':undefined}} onClick={() => ToCropView('out')} title={strings["ToCropView"]} disabled={cropping}>
+                            <Button style={{width: '40px', height: '40px'}} onClick={() => ToCropView('out')} title={strings["ToCropView"]} disabled={cropping || loadingCropImage}>
                                 <FontAwesomeIcon icon={faCropSimple} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                             <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>

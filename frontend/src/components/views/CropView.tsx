@@ -10,7 +10,9 @@ import { CropImage, FromCroptoRMBG, CopyImage, SaveImage, ToJPG, ToPNG, ClearIma
 
 export function CropView() {
     const { strings, isDarkMode, accentColor } = useContext(MainContext);
-    const { cropImage, setCropImage, JPGcropImage, setJPGCropImage, setPNGCropImage, PNGcropImage, setInputRMBGImage, setOutputRMBGImage, cropDimens, cropping, setCropping, setIsJPG, isJPG, setCropImageByType } = useContext(ImageContext);
+    const { cropImage, setCropImage, JPGcropImage, setJPGCropImage, setPNGCropImage, PNGcropImage, setInputRMBGImage, setOutputRMBGImage, cropDimens, cropping, setCropping, loadingCropImage, setIsJPG, isJPG, setCropImageByType } = useContext(ImageContext);
+    // a dropped image is checked and converted under the crop lock, anything started meanwhile waits and works on the new image, not the one shown
+    const busy = cropping || loadingCropImage;
 
     let navigate = useNavigate();
 
@@ -30,13 +32,13 @@ export function CropView() {
 
     function CropImageButton() {
         if (cropDimens.left == 0 && cropDimens.right == 0 && cropDimens.top == 0 && cropDimens.bottom == 0) return;
+        setCropping(true);
         CropImage(cropDimens.left, cropDimens.right, cropDimens.top, cropDimens.bottom, isJPG).then((result) => {
             if (result.length > 0) {
                 const [url, fileType] = result;
                 setCropImageByType(url, fileType);
-                setCropping(false);
             }
-        });
+        }).finally(() => setCropping(false));
     }
 
     function OnSwitchChange(active: boolean) {
@@ -44,32 +46,32 @@ export function CropView() {
         if (active) {
             //PNG to JPG
             if (JPGcropImage == "") {
+                setCropping(true);
                 ToJPG().then((result) => {
                     if (result.length > 0) {
                         const newImage = result[0];
                         setJPGCropImage(newImage);
                         setCropImage(newImage);
-                        setCropping(false);
                     }else{
                         setIsJPG(false);
                     }
-                })
+                }).finally(() => setCropping(false));
             }else{
                 setCropImage(JPGcropImage);
             }
         }else{
             //JPG to PNG
             if (PNGcropImage == "") {
+                setCropping(true);
                 ToPNG().then((result) => {
                     if (result.length > 0) {
                         const newImage = result[0];
                         setPNGCropImage(newImage);
                         setCropImage(newImage);
-                        setCropping(false);
                     }else{
                         setIsJPG(true);
                     }
-                })
+                }).finally(() => setCropping(false));
             }else{
                 setCropImage(PNGcropImage);
             }
@@ -83,29 +85,29 @@ export function CropView() {
                 <div style={{display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center'}}>
                     <div style={{height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '10px'}}>
                         <span style={{visibility: cropImage==""?'hidden':'visible', color: isDarkMode?'white':'black'}}>PNG</span>
-                        <Switch visibility={cropImage==""?'hidden':'visible'} primaryColor={accentColor} secondaryColor={accentColor} onChange={OnSwitchChange} value={isJPG} disabled={cropping}></Switch>
+                        <Switch visibility={cropImage==""?'hidden':'visible'} primaryColor={accentColor} secondaryColor={accentColor} onChange={OnSwitchChange} value={isJPG} disabled={busy}></Switch>
                         <span style={{visibility: cropImage==""?'hidden':'visible', color: isDarkMode?'white':'black'}}>JPEG</span>
                     </div>
                     <InputImageContainer></InputImageContainer>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: '10px'}}>
                         <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={ClearView} title={strings["ClearView"]} disabled={cropping}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1}} onClick={ClearView} title={strings["ClearView"]} disabled={busy}>
                                 <FontAwesomeIcon icon={faTrashCan} size='xl' style={{transform: 'scale(0.8)'}} />
                             </Button>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={ToRMBGView} title={strings["ToRMBGView"]} disabled={cropping}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1}} onClick={ToRMBGView} title={strings["ToRMBGView"]} disabled={busy}>
                                 <FontAwesomeIcon icon={faImage} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                         </div>
                         <div>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1, backgroundColor: cropping?'indigo':undefined}} onClick={CropImageButton} title={strings["CropImage"]} disabled={cropping}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible', opacity: cropImage==""?0:1}} onClick={CropImageButton} title={strings["CropImage"]} disabled={busy}>
                                 <FontAwesomeIcon icon={faCheck} size='xl' style={{transform: 'scale(0.8)'}} />
                             </Button>
                         </div>
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '10px'}}>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible'}} onClick={() => CopyImage('CROP', isJPG)} title={strings["CopyImage"]}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible'}} onClick={() => CopyImage('CROP', isJPG)} title={strings["CopyImage"]} disabled={busy}>
                                 <FontAwesomeIcon icon={faCopy} size='xl'style={{transform: 'scale(0.8)'}} />
                             </Button>
-                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible'}} onClick={() => SaveImage('CROP', isJPG)} title={strings["SaveImage"]}>
+                            <Button style={{width: '40px', height: '40px', visibility: cropImage==""?'hidden':'visible'}} onClick={() => SaveImage('CROP', isJPG)} title={strings["SaveImage"]} disabled={busy}>
                                 <FontAwesomeIcon icon={faCloudArrowDown} size='xl' style={{transform: 'scale(0.8)'}}/>
                             </Button>
                         </div>

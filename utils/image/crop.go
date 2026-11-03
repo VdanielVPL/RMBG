@@ -5,8 +5,6 @@ import (
 	imgpkg "image"
 	"image/jpeg"
 	"image/png"
-
-	_ "golang.org/x/image/webp"
 )
 
 func CropImage(image []byte, left, right, top, bottom float32) ([]byte, error) {
@@ -32,14 +30,11 @@ func CropImage(image []byte, left, right, top, bottom float32) ([]byte, error) {
 	var buf bytes.Buffer
 	if format == "jpeg" {
 		err = jpeg.Encode(&buf, croppedImg, &jpeg.Options{Quality: 100})
-		if err != nil {
-			return nil, err
-		}
 	} else {
 		err = png.Encode(&buf, croppedImg)
-		if err != nil {
-			return nil, err
-		}
+	}
+	if err != nil {
+		return nil, err
 	}
 	return buf.Bytes(), nil
 }

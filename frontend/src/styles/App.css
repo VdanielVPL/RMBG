@@ -60,6 +60,10 @@ a{
 .NavButton:active, .Button:active{
     filter: brightness(60%) contrast(100%);
 }
+.Button:disabled{
+    filter: brightness(60%) contrast(100%);
+    cursor: auto;
+}
 
 .selectListOption:hover{
     background-color: var(--accent-color) !important;

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useContext, useLayoutEffect } from "react";
+import { useEffect, useContext } from "react";
 import { Events } from "@wailsio/runtime";
 import { HandleDrop, OpenImage } from "../../bindings/rmbg/app";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,7 +8,6 @@ import { MainContext, ImageContext } from "./contexts";
 export function InputImageContainer() {
     const { accentColor } = useContext(MainContext);
     const { inputRMBGImage, setInputRMBGImage, setOutputRMBGImage } = useContext(ImageContext);
-    const imgRef = useRef<HTMLImageElement>(null);
 
     function setLoadedImage(result: string[]) {
         if (result.length > 0) {
@@ -36,21 +35,9 @@ export function InputImageContainer() {
         setLoadedImage(await OpenImage("RMBG"))
     }
 
-    useLayoutEffect(() => {  
-        if(imgRef.current){
-            if (inputRMBGImage != "") {
-                imgRef.current.style.width = '100%';
-                imgRef.current.style.height = '100%';
-            }else{
-                imgRef.current.style.width = 'auto';
-                imgRef.current.style.height = 'auto';
-            }
-        }
-    }, [inputRMBGImage]);
-
     return (
         <div id='RMBG' className='imageContainer' onDrop={handleURLDrop} data-file-drop-target onClick={openDialog}>
-            {inputRMBGImage!="" && <img ref={imgRef} src={inputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>}
+            {inputRMBGImage!="" && <img src={inputRMBGImage} style={{userSelect: 'none', pointerEvents: 'none'}} draggable={false}></img>}
             <div style={{position: 'absolute', height: '100%', width: '100%', color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: -1,}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%'}} />
             </div>

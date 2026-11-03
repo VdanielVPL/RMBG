@@ -8,7 +8,7 @@ import CropEditor from "./CropEditor";
 
 export function InputImageContainer() {
     const { accentColor } = useContext(MainContext);
-    const { cropImage, cropping, setCropImageByType } = useContext(ImageContext);
+    const { cropImage, cropping, setCropImageByType, loadingCropImage, setLoadingCropDrop } = useContext(ImageContext);
     const [rect, setRect] = useState<DOMRect | null>(null);
     const [isImageDark, setIsImageDark] = useState<boolean>(true);
     const imageContainer = useRef<HTMLDivElement>(null);
@@ -22,10 +22,19 @@ export function InputImageContainer() {
         }
     }
 
+    // drops can overlap, the backend keeps only the last one, so only the last one ends the loading
+    function loadDroppedImage(path: string, isUrl: boolean) {
+        const drop = Symbol();
+        setLoadingCropDrop(drop);
+        HandleDrop("CROP", path, isUrl).then(setLoadedImage).finally(() => {
+            setLoadingCropDrop(loading => loading == drop ? null : loading);
+        });
+    }
+
     useEffect(() => {
         return Events.On('filedrop', (event) => {
             if (event.data?.[0] == "CROP") {
-                HandleDrop("CROP", event.data[1], false).then(setLoadedImage);
+                loadDroppedImage(event.data[1], false);
             }
         });
     }, []);
@@ -36,10 +45,6 @@ export function InputImageContainer() {
                 imageContainer.current.style.width = '450px';
                 imageContainer.current.style.height = '450px';
                 imageContainer.current.style.borderRadius = '10px';
-                if(imageRef.current){
-                    imageRef.current.style.width = 'auto';
-                    imageRef.current.style.height = 'auto';
-                }
             }
         }
     }, [cropImage]);
@@ -73,12 +78,12 @@ export function InputImageContainer() {
     const handleURLDrop = (event: DragEvent<HTMLDivElement>) => {
         const url = event.dataTransfer.getData('URL') || event.dataTransfer.getData('text/plain');
         if (url.startsWith('http://') || url.startsWith('https://')) {
-            HandleDrop("CROP", url, true).then(setLoadedImage);
+            loadDroppedImage(url, true);
         }
     };
 
     async function openDialog() {
-        if (cropImage != "") {
+        if (cropImage != "" || loadingCropImage) {
             return;
         }
         setLoadedImage(await OpenImage("CROP"))
@@ -133,7 +138,7 @@ export function InputImageContainer() {
                     <FontAwesomeIcon icon={faSpinner} color='lightgray' spinPulse style={{height: '50%', width: '50%', fontSize: '50%', maxWidth: '160px', maxHeight: '160px'}} />
                 </div>
             }
-            <div className="dropView" style={{position: 'absolute', zIndex: 4, backgroundColor: accentColor, width: '100%', height: '100%', opacity: '0', transition: 'opacity 0.4s ease', display: 'flex', justifyContent: 'center', alignItems: 'center', filter: cropImage&& 'brightness(0.5)'}}>
+            <div className="dropView" style={{position: 'absolute', zIndex: 5, backgroundColor: accentColor, width: '100%', height: '100%', opacity: loadingCropImage?'1':'0', pointerEvents: loadingCropImage?'auto':'none', transition: 'opacity 0.4s ease', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <FontAwesomeIcon icon={faCloudArrowUp} color="lightgray" style={{width: '60%', height: '60%', fontSize: '60%', maxHeight: '200px', maxWidth: '200px'}} />
             </div>
             {(cropImage && !cropping) && <CropEditor rect={rect} imageRef={imageRef} isImageDark={isImageDark}/>}

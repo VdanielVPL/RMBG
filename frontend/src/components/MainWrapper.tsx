@@ -1,23 +1,14 @@
 import { ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { Events } from "@wailsio/runtime";
-import { MainContext, ImageContext } from "./contexts";
+import { MainContext } from "./contexts";
 
 export function MainWrapper({children}: {children: ReactNode}) {
     const { accentColor, strings } = useContext(MainContext);
-    const { setRemovingBG, setCropping } = useContext(ImageContext);
     const [ triggerAlert, setTriggerAlert ] = useState<boolean>(false);
     const [ alertString, setAlertString ] = useState<string>("");
 
     useEffect(() => {
         document.body.style.setProperty('--accent-color', accentColor);
-        const handleRemBGstatus = (status: boolean) => {
-            setRemovingBG(status);
-        }
-
-        const handleCropStatus = (status: boolean) => {
-            setCropping(status);
-        }
-
         const handleAlert = (alert: string) => {
             let alertMessage = '';
             switch (alert) {
@@ -61,13 +52,9 @@ export function MainWrapper({children}: {children: ReactNode}) {
             setAlertString(alertMessage);
         }
 
-        const offRemovingBG = Events.On('removingbg', (event) => handleRemBGstatus(event.data));
-        const offCropping = Events.On('cropping', (event) => handleCropStatus(event.data));
         const offAlert = Events.On('alert', (event) => handleAlert(event.data));
 
         return () => {
-            offRemovingBG();
-            offCropping();
             offAlert();
         }
     }, [strings, accentColor]);

@@ -7,6 +7,8 @@ import (
 	"os/exec"
 	"strings"
 	"syscall"
+
+	"golang.org/x/sys/windows"
 )
 
 // RemBG runs rembg, canceling ctx kills it (the pip launcher takes its Python process down with it)
@@ -19,11 +21,7 @@ func RemBG(ctx context.Context, model string, path string, img []byte) ([]byte, 
 	if path == "" {
 		input = "-"
 	}
-	cmd := exec.CommandContext(ctx, "rembg", "i", "-m", model, input, "-")
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		CreationFlags: 0x08000000,
-		HideWindow:    true,
-	}
+	cmd := RembgCommand(ctx, "i", "-m", model, input, "-")
 	if path == "" {
 		cmd.Stdin = bytes.NewReader(img)
 	}
@@ -42,6 +40,15 @@ func RemBG(ctx context.Context, model string, path string, img []byte) ([]byte, 
 		return nil, err
 	}
 	return out.Bytes(), nil
+}
+
+func RembgCommand(ctx context.Context, args ...string) *exec.Cmd {
+	cmd := exec.CommandContext(ctx, "rembg", args...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		CreationFlags: windows.CREATE_NO_WINDOW,
+		HideWindow:    true,
+	}
+	return cmd
 }
 
 // errorLine picks the useful line from rembg's stderr: the exception for Python tracebacks,

@@ -1,16 +1,16 @@
 package utils
 
 import (
+	"context"
 	"os"
-	"os/exec"
 	"path/filepath"
+	"rmbg/utils/image"
 	"strconv"
-	"syscall"
 )
 
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
-	return !os.IsNotExist(err)
+	return err == nil
 }
 
 func generateUniqueFileName(dir, baseName string) string {
@@ -48,11 +48,7 @@ func Cli(args []string) error {
 		rembgArgs = []string{"i", "-m", args[2], absPath, newFilePath}
 	}
 
-	cmd := exec.Command("rembg", rembgArgs...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		CreationFlags: 0x08000000,
-		HideWindow:    true,
-	}
+	cmd := image.RembgCommand(context.Background(), rembgArgs...)
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }

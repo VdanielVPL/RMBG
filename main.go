@@ -13,9 +13,6 @@ import (
 var assets embed.FS
 
 func main() {
-
-	utils.InitAssets(assets)
-
 	if len(os.Args) > 1 {
 		if err := utils.Cli(os.Args); err != nil {
 			println("Error:", err.Error())

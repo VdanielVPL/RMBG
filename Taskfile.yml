@@ -2,7 +2,7 @@ version: '3'
 
 tasks:
   build:
-    summary: Builds bin/RMBG.exe, DEV=true skips obfuscation and reuses the built frontend
+    summary: Builds bin/RMBG.exe, DEV=true skips obfuscation, wails3 dev reuses the built frontend
     env:
       GOAMD64: v1
     cmds:
@@ -16,7 +16,7 @@ tasks:
   build:frontend:
     dir: frontend
     status:
-      - '{{if eq .DEV "true"}}test -f dist/index.html{{else}}false{{end}}'
+      - '{{if .FRONTEND_DEVSERVER_URL}}test -f dist/index.html{{else}}false{{end}}'
     cmds:
       - bun install
       - bun run build

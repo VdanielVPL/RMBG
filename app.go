@@ -40,10 +40,10 @@ type imgDataStruct struct {
 	rembgID        uint64
 	rembgimg2      []byte
 	rembg2ID       uint64
-	rembgGen       int                // changes with every new RMBG input
-	rembgCancel    context.CancelFunc // kills the running rembg
-	rmbgLoad       int                // changes with every image loaded into the tab,
-	cropLoad       int                // an older load that finishes later is dropped
+	rembgGen       int // changes with every new RMBG input
+	rembgCancel    context.CancelFunc
+	rmbgLoad       int // changes with every image loaded into the tab,
+	cropLoad       int // an older load that finishes later is dropped
 	model          string
 	pngcropimgpath string
 	pngcropimg     []byte
@@ -58,11 +58,10 @@ func NewApp() *App {
 	return &App{}
 }
 
-// ServiceStartup is called by Wails when the app starts
 func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
 	a.app = application.Get()
 
-	if langData, err := utils.LoadLang(); err == nil {
+	if langData, err := utils.LoadLang(assets); err == nil {
 		a.LangStrings = langData
 	} else {
 		a.app.Logger.Error(err.Error())
@@ -87,7 +86,6 @@ func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOpt
 	return nil
 }
 
-// ServiceShutdown is called by Wails when the app is closing
 func (a *App) ServiceShutdown() error {
 	a.rmbgMu.Lock()
 	a.stopRembg()
@@ -114,7 +112,6 @@ func (a *App) alert(key string) {
 	a.app.Event.Emit("alert", key)
 }
 
-// alertError shows a translated message, technical details only go to the log
 func (a *App) alertError(key string, err error) {
 	if err != nil {
 		if msg := err.Error(); msg == "NO_IMAGE" || msg == "INVALID_IMAGE" || msg == "REMBG_NOT_FOUND" {
@@ -126,16 +123,10 @@ func (a *App) alertError(key string, err error) {
 	a.alert(key)
 }
 
-func (a *App) cropFailed(key string, err error) {
-	a.app.Event.Emit("cropping", false)
-	a.alertError(key, err)
-}
-
 func (a *App) newImageID() uint64 {
 	return a.lastImageID.Add(1)
 }
 
-// toFrontend returns the image as [URL, fileType]
 func toFrontend(id uint64, imgBytes []byte) []string {
 	return []string{"/images/" + strconv.FormatUint(id, 10), http.DetectContentType(imgBytes)}
 }
@@ -189,7 +180,7 @@ func (a *App) HandleDrop(ImageType string, path string, isUrl bool) []string {
 		imgBytes, err = image.GetImageFromURL(path)
 		path = ""
 	} else {
-		imgBytes, err = image.ToBytesFromPath(path)
+		imgBytes, err = os.ReadFile(path)
 	}
 	return a.setInputImage(ImageType, load, path, imgBytes, err)
 }
@@ -201,7 +192,7 @@ func (a *App) OpenImage(ImageType string) []string {
 	}
 
 	load := a.newLoad(ImageType)
-	imgBytes, err := image.ToBytesFromPath(path)
+	imgBytes, err := os.ReadFile(path)
 	return a.setInputImage(ImageType, load, path, imgBytes, err)
 }
 
@@ -283,7 +274,6 @@ func (a *App) setRMBGImage(path string, imgBytes []byte, id uint64) {
 	a.stopRembg()
 }
 
-// stopRembg kills the running rembg, its result would be dropped anyway
 func (a *App) stopRembg() {
 	if a.imgData.rembgCancel != nil {
 		a.imgData.rembgCancel()
@@ -307,10 +297,8 @@ func (a *App) RemoveBackground() []string {
 	defer a.rembgRuns.Done()
 	a.rmbgMu.Unlock()
 
-	a.app.Event.Emit("removingbg", true)
 	output, err := image.RemBG(ctx, model, path, img)
 	if err != nil {
-		a.app.Event.Emit("removingbg", false)
 		if ctx.Err() == nil { // canceled because the image changed, not an error
 			a.alertError("REMBG_FAILED", err)
 		}
@@ -320,7 +308,6 @@ func (a *App) RemoveBackground() []string {
 	a.rmbgMu.Lock()
 	defer a.rmbgMu.Unlock()
 	if gen != a.imgData.rembgGen {
-		a.app.Event.Emit("removingbg", false)
 		return nil
 	}
 	a.imgData.rembgimg2, a.imgData.rembg2ID = output, a.newImageID()
@@ -378,34 +365,32 @@ func readImage(imgBytes []byte, path string) ([]byte, error) {
 	if imgBytes != nil || path == "" {
 		return imgBytes, nil
 	}
-	return image.ToBytesFromPath(path)
+	return os.ReadFile(path)
 }
 
 func (a *App) CropImage(left, right, top, bottom float32, isJPG bool) []string {
-	a.app.Event.Emit("cropping", true)
-
 	a.cropMu.Lock()
 	defer a.cropMu.Unlock()
 
 	imgBytes, err := a.cropImageBytes(isJPG)
 	if err != nil {
-		a.cropFailed("CROP_FAILED", err)
+		a.alertError("CROP_FAILED", err)
 		return nil
 	}
 	if imgBytes == nil {
-		a.cropFailed("NO_IMAGE", nil)
+		a.alert("NO_IMAGE")
 		return nil
 	}
 
 	img, err := image.CropImage(imgBytes, left, right, top, bottom)
 	if err != nil {
-		a.cropFailed("CROP_FAILED", err)
+		a.alertError("CROP_FAILED", err)
 		return nil
 	}
 
 	result, err := a.setCropImage("", img, a.newImageID())
 	if err != nil {
-		a.cropFailed("CROP_FAILED", err)
+		a.alertError("CROP_FAILED", err)
 		return nil
 	}
 	return result
@@ -422,8 +407,6 @@ func (a *App) ToPNG() []string {
 // convertCropImage makes the crop image in the other format and keeps both,
 // when there is nothing to convert it returns the one that is already there
 func (a *App) convertCropImage(toJPG bool) []string {
-	a.app.Event.Emit("cropping", true)
-
 	a.cropMu.Lock()
 	defer a.cropMu.Unlock()
 
@@ -434,26 +417,26 @@ func (a *App) convertCropImage(toJPG bool) []string {
 
 	imgBytes, err := a.cropImageBytes(!toJPG)
 	if err != nil {
-		a.cropFailed("CONVERT_FAILED", err)
+		a.alertError("CONVERT_FAILED", err)
 		return nil
 	}
 	if imgBytes != nil {
 		converted, err := convert(imgBytes)
 		if err != nil {
-			a.cropFailed("CONVERT_FAILED", err)
+			a.alertError("CONVERT_FAILED", err)
 			return nil
 		}
 		*target, *targetID = converted, a.newImageID()
 	}
 
 	if *target == nil {
-		a.cropFailed("NO_IMAGE", nil)
+		a.alert("NO_IMAGE")
 		return nil
 	}
 	return toFrontend(*targetID, *target)
 }
 
-// outputImage returns the image that is saved or copied from the tab
+// outputImage returns what Save and Copy use: the image without background or the crop
 func (a *App) outputImage(ImageType string, isJPG bool) ([]byte, error) {
 	switch ImageType {
 	case "RMBG":
